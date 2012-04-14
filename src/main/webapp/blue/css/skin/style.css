@@ -1,0 +1,152 @@
+
+a {
+	color: #0097da;
+}
+
+a:hover {
+	color: #00587f;
+}
+
+.category {
+	background: transparent url(images/icon_tag.png) 0px 2px  no-repeat;
+}
+
+.category a:hover {
+	color: #151515;
+}
+
+
+
+/************************************************************************
+-) BUTTONS
+*************************************************************************/
+
+a.btn-light { 
+	background: transparent url(images/btn-light-right.jpg) no-repeat scroll top right;
+	display: block;  
+	float: right; 
+	height: 28px; 
+	margin-right: 6px;
+	margin-top: -5px;
+	padding-right: 18px;  
+	text-decoration: none; 	
+	color: #fff; 
+	font-family: Arial, Helvetica, sans-serif;  
+	font-size:11px; 
+	font-weight:normal; 
+}
+
+a.btn-light span { 
+	background: transparent url(images/btn-light-left.jpg) no-repeat; 
+	display: block; 
+	line-height: 28px; 
+	padding: 0px 0 5px 18px; 
+	text-align:center; 
+}
+
+a.btn-light:hover { 
+	background: transparent url(images/btn-light-righth.jpg) no-repeat scroll top right;  
+}
+
+a.btn-light:hover span { 
+	background: transparent url(images/btn-light-lefth.jpg) no-repeat;  
+	color:#fff !important; 
+	text-align:center; 
+}
+
+a.btn-light-preview { 
+	background: transparent url(images/btn-light-right.jpg) no-repeat scroll top right;
+	display: block;  
+	float: right; 
+	height: 28px; 
+	margin-right: 6px;
+	margin-top: -5px;
+	padding-right: 18px;  
+	text-decoration: none; 	
+	color: #fff; 
+	font-family: Arial, Helvetica, sans-serif;  
+	font-size:11px; 
+	font-weight:normal; 
+}
+
+a.btn-light-preview span { 
+	background: transparent url(images/btn-light-left.jpg) no-repeat; 
+	display: block; 
+	line-height: 28px; 
+	padding: 0px 0 5px 18px; 
+	text-align:center; 
+}
+
+a.btn-light-preview:hover { 
+	background: transparent url(images/btn-light-righth.jpg) no-repeat scroll top right;  
+}
+
+a.btn-light-preview:hover span { 
+	background: transparent url(images/btn-light-lefth.jpg) no-repeat;  
+	color:#fff !important; 
+	text-align:center; 
+}
+
+a.btn-medium { 
+	background: transparent url(images/btn-medium-right.jpg) no-repeat scroll top right;
+	display: block;  
+	float: left; 
+	height: 39px; 
+	margin-right: 6px; 
+	padding-right: 18px;  
+	text-decoration: none; 	
+	color: #fff; 
+	font-family: Arial, Helvetica, sans-serif;  
+	font-size:14px; 
+	font-weight:bold; 
+}
+
+a.btn-medium span { 
+	background: transparent url(images/btn-medium-left.jpg) no-repeat; 
+	display: block; 
+	line-height: 39px; 
+	padding: 0px 0 5px 18px; 
+	text-align:center; 
+}
+
+a.btn-medium:hover { 
+	background: transparent url(images/btn-medium-righth.jpg) no-repeat scroll top right;  
+}
+
+a.btn-medium:hover span { 
+	background: transparent url(images/btn-medium-lefth.jpg) no-repeat;  
+	color:#fff !important; 
+	text-align:center; 
+}
+
+a.btn-big { 
+	background: transparent url(images/btn-big-right.jpg) no-repeat scroll top right; 
+	display: block;  
+	float: left; 
+	height: 59px; 
+	margin-right: 6px; 
+	padding-right: 18px;  
+	text-decoration: none; 
+	color: #fff; 
+	font-family: Arial, Helvetica, sans-serif;  
+	font-size:18px; 
+	font-weight:bold; 
+}
+
+a.btn-big span { 
+	background: transparent url(images/btn-big-left.jpg) no-repeat; 
+	display: block; 
+	line-height: 59px; 
+	padding: 0px 0 5px 18px; 
+	text-align:center; 
+}
+
+a.btn-big:hover { 
+	background: transparent url(images/btn-big-righth.jpg) no-repeat scroll top right;  
+}
+
+a.btn-big:hover span { 
+	background: transparent url(images/btn-big-lefth.jpg) no-repeat;  
+	color:#fff !important; 
+	text-align:center; 
+}

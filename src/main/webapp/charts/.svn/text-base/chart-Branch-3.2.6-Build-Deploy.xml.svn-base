@@ -1,0 +1,107 @@
+  <chart>
+
+	<axis_category shadow='low' size='10' color='FFFFFF' alpha='75' />
+	<axis_ticks value_ticks='true' category_ticks='true' minor_count='1' />
+	<axis_value shadow='low' size='10' color='FFFFFF' alpha='75' />
+
+	<chart_border top_thickness='0' bottom_thickness='2' left_thickness='2' right_thickness='0' />
+<chart_data>
+<row>
+<null/>
+<string>150</string>
+
+<string>149</string>
+
+<string>148</string>
+
+<string>147</string>
+
+<string>144</string>
+
+<string>143</string>
+
+<string>142</string>
+
+<string>141</string>
+
+<string>140</string>
+
+<string>139</string>
+
+</row>
+<row>
+<string>Passed</string>
+<number tooltip='189'>189</number>
+
+<number tooltip='99'>99</number>
+
+<number tooltip='8'>8</number>
+
+<number tooltip='55'>55</number>
+
+<number tooltip='403'>403</number>
+
+<number tooltip='426'>426</number>
+
+<number tooltip='426'>426</number>
+
+<number tooltip='426'>426</number>
+
+<number tooltip='428'>428</number>
+
+<number tooltip='390'>390</number>
+
+</row>
+<row>
+<string>Failed</string>
+<number tooltip='39'>39</number>
+
+<number tooltip='108'>108</number>
+
+<number tooltip='0'>0</number>
+
+<number tooltip='5'>5</number>
+
+<number tooltip='27'>27</number>
+
+<number tooltip='4'>4</number>
+
+<number tooltip='4'>4</number>
+
+<number tooltip='4'>4</number>
+
+<number tooltip='2'>2</number>
+
+<number tooltip='4'>4</number>
+
+</row>
+</chart_data>
+	<chart_grid_h thickness='1' type='solid' />
+	<chart_grid_v thickness='1' type='solid' />
+	<chart_rect x='80' y='60' width='320' height='150' positive_color='888888' positive_alpha='50' />
+	<chart_pref rotation_x='15' rotation_y='0' min_x='0' max_x='80' min_y='0' max_y='60' />
+	<chart_type>stacked 3d column</chart_type>
+
+	<filter>
+		<shadow id='high' distance='5' angle='45' alpha='35' blurX='15' blurY='15' />
+		<shadow id='low' distance='2' angle='45' alpha='50' blurX='5' blurY='5' />
+	</filter>
+
+	<legend shadow='high' x='1' y='1' width='80' height='20' margin='10' fill_color='000000' fill_alpha='7' line_color='000000' line_alpha='0' line_thickness='0' layout='horizontal' size='12' color='000000' alpha='50' />
+	<tooltip color='ffffcc' alpha='80' size='12' background_color_1='444488' background_alpha='75' shadow='low' />
+
+
+	<series_color>
+		<color>ADFF2F</color>
+		<color>DC143C</color>
+	</series_color>
+	<series bar_gap='10' set_gap='18' />
+
+	 <draw>
+		
+		<text shadow='low' transition='dissolve' delay='.5' duration='0.5' color='000022' alpha='60' size='20' x='120' y='23' width='300' height='240'>Branch-3.2.6-Build-Deploy</text>
+	          <text rotation='-90' color='000022' alpha='30' size='10' x='25' y='160' width='300' height='240'>Number of Tests</text>
+		 <text color='000022' alpha='30' size='10' x='25' y='215' width='300' height='240'>Builds</text> 
+	</draw>
+
+</chart>
