@@ -1,0 +1,16 @@
+<p><b>Publishes cucumber-jvm html results</b></p>
+<p>This plugin requires that you use <b>cucumber-jvm</b> and run using <b>JUnit</b> as well as setting cucumber to generate a <b>json</b> report (<i>you <b>must</b> give the json file the suffix <b>.json</b>). The plugin
+	uses the json report to produce html reports that are available from jenkins on the build page after a build has run.
+	</p>
+<pre>
+	package net.masterthought.example;
+
+	import cucumber.junit.Cucumber;
+	import org.junit.runner.RunWith;
+
+	@RunWith(Cucumber.class)
+	@Cucumber.Options(format = {"pretty", "html:target/cucumber", "json:target/cucumber.json"})
+	public class ATMTest {
+	}
+	
+</pre>
