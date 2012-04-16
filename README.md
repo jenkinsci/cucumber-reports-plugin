@@ -14,7 +14,7 @@ This plugin allows Jenkins to publish the results as pretty html reports hosted 
 1. [Get](https://jenkins-ci.org/) Jenkins.
 
 2. Install the [cucumber-jvm-reports-java]
-(https://wiki.jenkins-ci.org/display/JENKINS) plugin.
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/downloads) plugin.
 
 3. Restart Jenkins.
 
@@ -56,4 +56,4 @@ Make sure you have configured cucumber-jvm to run with the JUnit runner and to g
 ## Develop
 
 Interested in contributing to the Jenkins cucumber-jvm-reports plugin?  Great!  Start [here]
-(https://github.com/jenkinsci/jenkins.rb/wiki/Getting-Started-With-Ruby-Plugins).
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java).
