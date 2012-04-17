@@ -3,7 +3,7 @@
 <head>
 <script language="javascript">AC_FL_RunContent = 0;</script>
 <script language="javascript"> DetectFlashVer = 0; </script>
-<script src="/plugin/cucumber-reports/charts/AC_RunActiveContent.js" language="javascript"></script>
+<script src="${jenkins_base}plugin/cucumber-reports/charts/AC_RunActiveContent.js" language="javascript"></script>
 <script language="JavaScript" type="text/javascript">
 <!--
 var requiredMajorVersion = 10;
@@ -13,12 +13,12 @@ var requiredRevision = 45;
 </script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Cucumber-JVM Html Reports - Feature Overview</title>
-	<link rel="stylesheet" href="/plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="/plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="/plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="/plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="/plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen" />
-	<link rel="shortcut icon" href="/plugin/cucumber-reports/blue/favicon.ico" />
+	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen" />
+	<link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico" />
 <style>
 .feature-keyword{font-weight:bold;}
 .feature-description{padding-left:15px;font-style:italic;background-color:beige;}
@@ -71,7 +71,7 @@ table.stats-table td {
 			<h1 class="grid_4 logo"><a href="feature-overview.html" class='ie6fix'>Cucumber</a></h1>
 			<div class="grid_6" id="nav">
 				<ul>
-				<li><a href="/job/$build_project/$build_number">Back To Jenkins</a></li>
+				<li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
 				</ul>
 			</div>
 		</div>
@@ -102,9 +102,9 @@ if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
 			'salign', 'TL',
 			'bgcolor', '#bbccff',
 			'wmode', 'opaque',
-			'movie', '/plugin/cucumber-reports/charts/charts',
-			'src', '/plugin/cucumber-reports/charts/charts',
-			'FlashVars', "library_path=/plugin/cucumber-reports/charts/charts_library&xml_data=$chart_data",
+			'movie', '${jenkins_base}plugin/cucumber-reports/charts/charts',
+			'src', '${jenkins_base}plugin/cucumber-reports/charts/charts',
+			'FlashVars', "library_path=${jenkins_base}plugin/cucumber-reports/charts/charts_library&xml_data=$chart_data",
 			'id', 'my_chart',
 			'name', 'my_chart',
 			'menu', 'true',

@@ -23,11 +23,13 @@ import java.io.IOException;
 
 public class CucumberReportPublisher extends Recorder {
 
-    private final String jsonReportDirectory;
+    public final String jsonReportDirectory;
+    public final String pluginUrlPath;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory) {
+    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath) {
         this.jsonReportDirectory = jsonReportDirectory;
+        this.pluginUrlPath = pluginUrlPath;
     }
 
     private String[] findJsonFiles(File targetDirectory) {
@@ -65,7 +67,7 @@ public class CucumberReportPublisher extends Recorder {
             String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
             for (String file : jsonReportFiles) {
                 listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports based on: " + file);
-                SingleResultParser singleResultParser = new SingleResultParser(new File(targetBuildDirectory, file).getAbsolutePath(), targetBuildDirectory, buildNumber, buildProject);
+                SingleResultParser singleResultParser = new SingleResultParser(new File(targetBuildDirectory, file).getAbsolutePath(), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject);
                 try {
                     singleResultParser.generateReports();
                 } catch (Exception e) {

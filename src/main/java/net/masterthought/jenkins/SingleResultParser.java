@@ -20,13 +20,15 @@ public class SingleResultParser {
     private String buildNumber;
     private String buildProject;
     private List<Util.Status> totalSteps;
+    private String pluginUrlPath;
 
-    public SingleResultParser(String jsonResultFile, File reportDirectory, String buildNumber, String buildProject) throws IOException {
+    public SingleResultParser(String jsonResultFile, File reportDirectory, String pluginUrlPath, String buildNumber, String buildProject) throws IOException {
         this.featureList = parseJson(jsonResultFile);
         this.totalSteps = getAllStepStatuses();
         this.reportDirectory = reportDirectory;
         this.buildNumber = buildNumber;
         this.buildProject = buildProject;
+        this.pluginUrlPath = getPluginUrlPath(pluginUrlPath);
     }
 
     public void generateReports() throws Exception {
@@ -50,10 +52,32 @@ public class SingleResultParser {
         context.put("total_skipped", getTotalSkipped());
         context.put("chart_data", XmlChartBuilder.donutChart(getTotalPasses(), getTotalFails(), getTotalSkipped()));
         context.put("time_stamp", timeStamp());
+        context.put("jenkins_base", pluginUrlPath);
         generateReport("feature-overview.html", featureOverview, context);
     }
 
-
+    public void generateFeatureReports() throws Exception {
+        for (Feature feature : featureList) {
+            VelocityEngine ve = new VelocityEngine();
+            ve.init(getProperties());
+            Template featureResult = ve.getTemplate("templates/featureReport.vm");
+            VelocityContext context = new VelocityContext();
+            context.put("feature", feature);
+            context.put("report_status_colour", getReportStatusColour(feature));
+            context.put("build_project", buildProject);
+            context.put("build_number", buildNumber);
+            context.put("scenarios", feature.getElements());
+            context.put("time_stamp", timeStamp());
+            context.put("jenkins_base", pluginUrlPath);
+            generateReport(feature.getFileName(), featureResult, context);
+        }
+    }
+    
+    
+    private String getPluginUrlPath(String path){
+      return path.isEmpty() ? "/" : path;  
+    }
+    
     private int getTotalSteps() {
         return totalSteps.size();
     }
@@ -92,22 +116,6 @@ public class SingleResultParser {
             scenarios = scenarios + feature.getNumberOfScenarios();
         }
         return scenarios;
-    }
-
-    public void generateFeatureReports() throws Exception {
-        for (Feature feature : featureList) {
-            VelocityEngine ve = new VelocityEngine();
-            ve.init(getProperties());
-            Template featureResult = ve.getTemplate("templates/featureReport.vm");
-            VelocityContext context = new VelocityContext();
-            context.put("feature", feature);
-            context.put("report_status_colour", getReportStatusColour(feature));
-            context.put("build_project", buildProject);
-            context.put("build_number", buildNumber);
-            context.put("scenarios", feature.getElements());
-            context.put("time_stamp", timeStamp());
-            generateReport(feature.getFileName(), featureResult, context);
-        }
     }
 
     private void generateReport(String fileName, Template featureResult, VelocityContext context) throws Exception {
