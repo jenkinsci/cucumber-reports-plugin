@@ -20,6 +20,8 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CucumberReportPublisher extends Recorder {
 
@@ -65,14 +67,12 @@ public class CucumberReportPublisher extends Recorder {
             }
 
             String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
-            for (String file : jsonReportFiles) {
-                listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports based on: " + file);
-                SingleResultParser singleResultParser = new SingleResultParser(new File(targetBuildDirectory, file).getAbsolutePath(), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject);
-                try {
-                    singleResultParser.generateReports();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
+            FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject);
+            try {
+                featureReportGenerator.generateReports();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
         } else {
@@ -81,6 +81,14 @@ public class CucumberReportPublisher extends Recorder {
 
         build.addAction(new CucumberReportBuildAction(build));
         return true;
+    }
+    
+    private List<String> fullPathToJsonFiles(String[] jsonFiles, File targetBuildDirectory){
+        List<String> fullPathList = new ArrayList<String>();
+        for(String file : jsonFiles){
+         fullPathList.add(new File(targetBuildDirectory, file).getAbsolutePath());
+      }
+        return fullPathList;
     }
 
     @Extension

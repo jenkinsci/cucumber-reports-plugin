@@ -10,7 +10,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>hpi</packaging>
 
     <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->

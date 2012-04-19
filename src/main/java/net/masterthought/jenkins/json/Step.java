@@ -1,10 +1,14 @@
 package net.masterthought.jenkins.json;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Step {
 
     private String name;
     private String keyword;
     private Result result;
+    private Row[] rows;
 
     public Step(String name, String keyword) {
         this.name = name;
@@ -12,8 +16,45 @@ public class Step {
 
     }
 
+//    public Row getTitleRow(){
+//        return rows[0];
+//    }
+    
+//    public List getRows(){
+//        return Arrays.asList(rows).subList(1, -1);
+//    }
+    
+    public Row[] getRows(){
+        return rows;
+    }
+
+    public boolean hasRows(){
+      boolean result = false;
+      if(rows != null){
+          if(rows.length > 0){
+              result = true;
+          }
+      }
+        return result;
+    }
+    
     public Util.Status getStatus() {
         return Util.resultMap.get(result.getStatus());
+    }
+    
+    public String getDataTableClass(){
+        String content = "";
+        Util.Status status = getStatus();
+        if(status == Util.Status.FAILED){
+            content = "failed";
+        } else if(status == Util.Status.PASSED){
+            content = "passed";
+        } else if(status == Util.Status.SKIPPED){
+            content = "skipped";
+        } else {
+            content = ""; 
+        }
+        return content;   
     }
 
     public String getName(){

@@ -52,6 +52,39 @@ border-color: gray;
 background-color: white;
 -moz-border-radius: ;
 }
+
+table.data-table {
+    color: black;
+    border-width: 1px;
+    border-spacing: 2px;
+    border-style: outset;
+    border-color: #d6d6d6;
+    border-collapse: collapse;
+    background-color: beige;
+}
+table.data-table th {
+    color:black;
+    border-width: 1px;
+    padding: 5px;
+    border-style: inset;
+    border-color: #d6d6d6;
+    background-color: #66CCEE;
+}
+table.data-table td {
+    color:black;
+    text-align: center;
+    border-width: 1px;
+    padding: 5px;
+    border-style: inset;
+    border-color: #d6d6d6;
+    background-color: beige;
+}
+
+.data {
+   padding-left:50px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
 </style>
 
 </head>
@@ -88,6 +121,19 @@ background-color: white;
                 $scenario.getName()
                 #foreach($step in $scenario.getSteps())
                   $step.getName()
+                    #if($step.hasRows())
+                        <div class="data $step.getDataTableClass()">
+                        <table class="data-table">
+                      #foreach($row in $step.getRows())
+                       <tr>
+                           #foreach($cell in $row.getCells())
+                           <td>$cell</td>
+                           #end
+                       </tr>
+                      #end
+                      </table>
+                        </div>
+                    #end
                 #end
             #end
 
