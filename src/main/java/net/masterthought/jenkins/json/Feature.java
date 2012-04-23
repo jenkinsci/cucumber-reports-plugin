@@ -62,9 +62,9 @@ public class Feature {
         return result;
     }
 
-    public String getFileName() {
-        return uri.replaceAll("/", "-") + ".html";
-    }
+	public String getFileName() {
+	    return uri.replaceAll("/", "-").replaceAll("\\\\", "-") + ".html";
+	}
 
     public int getNumberOfScenarios() {
         return elements.length;
