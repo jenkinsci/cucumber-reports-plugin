@@ -19,6 +19,7 @@ This plugin allows Jenkins to publish the results as pretty html reports hosted 
 3. Restart Jenkins.
 
 ## Use
+You must use a Freestyle project type in jenkins.
 
 With the cucumber-jvm-reports plugin installed in Jenkins, you simply check the "Publish cucumber results as a report" box in the
 publish section of the build config and enter the path to the json reports relative to the workspace:
