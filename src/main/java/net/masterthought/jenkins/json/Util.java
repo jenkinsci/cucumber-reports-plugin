@@ -3,7 +3,16 @@ package net.masterthought.jenkins.json;
 import net.masterthought.jenkins.json.Closure;
 import net.masterthought.jenkins.json.Element;
 import net.masterthought.jenkins.json.Step;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,22 +44,25 @@ public class Util {
         put("passed", Util.Status.PASSED);
         put("failed", Util.Status.FAILED);
         put("skipped", Util.Status.SKIPPED);
+        put("undefined", Util.Status.UNDEFINED);
     }};
 
     public static String result(Status status) {
-        String result = "";
+        String result = "<div>";
         if (status == Status.PASSED) {
             result = "<div class=\"passed\">";
         } else if (status == Status.FAILED) {
             result = "<div class=\"failed\">";
         } else if (status == Status.SKIPPED) {
             result = "<div class=\"skipped\">";
+        } else if (status == Status.UNDEFINED){
+            result = "<div class=\"undefined\">";
         }
         return result;
     }
 
     public static enum Status {
-        PASSED, FAILED, SKIPPED
+        PASSED, FAILED, SKIPPED, UNDEFINED
     }
 
     public static <T, R> List<R> collectScenarios(Element[] list, Closure<String, Element> clo) {
@@ -89,5 +101,42 @@ public class Util {
             }
         }
        return occurrence;
+    }
+
+    public static String readFileAsString(String filePath) throws java.io.IOException {
+        byte[] buffer = new byte[(int) new File(filePath).length()];
+        BufferedInputStream f = null;
+        try {
+            f = new BufferedInputStream(new FileInputStream(filePath));
+            f.read(buffer);
+        } finally {
+            if (f != null) try {
+                f.close();
+            } catch (IOException ignored) {
+            }
+        }
+        return new String(buffer);
+    }
+
+    public static String formatDuration(Long duration){
+        PeriodFormatter formatter = new PeriodFormatterBuilder()
+                .appendDays()
+                .appendSuffix(" day", " days")
+                .appendSeparator(" and ")
+                .appendHours()
+                .appendSuffix(" hour", " hours")
+                .appendSeparator(" and ")
+                .appendMinutes()
+                .appendSuffix(" min", " mins")
+                .appendSeparator(" and ")
+                .appendSeconds()
+                .appendSuffix(" sec", " secs")
+                .appendSeparator(" and ")
+                .appendMillis()
+                .appendSuffix(" ms", " ms")
+                .toFormatter();
+        return formatter.print(new Period(0, duration/1000000));
+        
+       
     }
 }

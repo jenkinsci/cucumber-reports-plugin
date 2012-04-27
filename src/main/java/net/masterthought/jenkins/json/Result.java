@@ -4,9 +4,9 @@ public class Result {
 
     private String status;
     private String error_message;
-    private int duration;
+    private Long duration;
 
-    public Result(String status, String error_message, int duration){
+    public Result(String status, String error_message, Long duration){
         this.status = status;
         this.error_message = error_message;
         this.duration = duration;
@@ -16,6 +16,10 @@ public class Result {
       return status;
     }
 
+    public Long getDuration(){
+        return duration == null ? 0L : duration;
+    }
+    
     public String getErrorMessage(){
         return error_message;
     }

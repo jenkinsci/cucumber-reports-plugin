@@ -89,6 +89,16 @@ public class Feature {
     public String getRawStatus() {
         return getStatus().toString().toLowerCase();
     }
+    
+    public String getDurationOfSteps(){
+        Long totalDuration = 0L;
+        for(Element element : elements){
+            for(Step step : element.getSteps()){
+               totalDuration = totalDuration + step.getDuration();
+            }
+        }
+        return Util.formatDuration(totalDuration);
+    }
 
 }
 

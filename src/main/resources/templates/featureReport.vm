@@ -23,6 +23,7 @@
 .passed{background-color:#C5D88A;}
 .failed{background-color:#D88A8A;}
 .skipped{background-color:#2DEAEC;}
+.undefined{background-color: #ebcc81;}
 
 table.stats-table {
 color:black;
@@ -151,6 +152,7 @@ table.data-table td {
 <th>Passed</th>
 <th>Failed</th>
 <th>Skipped</th>
+<th>Duration</th>
 <th>Status</th>
 </tr>
 
@@ -161,6 +163,7 @@ table.data-table td {
 <td>$feature.getNumberOfPasses()</td>
 <td>$feature.getNumberOfFailures()</td>
 <td>$feature.getNumberOfSkipped()</td>
+<td>$feature.getDurationOfSteps()</td>
 <td style="background-color: $report_status_colour;">$feature.getRawStatus()</td></tr>
 
 </table>

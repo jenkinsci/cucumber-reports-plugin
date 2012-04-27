@@ -1,6 +1,7 @@
 package net.masterthought.jenkins;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.masterthought.jenkins.json.Element;
 import net.masterthought.jenkins.json.Feature;
 import net.masterthought.jenkins.json.Step;
@@ -8,10 +9,15 @@ import net.masterthought.jenkins.json.Util;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FeatureReportGenerator {
 
@@ -22,6 +28,7 @@ public class FeatureReportGenerator {
     private List<Util.Status> totalSteps;
     private String pluginUrlPath;
     private List<Feature> allFeatures;
+    private static final String charEncoding = "UTF-8";
 
     public FeatureReportGenerator(List<String> jsonResultFiles, File reportDirectory, String pluginUrlPath, String buildNumber, String buildProject) throws IOException {
         this.jsonResultFiles = parseJsonResults(jsonResultFiles);
@@ -33,11 +40,12 @@ public class FeatureReportGenerator {
         this.pluginUrlPath = getPluginUrlPath(pluginUrlPath);
     }
 
-    private Map<String, List<Feature>> parseJsonResults(List<String> jsonResultFiles) throws FileNotFoundException {
+    private Map<String, List<Feature>> parseJsonResults(List<String> jsonResultFiles) throws IOException {
         Map<String, List<Feature>> featureResults = new HashMap<String, List<Feature>>();
         for (String jsonFile : jsonResultFiles) {
-            FileReader reader = new FileReader(jsonFile);
-            featureResults.put(jsonFile, Arrays.asList(new Gson().fromJson(reader, Feature[].class)));
+            String fileContent = U2U(Util.readFileAsString(jsonFile));
+            Feature[] features = new Gson().fromJson(fileContent, Feature[].class);
+            featureResults.put(jsonFile, Arrays.asList(features));
         }
         return featureResults;
     }
@@ -63,11 +71,12 @@ public class FeatureReportGenerator {
         context.put("total_skipped", getTotalSkipped());
         context.put("chart_data", XmlChartBuilder.donutChart(getTotalPasses(), getTotalFails(), getTotalSkipped()));
         context.put("time_stamp", timeStamp());
+        context.put("total_duration", getTotalDuration());
         context.put("jenkins_base", pluginUrlPath);
         generateReport("feature-overview.html", featureOverview, context);
     }
 
-    private List<Feature> listAllFeatures(){
+    private List<Feature> listAllFeatures() {
         List<Feature> allFeatures = new ArrayList<Feature>();
         Iterator it = jsonResultFiles.entrySet().iterator();
         while (it.hasNext()) {
@@ -77,7 +86,7 @@ public class FeatureReportGenerator {
         }
         return allFeatures;
     }
-    
+
     public void generateFeatureReports() throws Exception {
 
         Iterator it = jsonResultFiles.entrySet().iterator();
@@ -100,10 +109,19 @@ public class FeatureReportGenerator {
                 generateReport(feature.getFileName(), featureResult, context);
             }
         }
-
-
     }
 
+    private static final Pattern p = Pattern.compile("\\\\u\\s*([0-9(A-F|a-f)]{4})", Pattern.MULTILINE);
+
+    public static String U2U(String s) {
+        String res = s;
+        Matcher m = p.matcher(res);
+        while (m.find()) {
+            res = res.replaceAll("\\" + m.group(0),
+                    Character.toString((char) Integer.parseInt(m.group(1), 16)));
+        }
+        return res;
+    }
 
     private String getPluginUrlPath(String path) {
         return path.isEmpty() ? "/" : path;
@@ -111,6 +129,18 @@ public class FeatureReportGenerator {
 
     private int getTotalSteps() {
         return totalSteps.size();
+    }
+
+    private String getTotalDuration() {
+        Long duration = 0L;
+        for (Feature feature : allFeatures) {
+            for (Element scenario : feature.getElements()) {
+                for (Step step : scenario.getSteps()) {
+                    duration = duration + step.getDuration();
+                }
+            }
+        }
+        return Util.formatDuration(duration);
     }
 
     private int getTotalPasses() {
@@ -166,11 +196,6 @@ public class FeatureReportGenerator {
     private String getReportStatusColour(Feature feature) {
         return feature.getStatus() == Util.Status.PASSED ? "#C5D88A" : "#D88A8A";
     }
-
-//    private List<Feature> parseJson(String jsonResultFile) throws FileNotFoundException {
-//        FileReader reader = new FileReader(jsonResultFile);
-//        return Arrays.asList(new Gson().fromJson(reader, Feature[].class));
-//    }
 
     private String timeStamp() {
         return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());

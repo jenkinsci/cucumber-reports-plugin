@@ -33,6 +33,7 @@ var requiredRevision = 45;
 .passed{background-color:#C5D88A;}
 .failed{background-color:#D88A8A;}
 .skipped{background-color:#2DEAEC;}
+.undefined{background-color: #ebcc81;}
 
 table.stats-table {
 	color:black;
@@ -86,7 +87,7 @@ table.stats-table td {
 	</div>
 
 	<div class="container_12">
-		<div class="grid_9">
+		<div class="grid_12">
 	 <div style="text-align:center;"><script language="JavaScript" type="text/javascript">
 <!--
 if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
@@ -142,6 +143,7 @@ if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
   <th>Passed</th>
   <th>Failed</th>
   <th>Skipped</th>
+  <th>Duration</th>
   <th>Status</th>
   </tr>
 
@@ -154,12 +156,13 @@ if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
           #end
 
           <tr>
-          <td><a href="$feature.getFileName()">$feature.getRawName()</a></td>
+          <td style="text-align:left;"><a href="$feature.getFileName()">$feature.getRawName()</a></td>
           <td>$feature.getNumberOfScenarios()</td>
           <td>$feature.getNumberOfSteps()</td>
           <td>$feature.getNumberOfPasses()</td>
           <td>$feature.getNumberOfFailures()</td>
           <td>$feature.getNumberOfSkipped()</td>
+          <td>$feature.getDurationOfSteps()</td>
           <td style="background-color: $bgcolour;">$feature.getRawStatus()</td>
           </tr>
       #end
@@ -171,6 +174,7 @@ if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
 <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
 <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
 <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
+<td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
 <td style="background-color:lightgray;font-weight:bold;">Totals</td>
 </tr></table>
 	</div>

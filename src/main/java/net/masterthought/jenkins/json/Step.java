@@ -15,14 +15,6 @@ public class Step {
         this.keyword = keyword;
 
     }
-
-//    public Row getTitleRow(){
-//        return rows[0];
-//    }
-    
-//    public List getRows(){
-//        return Arrays.asList(rows).subList(1, -1);
-//    }
     
     public Row[] getRows(){
         return rows;
@@ -36,6 +28,10 @@ public class Step {
           }
       }
         return result;
+    }
+    
+    public Long getDuration(){
+        return result.getDuration();
     }
     
     public Util.Status getStatus() {
