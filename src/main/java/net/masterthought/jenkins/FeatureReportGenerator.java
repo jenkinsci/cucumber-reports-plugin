@@ -1,7 +1,6 @@
 package net.masterthought.jenkins;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.masterthought.jenkins.json.Element;
 import net.masterthought.jenkins.json.Feature;
 import net.masterthought.jenkins.json.Step;
@@ -9,11 +8,11 @@ import net.masterthought.jenkins.json.Util;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;

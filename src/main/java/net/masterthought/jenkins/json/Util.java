@@ -1,10 +1,5 @@
 package net.masterthought.jenkins.json;
 
-import net.masterthought.jenkins.json.Closure;
-import net.masterthought.jenkins.json.Element;
-import net.masterthought.jenkins.json.Step;
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
