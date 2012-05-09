@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Cucumber-JVM Html Reports - Feature: $feature.getRawName() </title>
+	<title>Cucumber-JVM Html Reports - Tag: $tag.getTagName() </title>
 	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen" />
@@ -96,8 +96,8 @@ table.data-table td {
 			<div class="grid_6" id="nav">
 				<ul>
 					<li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
-					<li><a href="tag-overview.html">Tag Overview</a></li>
 					<li><a href="feature-overview.html">Feature Overview</a></li>
+					<li><a href="tag-overview.html">Tag Overview</a></li>
 				</ul>
 			</div>
 		</div>
@@ -105,7 +105,7 @@ table.data-table td {
 	<div id="fullwidth_gradient">
 		<div class="container_12">
 			<div class="grid_9 heading">
-				<h2>Feature Result for Build: $build_number</h2>
+				<h2>Result for <span style="color:#66CCEE;">$tag.getTagName()</span> in Build: $build_number</h2>
 			</div>
 		</div>
 	</div>
@@ -116,7 +116,7 @@ table.data-table td {
             <div>
                 <table class="stats-table">
                     <tr>
-                        <th>Feature</th>
+                        <th>Tag</th>
                         <th>Scenarios</th>
                         <th>Steps</th>
                         <th>Passed</th>
@@ -127,29 +127,25 @@ table.data-table td {
                     </tr>
 
                     <tr>
-                        <td><a href="$feature.getFileName()">$feature.getRawName()</a></td>
-                        <td>$feature.getNumberOfScenarios()</td>
-                        <td>$feature.getNumberOfSteps()</td>
-                        <td>$feature.getNumberOfPasses()</td>
-                        <td>$feature.getNumberOfFailures()</td>
-                        <td>$feature.getNumberOfSkipped()</td>
-                        <td>$feature.getDurationOfSteps()</td>
-                        <td style="background-color: $report_status_colour;">$feature.getRawStatus()</td></tr>
+                        <td><a href="$tag.getFileName()">$tag.getTagName()</a></td>
+                        <td>$tag.getNumberOfScenarios()</td>
+                        <td>$tag.getNumberOfSteps()</td>
+                        <td>$tag.getNumberOfPasses()</td>
+                        <td>$tag.getNumberOfFailures()</td>
+                        <td>$tag.getNumberOfSkipped()</td>
+                        <td>$tag.getDurationOfSteps()</td>
+                        <td style="background-color: $report_status_colour;">$tag.getRawStatus()</td></tr>
 
                 </table>
 
             </div>
 
 		<div style="color:black;">
-
-            $feature.getTags()
-            $feature.getName()
-            $feature.getDescription()
-
-            #foreach($scenario in $scenarios)
-                $scenario.getTags()
-                $scenario.getName()
-                #foreach($step in $scenario.getSteps())
+            #foreach($scenario in $tag.getScenarios())
+                <div style="margin-bottom:20px;padding:15px;">
+                    <div><a href="$scenario.getParentFeatureUri()">View Feature File</a></div>
+                $scenario.getScenario().getName()
+                #foreach($step in $scenario.getScenario().getSteps())
                   $step.getName()
                     #if($step.hasRows())
                         <div class="data $step.getDataTableClass()">
@@ -165,8 +161,8 @@ table.data-table td {
                         </div>
                     #end
                 #end
+                </div>
             #end
-
 	</div>
 	</div>
 

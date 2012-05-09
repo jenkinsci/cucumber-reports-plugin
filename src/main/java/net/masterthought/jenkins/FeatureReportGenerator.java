@@ -27,6 +27,7 @@ public class FeatureReportGenerator {
     private List<Util.Status> totalSteps;
     private String pluginUrlPath;
     private List<Feature> allFeatures;
+    private List<TagObject> allTags;
     private static final String charEncoding = "UTF-8";
 
     public FeatureReportGenerator(List<String> jsonResultFiles, File reportDirectory, String pluginUrlPath, String buildNumber, String buildProject) throws IOException {
@@ -37,6 +38,7 @@ public class FeatureReportGenerator {
         this.buildNumber = buildNumber;
         this.buildProject = buildProject;
         this.pluginUrlPath = getPluginUrlPath(pluginUrlPath);
+        this.allTags = findTagsInFeatures();
     }
 
     private Map<String, List<Feature>> parseJsonResults(List<String> jsonResultFiles) throws IOException {
@@ -52,6 +54,8 @@ public class FeatureReportGenerator {
     public void generateReports() throws Exception {
         generateFeatureReports();
         generateFeatureOverview();
+        generateTagReports();
+        generateTagOverview();
     }
 
     public void generateFeatureOverview() throws Exception {
@@ -75,19 +79,7 @@ public class FeatureReportGenerator {
         generateReport("feature-overview.html", featureOverview, context);
     }
 
-    private List<Feature> listAllFeatures() {
-        List<Feature> allFeatures = new ArrayList<Feature>();
-        Iterator it = jsonResultFiles.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
-            List<Feature> featureList = (List<Feature>) pairs.getValue();
-            allFeatures.addAll(featureList);
-        }
-        return allFeatures;
-    }
-
     public void generateFeatureReports() throws Exception {
-
         Iterator it = jsonResultFiles.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
@@ -110,6 +102,120 @@ public class FeatureReportGenerator {
         }
     }
 
+    public void generateTagReports() throws Exception {
+        for(TagObject tagObject : allTags) {
+            VelocityEngine ve = new VelocityEngine();
+            ve.init(getProperties());
+            Template featureResult = ve.getTemplate("templates/tagReport.vm");
+            VelocityContext context = new VelocityContext();
+            context.put("tag", tagObject);
+            context.put("time_stamp", timeStamp());
+            context.put("jenkins_base", pluginUrlPath);
+            context.put("build_project", buildProject);
+            context.put("build_number", buildNumber);
+            context.put("report_status_colour", getTagReportStatusColour(tagObject));
+            generateReport(tagObject.getTagName().replace("@", "").trim() + ".html", featureResult, context);
+
+        }
+    }
+
+    public void generateTagOverview() throws Exception {
+        VelocityEngine ve = new VelocityEngine();
+        ve.init(getProperties());
+        Template featureOverview = ve.getTemplate("templates/tagOverview.vm");
+        VelocityContext context = new VelocityContext();
+        context.put("build_project", buildProject);
+        context.put("build_number", buildNumber);
+        context.put("tags", allTags);
+        context.put("total_tags", getTotalTags());
+        context.put("total_scenarios", getTotalTagScenarios());
+        context.put("total_steps", getTotalTagSteps());
+        context.put("total_passes", getTotalTagPasses());
+        context.put("total_fails", getTotalTagFails());
+        context.put("total_skipped", getTotalTagSkipped());
+        context.put("chart_data", XmlChartBuilder.StackedColumnChart(allTags));
+        context.put("total_duration", getTotalTagDuration());
+
+        context.put("time_stamp", timeStamp());
+        context.put("jenkins_base", pluginUrlPath);
+        generateReport("tag-overview.html", featureOverview, context);
+    }
+
+        private List<TagObject> findTagsInFeatures() {
+        List<TagObject> tagMap = new ArrayList<TagObject>();
+        for (Feature feature : allFeatures) {
+            List<ScenarioTag> scenarioList = new ArrayList<ScenarioTag>();
+
+            if (feature.hasTags()) {
+                for (Element scenario : feature.getElements()) {
+                    scenarioList.add(new ScenarioTag(scenario, feature.getFileName()));
+                    tagMap = createOrAppendToTagMap(tagMap, feature.getTagList(), scenarioList);
+                }
+            }
+            for (Element scenario : feature.getElements()) {
+                if (scenario.hasTags()) {
+                    scenarioList = addScenarioUnlessExists(scenarioList, new ScenarioTag(scenario, feature.getFileName()));
+                }
+                tagMap = createOrAppendToTagMap(tagMap, scenario.getTagList(), scenarioList);
+            }
+        }
+        return tagMap;
+    }  
+    
+    private List<ScenarioTag> addScenarioUnlessExists(List<ScenarioTag> scenarioList, ScenarioTag scenarioTag) {
+        boolean exists = false;
+        for(ScenarioTag scenario : scenarioList){
+             if(scenario.getParentFeatureUri().equalsIgnoreCase(scenarioTag.getParentFeatureUri())
+                     && scenario.getScenario().getName().equalsIgnoreCase(scenarioTag.getScenario().getName())){
+                 exists = true;
+                 break;
+             }
+        }
+        
+        if (!exists) {
+            scenarioList.add(scenarioTag);
+        }
+        return scenarioList;
+    }
+
+    private List<TagObject> createOrAppendToTagMap(List<TagObject> tagMap, List<String> tagList, List<ScenarioTag> scenarioList) {
+        for (String tag : tagList) {
+            boolean exists = false;
+            TagObject tagObj = null;
+            for(TagObject tagObject : tagMap){
+                if(tagObject.getTagName().equalsIgnoreCase(tag)){
+                    exists = true;
+                    tagObj = tagObject;
+                    break;
+                }
+            }
+            if (exists) {
+                List<ScenarioTag> existingTagList = tagObj.getScenarios();
+                for(ScenarioTag scenarioTag : scenarioList){
+                   existingTagList = addScenarioUnlessExists(existingTagList, scenarioTag);
+                }
+                tagMap.remove(tagObj);
+                tagObj.setScenarios(existingTagList);
+                tagMap.add(tagObj);
+            } else {
+                tagObj = new TagObject(tag, scenarioList);
+                tagMap.add(tagObj);
+            }
+        }
+        return tagMap;
+    }
+
+    private List<Feature> listAllFeatures() {
+        List<Feature> allFeatures = new ArrayList<Feature>();
+        Iterator it = jsonResultFiles.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry) it.next();
+            List<Feature> featureList = (List<Feature>) pairs.getValue();
+            allFeatures.addAll(featureList);
+        }
+        return allFeatures;
+    }
+
     private static final Pattern p = Pattern.compile("\\\\u\\s*([0-9(A-F|a-f)]{4})", Pattern.MULTILINE);
 
     public static String U2U(String s) {
@@ -130,11 +236,33 @@ public class FeatureReportGenerator {
         return totalSteps.size();
     }
 
+    private int getTotalTagSteps() {
+       int steps = 0;
+       for(TagObject tag : allTags){
+         for(ScenarioTag scenarioTag : tag.getScenarios()){
+            steps += scenarioTag.getScenario().getSteps().length;
+         }
+       }
+        return steps;
+    }
+
     private String getTotalDuration() {
         Long duration = 0L;
         for (Feature feature : allFeatures) {
             for (Element scenario : feature.getElements()) {
                 for (Step step : scenario.getSteps()) {
+                    duration = duration + step.getDuration();
+                }
+            }
+        }
+        return Util.formatDuration(duration);
+    }
+
+    private String getTotalTagDuration() {
+        Long duration = 0L;
+        for (TagObject tagObject : allTags) {
+            for (ScenarioTag scenario : tagObject.getScenarios()) {
+                for (Step step : scenario.getScenario().getSteps()) {
                     duration = duration + step.getDuration();
                 }
             }
@@ -154,6 +282,30 @@ public class FeatureReportGenerator {
         return Util.findStatusCount(totalSteps, Util.Status.SKIPPED);
     }
 
+    private int getTotalTagPasses() {
+        int passes = 0;
+        for(TagObject tag : allTags){
+           passes += tag.getNumberOfPasses();
+       }
+        return passes;
+    }
+
+    private int getTotalTagFails() {
+        int failed = 0;
+        for(TagObject tag : allTags){
+            failed += tag.getNumberOfFailures();
+        }
+        return failed;
+    }
+
+    private int getTotalTagSkipped() {
+        int skipped = 0;
+        for(TagObject tag : allTags){
+            skipped += tag.getNumberOfSkipped();
+        }
+        return skipped;
+    }
+
     private List<Util.Status> getAllStepStatuses() {
         List<Util.Status> steps = new ArrayList<Util.Status>();
         for (Feature feature : allFeatures) {
@@ -169,6 +321,10 @@ public class FeatureReportGenerator {
     private int getTotalFeatures() {
         return allFeatures.size();
     }
+    
+    private int getTotalTags(){
+        return allTags.size();
+    }
 
     private int getTotalScenarios() {
         int scenarios = 0;
@@ -176,6 +332,14 @@ public class FeatureReportGenerator {
             scenarios = scenarios + feature.getNumberOfScenarios();
         }
         return scenarios;
+    }
+    
+    private int getTotalTagScenarios(){
+        int scenarios = 0;
+        for (TagObject tag : allTags) {
+            scenarios = scenarios + tag.getScenarios().size();
+        }
+        return scenarios; 
     }
 
     private void generateReport(String fileName, Template featureResult, VelocityContext context) throws Exception {
@@ -194,6 +358,10 @@ public class FeatureReportGenerator {
 
     private String getReportStatusColour(Feature feature) {
         return feature.getStatus() == Util.Status.PASSED ? "#C5D88A" : "#D88A8A";
+    }
+
+    private String getTagReportStatusColour(TagObject tag) {
+        return tag.getStatus() == Util.Status.PASSED ? "#C5D88A" : "#D88A8A";
     }
 
     private String timeStamp() {

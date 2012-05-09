@@ -47,17 +47,31 @@ public class Element {
         return Util.itemExists(contentString) ? Util.result(getStatus()) + StringUtils.join(contentString.toArray(), " ") + Util.closeDiv() : "";
     }
 
-    public String getTags() {
-        String result = "<div class=\"feature-tags\"></div>";
-
+    public List<String> getTagList(){
+        return processTags();
+    }
+    
+    public boolean hasTags(){
+        return Util.itemExists(tags);
+    }
+    
+    private List<String> processTags(){
+        List<String> results = new ArrayList<String>();
         if (Util.itemExists(tags)) {
             StringClosure<String, Tag> scenarioTags = new StringClosure<String, Tag>() {
                 public String call(Tag tag) {
                     return tag.getName();
                 }
             };
-            List<Util.Status> results = Util.collectTags(tags, scenarioTags);
-            String tagList = StringUtils.join(results.toArray(), ",");
+             results = Util.collectTags(tags, scenarioTags);
+        } 
+        return results;
+    }
+    
+    public String getTags() {
+        String result = "<div class=\"feature-tags\"></div>";
+        if (Util.itemExists(tags)) {
+            String tagList = StringUtils.join(processTags().toArray(), ",");
             result = "<div class=\"feature-tags\">" + tagList + "</div>";
         }
         return result;

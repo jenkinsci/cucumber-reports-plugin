@@ -1,5 +1,7 @@
 package net.masterthought.jenkins.json;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ public class Feature {
     private String description;
     private String keyword;
     private Element[] elements;
+    private Tag[] tags;
 
     public Feature(String name, String uri, String description, String keyword) {
         this.name = name;
@@ -22,6 +25,27 @@ public class Feature {
         return elements;
     }
 
+    public boolean hasTags(){
+        return Util.itemExists(tags);
+    }
+    
+    public List<String> getTagList(){
+        List<String> tagList = new ArrayList<String>();
+        for(Tag tag : tags){
+           tagList.add(tag.getName());
+        }
+        return tagList;
+    }
+
+    public String getTags() {
+        String result = "<div class=\"feature-tags\"></div>";
+        if (Util.itemExists(tags)) {
+            String tagList = StringUtils.join(getTagList().toArray(), ",");
+            result = "<div class=\"feature-tags\">" + tagList + "</div>";
+        }
+        return result;
+    }
+    
     public Util.Status getStatus() {
         Closure<String, Element> scenarioStatus = new Closure<String, Element>() {
             public Util.Status call(Element step) {
