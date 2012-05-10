@@ -48,6 +48,7 @@ If you have tags in your cucumber features you can see a tag overview:
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin/raw/master/.README/tag-overview.png)
 
 And you can drill down into tag specific reports:
+
 ![Tag report]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin/raw/master/.README/tag-report.png)
 
