@@ -135,7 +135,6 @@ public class FeatureReportGenerator {
         context.put("total_skipped", getTotalTagSkipped());
         context.put("chart_data", XmlChartBuilder.StackedColumnChart(allTags));
         context.put("total_duration", getTotalTagDuration());
-
         context.put("time_stamp", timeStamp());
         context.put("jenkins_base", pluginUrlPath);
         generateReport("tag-overview.html", featureOverview, context);
