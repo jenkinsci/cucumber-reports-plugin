@@ -25,32 +25,32 @@ With the cucumber-jvm-reports plugin installed in Jenkins, you simply check the 
 publish section of the build config and enter the path to the json reports relative to the workspace:
 
 ![check the publish cucumber-jvm-reports box]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin/raw/master/.README/publish-box.png)
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/publish-box.png)
 
 When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the cucumber reports. There is a feature overview page:
 
 ![feature overview page]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin/raw/master/.README/feature-overview.png)
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-overview.png)
 
 And there are also feature specific results pages:
 
 ![feature specific page passing]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin/raw/master/.README/feature-passed.png)
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-passed.png)
 
 And useful information for failures:
 
 ![feature specific page passing]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin/raw/master/.README/feature-failed.png)
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-failed.png)
 
 If you have tags in your cucumber features you can see a tag overview:
 
 ![Tag overview]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin/raw/master/.README/tag-overview.png)
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/tag-overview.png)
 
 And you can drill down into tag specific reports:
 
 ![Tag report]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin/raw/master/.README/tag-report.png)
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/tag-report.png)
 
 Make sure you have configured cucumber-jvm to run with the JUnit runner and to generate a json report:
 
