@@ -18,6 +18,9 @@ This plugin allows Jenkins to publish the results as pretty html reports hosted 
 
 3. Restart Jenkins.
 
+Read this if you need further  [detailed install and configuration]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/wiki/Detailed-Configuration) instructions 
+
 ## Use
 You must use a Freestyle project type in jenkins.
 
