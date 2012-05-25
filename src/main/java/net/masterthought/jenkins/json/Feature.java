@@ -93,12 +93,12 @@ public class Feature {
     public String getFileName() {
         List<String> matches = new ArrayList<String>();
         for (String line : Splitter.onPattern("/|\\\\").split(uri)) {
-            String modified = line.replaceAll("\\)|\\(","");
+            String modified = line.replaceAll("\\)|\\(", "");
             modified = StringUtils.deleteWhitespace(modified).trim();
             matches.add(modified);
         }
 
-        matches = matches.subList(1,matches.size());
+        matches = matches.subList(1, matches.size());
         String fileName = Joiner.on("-").join(matches) + ".html";
         return fileName;
     }

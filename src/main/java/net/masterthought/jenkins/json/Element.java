@@ -1,5 +1,6 @@
 package net.masterthought.jenkins.json;
 
+import net.masterthought.jenkins.ConfigurationOptions;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -47,15 +48,15 @@ public class Element {
         return Util.itemExists(contentString) ? Util.result(getStatus()) + StringUtils.join(contentString.toArray(), " ") + Util.closeDiv() : "";
     }
 
-    public List<String> getTagList(){
+    public List<String> getTagList() {
         return processTags();
     }
-    
-    public boolean hasTags(){
+
+    public boolean hasTags() {
         return Util.itemExists(tags);
     }
-    
-    private List<String> processTags(){
+
+    private List<String> processTags() {
         List<String> results = new ArrayList<String>();
         if (Util.itemExists(tags)) {
             StringClosure<String, Tag> scenarioTags = new StringClosure<String, Tag>() {
@@ -63,11 +64,11 @@ public class Element {
                     return tag.getName();
                 }
             };
-             results = Util.collectTags(tags, scenarioTags);
-        } 
+            results = Util.collectTags(tags, scenarioTags);
+        }
         return results;
     }
-    
+
     public String getTags() {
         String result = "<div class=\"feature-tags\"></div>";
         if (Util.itemExists(tags)) {

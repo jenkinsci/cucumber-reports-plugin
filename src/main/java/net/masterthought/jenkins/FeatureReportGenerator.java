@@ -30,7 +30,9 @@ public class FeatureReportGenerator {
     private List<TagObject> allTags;
     private static final String charEncoding = "UTF-8";
 
-    public FeatureReportGenerator(List<String> jsonResultFiles, File reportDirectory, String pluginUrlPath, String buildNumber, String buildProject) throws IOException {
+    public FeatureReportGenerator(List<String> jsonResultFiles, File reportDirectory, String pluginUrlPath, String buildNumber, String buildProject, boolean skippedFails, boolean undefinedFails) throws IOException {
+        ConfigurationOptions.setSkippedFailsBuild(skippedFails);
+        ConfigurationOptions.setUndefinedFailsBuild(undefinedFails);
         this.jsonResultFiles = parseJsonResults(jsonResultFiles);
         this.allFeatures = listAllFeatures();
         this.totalSteps = getAllStepStatuses();
@@ -39,6 +41,10 @@ public class FeatureReportGenerator {
         this.buildProject = buildProject;
         this.pluginUrlPath = getPluginUrlPath(pluginUrlPath);
         this.allTags = findTagsInFeatures();
+    }
+
+    public boolean getBuildStatus() {
+        return !(getTotalFails() > 0);
     }
 
     private Map<String, List<Feature>> parseJsonResults(List<String> jsonResultFiles) throws IOException {
@@ -103,7 +109,7 @@ public class FeatureReportGenerator {
     }
 
     public void generateTagReports() throws Exception {
-        for(TagObject tagObject : allTags) {
+        for (TagObject tagObject : allTags) {
             VelocityEngine ve = new VelocityEngine();
             ve.init(getProperties());
             Template featureResult = ve.getTemplate("templates/tagReport.vm");
@@ -140,7 +146,7 @@ public class FeatureReportGenerator {
         generateReport("tag-overview.html", featureOverview, context);
     }
 
-        private List<TagObject> findTagsInFeatures() {
+    private List<TagObject> findTagsInFeatures() {
         List<TagObject> tagMap = new ArrayList<TagObject>();
         for (Feature feature : allFeatures) {
             List<ScenarioTag> scenarioList = new ArrayList<ScenarioTag>();
@@ -159,18 +165,18 @@ public class FeatureReportGenerator {
             }
         }
         return tagMap;
-    }  
-    
+    }
+
     private List<ScenarioTag> addScenarioUnlessExists(List<ScenarioTag> scenarioList, ScenarioTag scenarioTag) {
         boolean exists = false;
-        for(ScenarioTag scenario : scenarioList){
-             if(scenario.getParentFeatureUri().equalsIgnoreCase(scenarioTag.getParentFeatureUri())
-                     && scenario.getScenario().getName().equalsIgnoreCase(scenarioTag.getScenario().getName())){
-                 exists = true;
-                 break;
-             }
+        for (ScenarioTag scenario : scenarioList) {
+            if (scenario.getParentFeatureUri().equalsIgnoreCase(scenarioTag.getParentFeatureUri())
+                    && scenario.getScenario().getName().equalsIgnoreCase(scenarioTag.getScenario().getName())) {
+                exists = true;
+                break;
+            }
         }
-        
+
         if (!exists) {
             scenarioList.add(scenarioTag);
         }
@@ -181,8 +187,8 @@ public class FeatureReportGenerator {
         for (String tag : tagList) {
             boolean exists = false;
             TagObject tagObj = null;
-            for(TagObject tagObject : tagMap){
-                if(tagObject.getTagName().equalsIgnoreCase(tag)){
+            for (TagObject tagObject : tagMap) {
+                if (tagObject.getTagName().equalsIgnoreCase(tag)) {
                     exists = true;
                     tagObj = tagObject;
                     break;
@@ -190,8 +196,8 @@ public class FeatureReportGenerator {
             }
             if (exists) {
                 List<ScenarioTag> existingTagList = tagObj.getScenarios();
-                for(ScenarioTag scenarioTag : scenarioList){
-                   existingTagList = addScenarioUnlessExists(existingTagList, scenarioTag);
+                for (ScenarioTag scenarioTag : scenarioList) {
+                    existingTagList = addScenarioUnlessExists(existingTagList, scenarioTag);
                 }
                 tagMap.remove(tagObj);
                 tagObj.setScenarios(existingTagList);
@@ -236,12 +242,12 @@ public class FeatureReportGenerator {
     }
 
     private int getTotalTagSteps() {
-       int steps = 0;
-       for(TagObject tag : allTags){
-         for(ScenarioTag scenarioTag : tag.getScenarios()){
-            steps += scenarioTag.getScenario().getSteps().length;
-         }
-       }
+        int steps = 0;
+        for (TagObject tag : allTags) {
+            for (ScenarioTag scenarioTag : tag.getScenarios()) {
+                steps += scenarioTag.getScenario().getSteps().length;
+            }
+        }
         return steps;
     }
 
@@ -283,15 +289,15 @@ public class FeatureReportGenerator {
 
     private int getTotalTagPasses() {
         int passes = 0;
-        for(TagObject tag : allTags){
-           passes += tag.getNumberOfPasses();
-       }
+        for (TagObject tag : allTags) {
+            passes += tag.getNumberOfPasses();
+        }
         return passes;
     }
 
     private int getTotalTagFails() {
         int failed = 0;
-        for(TagObject tag : allTags){
+        for (TagObject tag : allTags) {
             failed += tag.getNumberOfFailures();
         }
         return failed;
@@ -299,7 +305,7 @@ public class FeatureReportGenerator {
 
     private int getTotalTagSkipped() {
         int skipped = 0;
-        for(TagObject tag : allTags){
+        for (TagObject tag : allTags) {
             skipped += tag.getNumberOfSkipped();
         }
         return skipped;
@@ -320,8 +326,8 @@ public class FeatureReportGenerator {
     private int getTotalFeatures() {
         return allFeatures.size();
     }
-    
-    private int getTotalTags(){
+
+    private int getTotalTags() {
         return allTags.size();
     }
 
@@ -332,13 +338,13 @@ public class FeatureReportGenerator {
         }
         return scenarios;
     }
-    
-    private int getTotalTagScenarios(){
+
+    private int getTotalTagScenarios() {
         int scenarios = 0;
         for (TagObject tag : allTags) {
             scenarios = scenarios + tag.getScenarios().size();
         }
-        return scenarios; 
+        return scenarios;
     }
 
     private void generateReport(String fileName, Template featureResult, VelocityContext context) throws Exception {

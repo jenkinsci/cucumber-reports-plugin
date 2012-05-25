@@ -27,11 +27,15 @@ public class CucumberReportPublisher extends Recorder {
 
     public final String jsonReportDirectory;
     public final String pluginUrlPath;
+    public final boolean skippedFails;
+    public final boolean undefinedFails;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath) {
+    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, boolean skippedFails, boolean undefinedFails) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.pluginUrlPath = pluginUrlPath;
+        this.skippedFails = skippedFails;
+        this.undefinedFails = undefinedFails;
     }
 
     private String[] findJsonFiles(File targetDirectory) {
@@ -60,6 +64,8 @@ public class CucumberReportPublisher extends Recorder {
 
         String[] files = findJsonFiles(workspaceJsonReportDirectory);
 
+        boolean buildResult = true;
+
         if (files.length != 0) {
             listener.getLogger().println("[CucumberReportPublisher] copying json to reports directory: " + targetBuildDirectory);
             for (String file : files) {
@@ -68,9 +74,10 @@ public class CucumberReportPublisher extends Recorder {
 
             String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
-            FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject);
+            FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject, skippedFails, undefinedFails);
             try {
                 featureReportGenerator.generateReports();
+                buildResult = featureReportGenerator.getBuildStatus();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -80,7 +87,7 @@ public class CucumberReportPublisher extends Recorder {
         }
 
         build.addAction(new CucumberReportBuildAction(build));
-        return true;
+        return buildResult;
     }
     
     private List<String> fullPathToJsonFiles(String[] jsonFiles, File targetBuildDirectory){
