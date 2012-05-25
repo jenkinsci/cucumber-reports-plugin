@@ -1,6 +1,10 @@
 package net.masterthought.jenkins.json;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.util.regexp.Regexp;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +29,14 @@ public class Feature {
         return elements;
     }
 
-    public boolean hasTags(){
+    public boolean hasTags() {
         return Util.itemExists(tags);
     }
-    
-    public List<String> getTagList(){
+
+    public List<String> getTagList() {
         List<String> tagList = new ArrayList<String>();
-        for(Tag tag : tags){
-           tagList.add(tag.getName());
+        for (Tag tag : tags) {
+            tagList.add(tag.getName());
         }
         return tagList;
     }
@@ -45,7 +49,7 @@ public class Feature {
         }
         return result;
     }
-    
+
     public Util.Status getStatus() {
         Closure<String, Element> scenarioStatus = new Closure<String, Element>() {
             public Util.Status call(Element step) {
@@ -58,9 +62,9 @@ public class Feature {
 
     private List<Util.Status> lookUpSteps() {
         List<Util.Status> stepStatuses = new ArrayList<Util.Status>();
-        for(Element element : elements){
-            for(Step step : element.getSteps()){
-              stepStatuses.add(step.getStatus());
+        for (Element element : elements) {
+            for (Step step : element.getSteps()) {
+                stepStatuses.add(step.getStatus());
             }
         }
         return stepStatuses;
@@ -86,9 +90,18 @@ public class Feature {
         return result;
     }
 
-	public String getFileName() {
-	    return uri.replaceAll("/", "-").replaceAll("\\\\", "-") + ".html";
-	}
+    public String getFileName() {
+        List<String> matches = new ArrayList<String>();
+        for (String line : Splitter.onPattern("/|\\\\").split(uri)) {
+            String modified = line.replaceAll("\\)|\\(","");
+            modified = StringUtils.deleteWhitespace(modified).trim();
+            matches.add(modified);
+        }
+
+        matches = matches.subList(1,matches.size());
+        String fileName = Joiner.on("-").join(matches) + ".html";
+        return fileName;
+    }
 
     public int getNumberOfScenarios() {
         return elements.length;
@@ -113,15 +126,20 @@ public class Feature {
     public String getRawStatus() {
         return getStatus().toString().toLowerCase();
     }
-    
-    public String getDurationOfSteps(){
+
+    public String getDurationOfSteps() {
         Long totalDuration = 0L;
-        for(Element element : elements){
-            for(Step step : element.getSteps()){
-               totalDuration = totalDuration + step.getDuration();
+        for (Element element : elements) {
+            for (Step step : element.getSteps()) {
+                totalDuration = totalDuration + step.getDuration();
             }
         }
         return Util.formatDuration(totalDuration);
+    }
+
+    private String getTimestamp() {
+        DateTime dateTime = new DateTime();
+        return dateTime.getYear() + "" + dateTime.getMonthOfYear() + "" + dateTime.getDayOfMonth() + "" + dateTime.getHourOfDay() + "" + dateTime.getMinuteOfHour() + "" + dateTime.getSecondOfMinute() + "" + dateTime.getMillis();
     }
 
 }
