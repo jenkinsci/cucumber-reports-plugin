@@ -1,6 +1,6 @@
 # Publish pretty [cucumber-jvm](https://github.com/cucumber/cucumber-jvm) reports on [Jenkins](http://jenkins-ci.org/)
 
-This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs.
+This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber --format json -o cucumber.json
 
 
 ## Background
@@ -17,6 +17,9 @@ This plugin allows Jenkins to publish the results as pretty html reports hosted 
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/downloads) plugin.
 
 3. Restart Jenkins.
+
+Read this if you need further  [detailed install and configuration]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/wiki/Detailed-Configuration) instructions 
 
 ## Use
 You must use a Freestyle project type in jenkins.
@@ -52,7 +55,7 @@ And you can drill down into tag specific reports:
 ![Tag report]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/tag-report.png)
 
-Make sure you have configured cucumber-jvm to run with the JUnit runner and to generate a json report:
+Make sure you have configured cucumber-jvm to run with the JUnit runner and to generate a json report: (note - you can add other formatters in if you like e.g. pretty - but only the json formatter is required for the reports to work)
 
     package net.masterthought.example;
 
@@ -60,7 +63,7 @@ Make sure you have configured cucumber-jvm to run with the JUnit runner and to g
     import org.junit.runner.RunWith;
 
     @RunWith(Cucumber.class)
-    @Cucumber.Options(format = {"pretty", "html:target/cucumber", "json:target/cucumber.json"})
+    @Cucumber.Options(format = {"json:target/cucumber.json"})
     public class ATMTest {
     }
 
