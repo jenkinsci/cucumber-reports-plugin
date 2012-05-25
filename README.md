@@ -55,6 +55,34 @@ And you can drill down into tag specific reports:
 ![Tag report]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/tag-report.png)
 
+## Advanced Configuration Options
+
+There are 2 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
+
+![Advanced Configuration]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/advanced_options.png)
+
+The first setting is Skipped steps fail the build - so if you tick this any steps that are skipped during executions will be marked as failed and will cause the build to fail:
+
+![Skipped Fails]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/skipped_fails.png)
+
+The second setting is Not Implemented steps fail the build - so if you tick this any steps that are not implemented will be marked as failed and will cause the build to fail:
+
+![Not Implemented Fails]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/pending_fails.png)
+
+If you check both skipped and not implemented fails the build then your report will look something like this:
+
+![Not Implemented and Skipped Fails]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/pending_skipped_fails.png)
+
+Finally if you don't check either of these options then skipped or not implemented steps will not fail the build and the report will look something like this:
+
+![Build Passes on Skipped and Not Implemented]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/skipped_pending_no_fail.png)
+
+
 Make sure you have configured cucumber-jvm to run with the JUnit runner and to generate a json report: (note - you can add other formatters in if you like e.g. pretty - but only the json formatter is required for the reports to work)
 
     package net.masterthought.example;
