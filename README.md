@@ -21,14 +21,28 @@ This plugin allows Jenkins to publish the results as pretty html reports hosted 
 Read this if you need further  [detailed install and configuration]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/wiki/Detailed-Configuration) instructions 
 
+## Release Notes
+
+Release notes are [here](https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/wiki/Release-Notes)
+
 ## Use
-You must use a Freestyle project type in jenkins.
+You must use a **Freestyle project type** in jenkins.
 
 With the cucumber-jvm-reports plugin installed in Jenkins, you simply check the "Publish cucumber results as a report" box in the
-publish section of the build config and enter the path to the json reports relative to the workspace:
+publish section of the build config:
 
 ![check the publish cucumber-jvm-reports box]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/publish-box.png)
+
+If you need more control over the plugin you can click the Advanced button for more options:
+
+![check the publish cucumber-jvm-reports box]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/advanced-publish-box.png)
+
+1. Leave empty for the plugin to automagically find your json files or enter the path to the json reports relative to the workspace if for some reason the automagic doesn't work for you
+2. Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
+3. Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
+4. Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
 
 When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the cucumber reports. There is a feature overview page:
 
