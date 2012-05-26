@@ -3,15 +3,14 @@ package net.masterthought.jenkins;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.BuildListener;
+import hudson.model.*;
+import hudson.slaves.SlaveComputer;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.AncestorInPath;
@@ -53,7 +52,10 @@ public class CucumberReportPublisher extends Recorder {
 
         listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Html Reports ...");
 
-        File workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath(), jsonReportDirectory);
+        File workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath());
+        if(!jsonReportDirectory.isEmpty()){
+            workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath(), jsonReportDirectory);
+        }
         File targetBuildDirectory = new File(build.getRootDir(), "cucumber-html-reports");
 
         String buildNumber = Integer.toString(build.getNumber());
@@ -63,17 +65,33 @@ public class CucumberReportPublisher extends Recorder {
             targetBuildDirectory.mkdirs();
         }
 
-        String[] files = findJsonFiles(workspaceJsonReportDirectory);
-
         boolean buildResult = true;
 
-        if (files.length != 0) {
-            listener.getLogger().println("[CucumberReportPublisher] copying json to reports directory: " + targetBuildDirectory);
-            for (String file : files) {
-                FileUtils.copyFile(new File(workspaceJsonReportDirectory.getPath() + "/" + file), new File(targetBuildDirectory, file));
-            }
+        // if we are on a slave
+        if (Computer.currentComputer() instanceof SlaveComputer) {
+            listener.getLogger().println("[CucumberReportPublisher] detected this build is running on a slave ");
+            FilePath projectWorkspaceOnSlave = build.getProject().getSomeWorkspace();
+            FilePath masterJsonReportDirectory = new FilePath(targetBuildDirectory);
+            listener.getLogger().println("[CucumberReportPublisher] copying json from: " +  projectWorkspaceOnSlave.toURI() + "to reports directory: " + masterJsonReportDirectory.toURI());
+            projectWorkspaceOnSlave.copyRecursiveTo("**/*.json","", masterJsonReportDirectory);
+        } else {
+            // if we are on the master
+            listener.getLogger().println("[CucumberReportPublisher] detected this build is running on the master ");
+            String[] files = findJsonFiles(workspaceJsonReportDirectory);
 
-            String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
+            if (files.length != 0) {
+                listener.getLogger().println("[CucumberReportPublisher] copying json to reports directory: " + targetBuildDirectory);
+                for (String file : files) {
+                    FileUtils.copyFile(new File(workspaceJsonReportDirectory.getPath() + "/" + file), new File(targetBuildDirectory, file));
+                }
+            } else {
+                listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + workspaceJsonReportDirectory);
+            }
+        }
+
+        // generate the reports from the targetBuildDirectory
+        String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
+        if (jsonReportFiles.length != 0) {
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
             FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject, skippedFails, undefinedFails);
             try {
@@ -82,27 +100,26 @@ public class CucumberReportPublisher extends Recorder {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         } else {
-            listener.getLogger().println("[CucumberReportPublisher] here were no json results found in: " + workspaceJsonReportDirectory);
+            listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + targetBuildDirectory);
         }
 
         build.addAction(new CucumberReportBuildAction(build));
         return buildResult;
     }
-    
-    private List<String> fullPathToJsonFiles(String[] jsonFiles, File targetBuildDirectory){
+
+    private List<String> fullPathToJsonFiles(String[] jsonFiles, File targetBuildDirectory) {
         List<String> fullPathList = new ArrayList<String>();
-        for(String file : jsonFiles){
-         fullPathList.add(new File(targetBuildDirectory, file).getAbsolutePath());
-      }
+        for (String file : jsonFiles) {
+            fullPathList.add(new File(targetBuildDirectory, file).getAbsolutePath());
+        }
         return fullPathList;
     }
 
     @Override
-      public Action getProjectAction(AbstractProject<?, ?> project) {
+    public Action getProjectAction(AbstractProject<?, ?> project) {
         return new CucumberReportProjectAction(project);
-      }
+    }
 
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
