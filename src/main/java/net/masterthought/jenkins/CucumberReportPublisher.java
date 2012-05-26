@@ -5,6 +5,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
@@ -97,6 +98,11 @@ public class CucumberReportPublisher extends Recorder {
       }
         return fullPathList;
     }
+
+    @Override
+      public Action getProjectAction(AbstractProject<?, ?> project) {
+        return new CucumberReportProjectAction(project);
+      }
 
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
