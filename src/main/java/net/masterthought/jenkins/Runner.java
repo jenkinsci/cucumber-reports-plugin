@@ -18,8 +18,8 @@ public class Runner {
 
        FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(list,rd,"","7","cucumber-jvm",true,true);
        featureReportGenerator.generateReports();
-       boolean result = featureReportGenerator.getBuildStatus();
-       System.out.println("status: " + result);
+//       boolean result = featureReportGenerator.getBuildStatus();
+//       System.out.println("status: " + result);
 
     }
 }

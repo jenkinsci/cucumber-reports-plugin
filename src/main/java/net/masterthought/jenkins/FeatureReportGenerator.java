@@ -78,7 +78,8 @@ public class FeatureReportGenerator {
         context.put("total_passes", getTotalPasses());
         context.put("total_fails", getTotalFails());
         context.put("total_skipped", getTotalSkipped());
-        context.put("chart_data", XmlChartBuilder.donutChart(getTotalPasses(), getTotalFails(), getTotalSkipped()));
+        context.put("total_pending", getTotalPending());
+        context.put("chart_data", XmlChartBuilder.donutChart(getTotalPasses(), getTotalFails(), getTotalSkipped(), getTotalPending()));
         context.put("time_stamp", timeStamp());
         context.put("total_duration", getTotalDuration());
         context.put("jenkins_base", pluginUrlPath);
@@ -139,6 +140,7 @@ public class FeatureReportGenerator {
         context.put("total_passes", getTotalTagPasses());
         context.put("total_fails", getTotalTagFails());
         context.put("total_skipped", getTotalTagSkipped());
+        context.put("total_pending", getTotalTagPending());
         context.put("chart_data", XmlChartBuilder.StackedColumnChart(allTags));
         context.put("total_duration", getTotalTagDuration());
         context.put("time_stamp", timeStamp());
@@ -287,6 +289,10 @@ public class FeatureReportGenerator {
         return Util.findStatusCount(totalSteps, Util.Status.SKIPPED);
     }
 
+    private int getTotalPending(){
+        return Util.findStatusCount(totalSteps, Util.Status.UNDEFINED);
+    }
+
     private int getTotalTagPasses() {
         int passes = 0;
         for (TagObject tag : allTags) {
@@ -309,6 +315,14 @@ public class FeatureReportGenerator {
             skipped += tag.getNumberOfSkipped();
         }
         return skipped;
+    }
+
+    private int getTotalTagPending(){
+        int pending = 0;
+        for (TagObject tag : allTags) {
+            pending += tag.getNumberOfPending();
+        }
+        return pending;
     }
 
     private List<Util.Status> getAllStepStatuses() {

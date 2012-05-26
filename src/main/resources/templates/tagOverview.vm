@@ -209,6 +209,7 @@
                     <th>Passed</th>
                     <th>Failed</th>
                     <th>Skipped</th>
+                    <th>Pending</th>
                     <th>Duration</th>
                     <th>Status</th>
                 </tr>
@@ -230,6 +231,7 @@
                         <td>$tag.getNumberOfPasses()</td>
                         <td>$tag.getNumberOfFailures()</td>
                         <td>$tag.getNumberOfSkipped()</td>
+                        <td>$tag.getNumberOfPending()</td>
                         <td>$tag.getDurationOfSteps()</td>
                         <td style="background-color: $bgcolour;">$tag.getRawStatus()</td>
                     </tr>
@@ -242,6 +244,7 @@
                     <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
+                    <td style="background-color:lightgray;font-weight:bold;">$total_pending</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
                     <td style="background-color:lightgray;font-weight:bold;">Totals</td>
                 </tr>

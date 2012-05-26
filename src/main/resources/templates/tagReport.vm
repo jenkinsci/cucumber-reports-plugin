@@ -119,9 +119,10 @@ table.data-table td {
                         <th>Tag</th>
                         <th>Scenarios</th>
                         <th>Steps</th>
-                        <th>Passed</th>
-                        <th>Failed</th>
-                        <th>Skipped</th>
+                        <th style="background-color:#C5D88A;">Passed</th>
+                        <th style="background-color:#D88A8A;">Failed</th>
+                        <th style="background-color:#2DEAEC;">Skipped</th>
+                        <th style="background-color:#ebcc81;">Pending</th>
                         <th>Duration</th>
                         <th>Status</th>
                     </tr>
@@ -133,6 +134,7 @@ table.data-table td {
                         <td>$tag.getNumberOfPasses()</td>
                         <td>$tag.getNumberOfFailures()</td>
                         <td>$tag.getNumberOfSkipped()</td>
+                        <td>$tag.getNumberOfPending()</td>
                         <td>$tag.getDurationOfSteps()</td>
                         <td style="background-color: $report_status_colour;">$tag.getRawStatus()</td></tr>
 

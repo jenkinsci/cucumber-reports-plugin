@@ -119,6 +119,10 @@ public class Feature {
         return Util.findStatusCount(lookUpSteps(), Util.Status.FAILED);
     }
 
+    public int getNumberOfPending(){
+        return Util.findStatusCount(lookUpSteps(), Util.Status.UNDEFINED);
+    }
+
     public int getNumberOfSkipped() {
         return Util.findStatusCount(lookUpSteps(), Util.Status.SKIPPED);
     }

@@ -144,6 +144,7 @@ if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
   <th>Passed</th>
   <th>Failed</th>
   <th>Skipped</th>
+  <th>Pending</th>
   <th>Duration</th>
   <th>Status</th>
   </tr>
@@ -163,6 +164,7 @@ if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
           <td>$feature.getNumberOfPasses()</td>
           <td>$feature.getNumberOfFailures()</td>
           <td>$feature.getNumberOfSkipped()</td>
+          <td>$feature.getNumberOfPending()</td>
           <td>$feature.getDurationOfSteps()</td>
           <td style="background-color: $bgcolour;">$feature.getRawStatus()</td>
           </tr>
@@ -175,6 +177,7 @@ if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
 <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
 <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
 <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
+<td style="background-color:lightgray;font-weight:bold;">$total_pending</td>
 <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
 <td style="background-color:lightgray;font-weight:bold;">Totals</td>
 </tr></table>
