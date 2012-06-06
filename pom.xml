@@ -10,8 +10,14 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>0.0.11</version>
+    <version>0.0.11-SNAPSHOT</version>
     <packaging>hpi</packaging>
+
+    <scm>
+      <connection>scm:git:git://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</connection>
+      <developerConnection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</developerConnection>
+      <url>http://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java</url>
+    </scm>
 
     <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
     <repositories>
