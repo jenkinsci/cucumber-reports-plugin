@@ -72,15 +72,15 @@ public class TagObject {
         return Util.findStatusCount(getStatuses(), Util.Status.FAILED);
     }
 
-    public int getNumberOfSkipped() {
+    public int getNumberOfSkipped()  {
         return Util.findStatusCount(getStatuses(), Util.Status.SKIPPED);
     }
 
-    public int getNumberOfPending() {
+    public int getNumberOfPending()  {
           return Util.findStatusCount(getStatuses(), Util.Status.UNDEFINED);
       }
     
-    private List<Util.Status> getStatuses(){
+    private List<Util.Status> getStatuses() {
         List<Util.Status> statuses = new ArrayList<Util.Status>();
           for(ScenarioTag scenarioTag : scenarios){
                 

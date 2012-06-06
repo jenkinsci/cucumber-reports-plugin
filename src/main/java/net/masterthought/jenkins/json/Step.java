@@ -9,13 +9,14 @@ public class Step {
 
     private String name;
     private String keyword;
+    private String line;
     private Result result;
     private Row[] rows;
 
-    public Step(String name, String keyword) {
+    public Step(String name, String keyword, String line) {
         this.name = name;
         this.keyword = keyword;
-
+        this.line = line;
     }
 
     public Row[] getRows() {
@@ -33,16 +34,23 @@ public class Step {
     }
 
     public Long getDuration() {
-        return result.getDuration();
+        if(result == null){
+         return 1L;
+        } else {
+            return result.getDuration();
+        }
     }
 
     private Util.Status getInternalStatus() {
+        if(result == null){
+            System.out.println("[WARNING] Line " + line + " : " + "Step is missing Result: " + keyword +  " : " + name);
+            return Util.Status.MISSING;
+        } else {
         return Util.resultMap.get(result.getStatus());
+        }
     }
 
     public Util.Status getStatus() {
-//        return Util.resultMap.get(result.getStatus());
-
         Util.Status status = getInternalStatus();
         Util.Status result = status;
 
@@ -62,7 +70,6 @@ public class Step {
             result = Util.Status.FAILED;
         }
         return result;
-
     }
 
     public String getDataTableClass() {
@@ -90,11 +97,22 @@ public class Step {
             if (getInternalStatus() == Util.Status.UNDEFINED) {
                 errorMessage = "Mode: Not Implemented causes Failure<br/><span class=\"undefined\">This step is not yet implemented</span>";
             }
-            content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + "<div class=\"step-error-message\"><pre>" + errorMessage + "</pre></div>" + Util.closeDiv();
+            content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + "<div class=\"step-error-message\"><pre>" + formatError(errorMessage) + "</pre></div>" + Util.closeDiv();
+        } else if(getStatus() == Util.Status.MISSING){
+            String errorMessage = "<span class=\"missing\">Result was missing for this step</span>";
+            content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + "<div class=\"step-error-message\"><pre>" + formatError(errorMessage) + "</pre></div>" + Util.closeDiv();
         } else {
             content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + Util.closeDiv();
         }
         return content;
+    }
+
+    private String formatError(String errorMessage){
+      String result = errorMessage;
+      if(errorMessage != null || !errorMessage.isEmpty()){
+          result = errorMessage.replaceAll("\\\\n","<br/>");
+      }
+        return result;
     }
 
 }

@@ -1,6 +1,5 @@
 package net.masterthought.jenkins.json;
 
-import net.masterthought.jenkins.ScenarioTag;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -41,6 +40,7 @@ public class Util {
         put("failed", Util.Status.FAILED);
         put("skipped", Util.Status.SKIPPED);
         put("undefined", Util.Status.UNDEFINED);
+        put("missing", Util.Status.MISSING);
     }};
 
     public static String result(Status status) {
@@ -51,14 +51,16 @@ public class Util {
             result = "<div class=\"failed\">";
         } else if (status == Status.SKIPPED) {
             result = "<div class=\"skipped\">";
-        } else if (status == Status.UNDEFINED){
+        } else if (status == Status.UNDEFINED) {
             result = "<div class=\"undefined\">";
+        } else if (status == Status.MISSING) {
+            result = "<div class=\"missing\">";
         }
         return result;
     }
 
     public static enum Status {
-        PASSED, FAILED, SKIPPED, UNDEFINED
+        PASSED, FAILED, SKIPPED, UNDEFINED, MISSING
     }
 
     public static <T, R> List<R> collectScenarios(Element[] list, Closure<String, Element> clo) {
@@ -91,12 +93,12 @@ public class Util {
 
     public static int findStatusCount(List<Util.Status> statuses, Status statusToFind) {
         int occurrence = 0;
-        for(Util.Status status : statuses){
-            if(status == statusToFind){
+        for (Util.Status status : statuses) {
+            if (status == statusToFind) {
                 occurrence++;
             }
         }
-       return occurrence;
+        return occurrence;
     }
 
     public static String readFileAsString(String filePath) throws java.io.IOException {
@@ -114,7 +116,7 @@ public class Util {
         return new String(buffer);
     }
 
-    public static String formatDuration(Long duration){
+    public static String formatDuration(Long duration) {
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .appendDays()
                 .appendSuffix(" day", " days")
@@ -131,8 +133,8 @@ public class Util {
                 .appendMillis()
                 .appendSuffix(" ms", " ms")
                 .toFormatter();
-        return formatter.print(new Period(0, duration/1000000));
-        
-       
+        return formatter.print(new Period(0, duration / 1000000));
+
+
     }
 }
