@@ -62,9 +62,13 @@ public class Feature {
 
     private List<Util.Status> lookUpSteps() {
         List<Util.Status> stepStatuses = new ArrayList<Util.Status>();
-        for (Element element : elements) {
-            for (Step step : element.getSteps()) {
-                stepStatuses.add(step.getStatus());
+        if (Util.itemExists(elements)) {
+            for (Element element : elements) {
+                if (Util.hasSteps(element)) {
+                    for (Step step : element.getSteps()) {
+                        stepStatuses.add(step.getStatus());
+                    }
+                }
             }
         }
         return stepStatuses;
@@ -106,7 +110,7 @@ public class Feature {
     }
 
     public int getNumberOfScenarios() {
-        return elements.length;
+        return Util.itemExists(elements) ? elements.length : 0;
     }
 
     public int getNumberOfSteps() {
@@ -135,9 +139,13 @@ public class Feature {
 
     public String getDurationOfSteps() {
         Long totalDuration = 0L;
-        for (Element element : elements) {
-            for (Step step : element.getSteps()) {
-                totalDuration = totalDuration + step.getDuration();
+        if (Util.itemExists(elements)) {
+            for (Element element : elements) {
+                if (Util.hasSteps(element)) {
+                    for (Step step : element.getSteps()) {
+                        totalDuration = totalDuration + step.getDuration();
+                    }
+                }
             }
         }
         return Util.formatDuration(totalDuration);

@@ -1,5 +1,6 @@
 package net.masterthought.jenkins.json;
 
+import net.masterthought.jenkins.ScenarioTag;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -19,7 +20,7 @@ public class Util {
         return listItem.size() != 0;
     }
 
-    public static boolean itemExists(Tag[] tags) {
+    public static <T> boolean itemExists(T[] tags) {
         boolean result = false;
         if (tags != null) {
             result = tags.length != 0;
@@ -59,22 +60,49 @@ public class Util {
         return result;
     }
 
+    public static boolean hasSteps(Element element) {
+        boolean result = element.getSteps() == null || element.getSteps().length == 0;
+        if(result){
+            System.out.println("[WARNING] scenario has no steps:  " + element.getName());
+        }
+        return !result;
+    }
+
+    public static boolean hasSteps(ScenarioTag scenario) {
+        boolean result = scenario.getScenario().getSteps() == null || scenario.getScenario().getSteps().length == 0;
+        if(result){
+            System.out.println("[WARNING] scenario tag has no steps:  " + scenario.getScenario().getName());
+        }
+        return !result;
+    }
+
+    public static boolean hasScenarios(Feature feature) {
+        boolean result = feature.getElements() == null || feature.getElements().length == 0;
+        if(result){
+            System.out.println("[WARNING] feature has no scenarios:  " + feature.getName());
+        }
+        return !result;
+    }
+
     public static enum Status {
         PASSED, FAILED, SKIPPED, UNDEFINED, MISSING
     }
 
     public static <T, R> List<R> collectScenarios(Element[] list, Closure<String, Element> clo) {
         List<R> res = new ArrayList<R>();
+        if(Util.itemExists(list)){
         for (final Element t : list) {
             res.add((R) clo.call(t));
-        }
+        }             }
         return res;
     }
 
     public static <T, R> List<R> collectSteps(Step[] list, Closure<String, Step> clo) {
         List<R> res = new ArrayList<R>();
-        for (final Step t : list) {
+        if(Util.itemExists(list)){
+          for (final Step t : list) {
             res.add((R) clo.call(t));
+          }
         }
         return res;
     }

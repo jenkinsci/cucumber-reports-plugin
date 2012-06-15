@@ -159,11 +159,14 @@ public class FeatureReportGenerator {
                     tagMap = createOrAppendToTagMap(tagMap, feature.getTagList(), scenarioList);
                 }
             }
-            for (Element scenario : feature.getElements()) {
-                if (scenario.hasTags()) {
-                    scenarioList = addScenarioUnlessExists(scenarioList, new ScenarioTag(scenario, feature.getFileName()));
+
+            if (Util.hasScenarios(feature)) {
+                for (Element scenario : feature.getElements()) {
+                    if (scenario.hasTags()) {
+                        scenarioList = addScenarioUnlessExists(scenarioList, new ScenarioTag(scenario, feature.getFileName()));
+                    }
+                    tagMap = createOrAppendToTagMap(tagMap, scenario.getTagList(), scenarioList);
                 }
-                tagMap = createOrAppendToTagMap(tagMap, scenario.getTagList(), scenarioList);
             }
         }
         return tagMap;
@@ -247,7 +250,10 @@ public class FeatureReportGenerator {
         int steps = 0;
         for (TagObject tag : allTags) {
             for (ScenarioTag scenarioTag : tag.getScenarios()) {
-                steps += scenarioTag.getScenario().getSteps().length;
+                Step[] stepList = scenarioTag.getScenario().getSteps();
+                if (stepList != null && stepList.length != 0) {
+                    steps += stepList.length;
+                }
             }
         }
         return steps;
@@ -256,9 +262,13 @@ public class FeatureReportGenerator {
     private String getTotalDuration() {
         Long duration = 0L;
         for (Feature feature : allFeatures) {
-            for (Element scenario : feature.getElements()) {
-                for (Step step : scenario.getSteps()) {
-                    duration = duration + step.getDuration();
+            if (Util.hasScenarios(feature)) {
+                for (Element scenario : feature.getElements()) {
+                    if (Util.hasSteps(scenario)) {
+                        for (Step step : scenario.getSteps()) {
+                            duration = duration + step.getDuration();
+                        }
+                    }
                 }
             }
         }
@@ -269,8 +279,10 @@ public class FeatureReportGenerator {
         Long duration = 0L;
         for (TagObject tagObject : allTags) {
             for (ScenarioTag scenario : tagObject.getScenarios()) {
-                for (Step step : scenario.getScenario().getSteps()) {
-                    duration = duration + step.getDuration();
+                if (Util.hasSteps(scenario)) {
+                    for (Step step : scenario.getScenario().getSteps()) {
+                        duration = duration + step.getDuration();
+                    }
                 }
             }
         }
@@ -289,7 +301,7 @@ public class FeatureReportGenerator {
         return Util.findStatusCount(totalSteps, Util.Status.SKIPPED);
     }
 
-    private int getTotalPending(){
+    private int getTotalPending() {
         return Util.findStatusCount(totalSteps, Util.Status.UNDEFINED);
     }
 
@@ -317,7 +329,7 @@ public class FeatureReportGenerator {
         return skipped;
     }
 
-    private int getTotalTagPending(){
+    private int getTotalTagPending() {
         int pending = 0;
         for (TagObject tag : allTags) {
             pending += tag.getNumberOfPending();
@@ -328,9 +340,13 @@ public class FeatureReportGenerator {
     private List<Util.Status> getAllStepStatuses() {
         List<Util.Status> steps = new ArrayList<Util.Status>();
         for (Feature feature : allFeatures) {
-            for (Element scenario : feature.getElements()) {
-                for (Step step : scenario.getSteps()) {
-                    steps.add(step.getStatus());
+            if (Util.hasScenarios(feature)) {
+                for (Element scenario : feature.getElements()) {
+                    if (Util.hasSteps(scenario)) {
+                        for (Step step : scenario.getSteps()) {
+                            steps.add(step.getStatus());
+                        }
+                    }
                 }
             }
         }
