@@ -25,7 +25,7 @@ public abstract class CucumberReportBaseAction implements Action {
     }
     
     public String getIconFileName(){
-            return "/plugin/cucumber-reports/cuke.gif";
+            return "/plugin/cucumber-reports/cuke.png";
     }
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {

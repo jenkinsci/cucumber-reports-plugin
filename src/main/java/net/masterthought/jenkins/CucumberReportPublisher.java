@@ -10,7 +10,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
-import jenkins.model.Jenkins;
+import net.masterthought.cucumber.ReportBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.AncestorInPath;
@@ -29,13 +29,15 @@ public class CucumberReportPublisher extends Recorder {
     public final String pluginUrlPath;
     public final boolean skippedFails;
     public final boolean undefinedFails;
+    public final boolean noFlashCharts;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, boolean skippedFails, boolean undefinedFails) {
+    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, boolean skippedFails, boolean undefinedFails, boolean noFlashCharts) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.pluginUrlPath = pluginUrlPath;
         this.skippedFails = skippedFails;
         this.undefinedFails = undefinedFails;
+        this.noFlashCharts = noFlashCharts;
     }
 
     private String[] findJsonFiles(File targetDirectory) {
@@ -93,10 +95,11 @@ public class CucumberReportPublisher extends Recorder {
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
         if (jsonReportFiles.length != 0) {
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
-            FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject, skippedFails, undefinedFails);
+            ReportBuilder reportBuilder = new ReportBuilder(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject, skippedFails, undefinedFails, !noFlashCharts, true);
+
             try {
-                featureReportGenerator.generateReports();
-                buildResult = featureReportGenerator.getBuildStatus();
+                reportBuilder.generateReports();
+                buildResult = reportBuilder.getBuildStatus();
             } catch (Exception e) {
                 e.printStackTrace();
             }

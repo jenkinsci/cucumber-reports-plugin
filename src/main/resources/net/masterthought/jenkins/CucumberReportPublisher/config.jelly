@@ -23,6 +23,9 @@
      <f:entry title="Pending Steps Fail the Build" field="undefinedFails" description="Tick this if you want pending steps to cause the build to fail">
               <f:checkbox />
         </f:entry>
+        <f:entry title="Turn Off Flash Charts" field="noFlashCharts" description="Tick this if you want to use javascript charts instead of flash charts">
+                      <f:checkbox />
+                </f:entry>
         </f:advanced>
 </j:jelly>
 

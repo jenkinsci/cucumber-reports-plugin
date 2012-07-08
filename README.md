@@ -96,6 +96,18 @@ Finally if you don't check either of these options then skipped or not implement
 ![Build Passes on Skipped and Not Implemented]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/skipped_pending_no_fail.png)
 
+There is also an option to turn off the default flash charts - if you check this then you will get javascript charts using graphael javascript charting library.
+
+Javascript Charts on Feature Overview:
+
+![JS Feature Overview]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/js-feature-overview.png)
+
+Javascript Charts on Tag Overview:
+
+![JS Feature Overview]
+(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/js-tag-overview.png)
+
 
 Make sure you have configured cucumber-jvm to run with the JUnit runner and to generate a json report: (note - you can add other formatters in if you like e.g. pretty - but only the json formatter is required for the reports to work)
 

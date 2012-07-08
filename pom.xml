@@ -9,7 +9,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>0.0.14</version>
     <packaging>hpi</packaging>
 
     <scm>
@@ -40,29 +40,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2.1</version>
+            <groupId>net.masterthought</groupId>
+            <artifactId>cucumber-reporting</artifactId>
+            <version>0.0.14-SNAPSHOT</version>
         </dependency>
-        <dependency>
-        	<groupId>maven</groupId>
-        	<artifactId>velocity</artifactId>
-        	<version>1.5-20060721.044818</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jamesmurty.utils</groupId>
-            <artifactId>java-xmlbuilder</artifactId>
-            <version>0.4</version>
-          </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>r09</version>
-        </dependency>
+
     </dependencies>
 </project>
