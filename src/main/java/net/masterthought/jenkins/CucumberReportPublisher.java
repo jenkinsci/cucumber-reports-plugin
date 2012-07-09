@@ -128,7 +128,7 @@ public class CucumberReportPublisher extends Recorder {
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override
         public String getDisplayName() {
-            return "Publish cucumber results as a report";
+			return Messages.CucumberReportPublisher_DisplayName();
         }
 
 
