@@ -95,9 +95,20 @@ public class CucumberReportPublisher extends Recorder {
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
         if (jsonReportFiles.length != 0) {
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
-            ReportBuilder reportBuilder = new ReportBuilder(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject, skippedFails, undefinedFails, !noFlashCharts, true);
 
             try {
+                ReportBuilder reportBuilder = new ReportBuilder(
+                        fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory),
+                        targetBuildDirectory,
+                        pluginUrlPath,
+                        buildNumber,
+                        buildProject,
+                        skippedFails,
+                        undefinedFails,
+                        !noFlashCharts,
+                        true,
+                        false,
+                        "");
                 reportBuilder.generateReports();
                 buildResult = reportBuilder.getBuildStatus();
             } catch (Exception e) {
@@ -128,7 +139,7 @@ public class CucumberReportPublisher extends Recorder {
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override
         public String getDisplayName() {
-			return Messages.CucumberReportPublisher_DisplayName();
+            return "Publish cucumber results as a report";
         }
 
 
