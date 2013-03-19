@@ -3,20 +3,45 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.424</version>
+        <version>1.504</version>
         <!-- which version of Jenkins is this plugin built against? -->
     </parent>
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>0.0.20</version>
+    <version>0.0.20-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <scm>
-      <connection>scm:git:git://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</connection>
-      <developerConnection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</developerConnection>
-      <url>http://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java</url>
-    </scm>
+          <connection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</connection>
+          <developerConnection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</developerConnection>
+          <url>git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</url>
+      </scm>
+
+      <description>
+          This project provides pretty html reports for Cucumber. It works by generating html from the cucumber json
+          report formatter. So can be used anywhere a json report is generated. Current use is in the cucumber jenkins
+          plugin and a maven mojo to generate the same report from mvn command line when running locally.
+      </description>
+
+    <licenses>
+           <license>
+               <comments>Use this project wherever you like</comments>
+               <name>LGPL 2.1</name>
+               <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+           </license>
+       </licenses>
+
+       <developers>
+           <developer>
+               <id>kingsleyh</id>
+               <name>Kingsley Hendrickse</name>
+               <email>kingsley@masterthought.net</email>
+               <timezone>GMT</timezone>
+               <roles>
+               </roles>
+           </developer>
+       </developers>
 
     <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
     <repositories>
@@ -42,7 +67,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>0.0.20-SNAPSHOT</version>
+            <version>0.0.20</version>
         </dependency>
 
     </dependencies>
