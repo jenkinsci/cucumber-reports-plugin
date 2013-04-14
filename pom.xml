@@ -9,7 +9,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>0.0.21</version>
+    <version>0.0.22-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <scm>
