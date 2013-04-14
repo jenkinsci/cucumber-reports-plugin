@@ -108,7 +108,8 @@ public class CucumberReportPublisher extends Recorder {
                         !noFlashCharts,
                         true,
                         false,
-                        "");
+                        "",
+                        false);
                 reportBuilder.generateReports();
                 buildResult = reportBuilder.getBuildStatus();
             } catch (Exception e) {
