@@ -55,7 +55,7 @@ public class CucumberReportPublisher extends Recorder {
         listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Html Reports ...");
 
         File workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath());
-        if(!jsonReportDirectory.isEmpty()){
+        if (!jsonReportDirectory.isEmpty()) {
             workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath(), jsonReportDirectory);
         }
         File targetBuildDirectory = new File(build.getRootDir(), "cucumber-html-reports");
@@ -74,8 +74,8 @@ public class CucumberReportPublisher extends Recorder {
             listener.getLogger().println("[CucumberReportPublisher] detected this build is running on a slave ");
             FilePath projectWorkspaceOnSlave = build.getProject().getSomeWorkspace();
             FilePath masterJsonReportDirectory = new FilePath(targetBuildDirectory);
-            listener.getLogger().println("[CucumberReportPublisher] copying json from: " +  projectWorkspaceOnSlave.toURI() + "to reports directory: " + masterJsonReportDirectory.toURI());
-            projectWorkspaceOnSlave.copyRecursiveTo("**/*.json","", masterJsonReportDirectory);
+            listener.getLogger().println("[CucumberReportPublisher] copying json from: " + projectWorkspaceOnSlave.toURI() + "to reports directory: " + masterJsonReportDirectory.toURI());
+            projectWorkspaceOnSlave.copyRecursiveTo("**/*.json", "", masterJsonReportDirectory);
         } else {
             // if we are on the master
             listener.getLogger().println("[CucumberReportPublisher] detected this build is running on the master ");
@@ -94,6 +94,13 @@ public class CucumberReportPublisher extends Recorder {
         // generate the reports from the targetBuildDirectory
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
         if (jsonReportFiles.length != 0) {
+
+            listener.getLogger().println("[CucumberReportPublisher] Found the following number of json files: " + jsonReportFiles.length);
+            int jsonIndex = 0;
+            for (String jsonReportFile : jsonReportFiles) {
+                listener.getLogger().println("[CucumberReportPublisher] " + jsonIndex + ". Found a json file: " + jsonReportFile);
+                jsonIndex++;
+            }
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
 
             try {
@@ -114,6 +121,10 @@ public class CucumberReportPublisher extends Recorder {
                 buildResult = reportBuilder.getBuildStatus();
             } catch (Exception e) {
                 e.printStackTrace();
+                listener.getLogger().println("[CucumberReportPublisher] there was an error generating the reports: " + e);
+                for(StackTraceElement error : e.getStackTrace()){
+                   listener.getLogger().println(error);
+                }
             }
         } else {
             listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + targetBuildDirectory);
