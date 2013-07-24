@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.504</version>
+        <version>1.511</version>
         <!-- which version of Jenkins is this plugin built against? -->
     </parent>
 
@@ -71,4 +71,16 @@
         </dependency>
 
     </dependencies>
+
+	<!-- The wrong maven-hpi-plugin is used default. Set it to the correct one -->
+	<!-- http://jenkins-ci.361315.n4.nabble.com/problem-with-dependency-ui-samples-plugin-td4664959.html -->
+	<build> 
+	     <plugins> 
+	       <plugin> 
+	         <groupId>org.jenkins-ci.tools</groupId> 
+	         <artifactId>maven-hpi-plugin</artifactId> 
+	         <version>1.95</version> 
+	       </plugin> 
+	     </plugins> 
+	   </build>
 </project>

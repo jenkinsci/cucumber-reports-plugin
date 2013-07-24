@@ -25,7 +25,10 @@
         </f:entry>
         <f:entry title="Turn Off Flash Charts" field="noFlashCharts" description="Tick this if you want to use javascript charts instead of flash charts">
                       <f:checkbox />
-                </f:entry>
+                </f:entry>	
+			<f:entry title="Ignore failed tests" field="ignoreFailedTests" description="Tick this if you don't want the entire build to fail when these tests fail. If so, build becomes unstable">
+				<f:checkbox />
+			</f:entry>
         </f:advanced>
 </j:jelly>
 
