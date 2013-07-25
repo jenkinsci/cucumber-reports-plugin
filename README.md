@@ -43,6 +43,7 @@ If you need more control over the plugin you can click the Advanced button for m
 2. Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
 3. Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
 4. Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
+5. Tick if you want failed test not to fail the entire build but make it unstable
 
 When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the cucumber reports. There is a feature overview page:
 
@@ -71,7 +72,7 @@ And you can drill down into tag specific reports:
 
 ## Advanced Configuration Options
 
-There are 2 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
+There are 3 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
 
 ![Advanced Configuration]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/advanced_options.png)
@@ -95,6 +96,8 @@ Finally if you don't check either of these options then skipped or not implement
 
 ![Build Passes on Skipped and Not Implemented]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/skipped_pending_no_fail.png)
+
+The third setting is Ignore failed tests - so if you tick this and one of the tests fail, the build becomes unstable instead of failed.
 
 There is also an option to turn off the default flash charts - if you check this then you will get javascript charts using graphael javascript charting library.
 
