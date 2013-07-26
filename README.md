@@ -43,7 +43,8 @@ If you need more control over the plugin you can click the Advanced button for m
 2. Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
 3. Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
 4. Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
-5. Tick if you want failed test not to fail the entire build but make it unstable
+5. Tick if you don't want the reports to be displayed in flash. Javascript will be used instead - see further down for more info on this
+6. Tick if you want failed test not to fail the entire build but make it unstable
 
 When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the cucumber reports. There is a feature overview page:
 
@@ -108,6 +109,8 @@ Javascript Charts on Tag Overview:
 
 ![JS Feature Overview]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/js-tag-overview.png)
+
+Unstable builds:
 
 The fourth setting is Ignore failed tests - so if you tick this and one of the tests fail, the build becomes unstable instead of failed.
 
