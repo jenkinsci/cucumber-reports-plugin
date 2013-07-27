@@ -30,14 +30,16 @@ public class CucumberReportPublisher extends Recorder {
     public final boolean skippedFails;
     public final boolean undefinedFails;
     public final boolean noFlashCharts;
+	public final boolean ignoreFailedTests;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, boolean skippedFails, boolean undefinedFails, boolean noFlashCharts) {
+    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, boolean skippedFails, boolean undefinedFails, boolean noFlashCharts, boolean ignoreFailedTests) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.pluginUrlPath = pluginUrlPath;
         this.skippedFails = skippedFails;
         this.undefinedFails = undefinedFails;
         this.noFlashCharts = noFlashCharts;
+		this.ignoreFailedTests = ignoreFailedTests;
     }
 
     private String[] findJsonFiles(File targetDirectory) {
@@ -67,8 +69,6 @@ public class CucumberReportPublisher extends Recorder {
             targetBuildDirectory.mkdirs();
         }
 
-        boolean buildResult = true;
-
         // if we are on a slave
         if (Computer.currentComputer() instanceof SlaveComputer) {
             listener.getLogger().println("[CucumberReportPublisher] detected this build is running on a slave ");
@@ -92,6 +92,7 @@ public class CucumberReportPublisher extends Recorder {
         }
 
         // generate the reports from the targetBuildDirectory
+		Result result = Result.NOT_BUILT;
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
         if (jsonReportFiles.length != 0) {
 
@@ -118,20 +119,35 @@ public class CucumberReportPublisher extends Recorder {
                         "",
                         false);
                 reportBuilder.generateReports();
-                buildResult = reportBuilder.getBuildStatus();
+
+				boolean buildSuccess = reportBuilder.getBuildStatus();
+
+				if (buildSuccess)
+				{
+					result = Result.SUCCESS;
+				}
+				else
+				{
+					result = ignoreFailedTests ? Result.UNSTABLE : Result.FAILURE;
+				}
+				
             } catch (Exception e) {
                 e.printStackTrace();
+				result = Result.FAILURE;
                 listener.getLogger().println("[CucumberReportPublisher] there was an error generating the reports: " + e);
                 for(StackTraceElement error : e.getStackTrace()){
                    listener.getLogger().println(error);
                 }
             }
         } else {
+			result = Result.SUCCESS;
             listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + targetBuildDirectory);
         }
 
         build.addAction(new CucumberReportBuildAction(build));
-        return buildResult;
+		build.setResult(result);
+		
+        return true;
     }
 
     private List<String> fullPathToJsonFiles(String[] jsonFiles, File targetBuildDirectory) {

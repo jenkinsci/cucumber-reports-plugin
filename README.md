@@ -37,12 +37,14 @@ publish section of the build config:
 If you need more control over the plugin you can click the Advanced button for more options:
 
 ![check the publish cucumber-jvm-reports box]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/advanced-publish-box.png)
+(https://github.com/choutman/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/advanced-publish-box.png)
 
 1. Leave empty for the plugin to automagically find your json files or enter the path to the json reports relative to the workspace if for some reason the automagic doesn't work for you
 2. Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
 3. Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
 4. Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
+5. Tick if you don't want the reports to be displayed in flash. Javascript will be used instead - see further down for more info on this
+6. Tick if you want failed test not to fail the entire build but make it unstable
 
 When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the cucumber reports. There is a feature overview page:
 
@@ -71,10 +73,10 @@ And you can drill down into tag specific reports:
 
 ## Advanced Configuration Options
 
-There are 2 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
+There are 4 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
 
 ![Advanced Configuration]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/advanced_options.png)
+(https://github.com/choutman/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/advanced_options.png)
 
 The first setting is Skipped steps fail the build - so if you tick this any steps that are skipped during executions will be marked as failed and will cause the build to fail:
 
@@ -96,7 +98,7 @@ Finally if you don't check either of these options then skipped or not implement
 ![Build Passes on Skipped and Not Implemented]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/skipped_pending_no_fail.png)
 
-There is also an option to turn off the default flash charts - if you check this then you will get javascript charts using graphael javascript charting library.
+The third setting is to turn off the default flash charts - if you check this then you will get javascript charts using graphael javascript charting library.
 
 Javascript Charts on Feature Overview:
 
@@ -107,6 +109,10 @@ Javascript Charts on Tag Overview:
 
 ![JS Feature Overview]
 (https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/js-tag-overview.png)
+
+Unstable builds:
+
+The fourth setting is Ignore failed tests - so if you tick this and one of the tests fail, the build becomes unstable instead of failed.
 
 
 Make sure you have configured cucumber-jvm to run with the JUnit runner and to generate a json report: (note - you can add other formatters in if you like e.g. pretty - but only the json formatter is required for the reports to work)
