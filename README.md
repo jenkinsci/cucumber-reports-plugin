@@ -2,6 +2,10 @@
  
 This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber --format json -o cucumber.json
 
+## Put up a Bounty
+If you would like something fixed or an enhancement added feel free to create a bounty for it and I will be immediately more motivated to fix or create the item
+
+[https://www.bountysource.com/trackers/17809-masterthought-jenkins-cucumber-jvm-reports-plugin-java](https://www.bountysource.com/trackers/17809-masterthought-jenkins-cucumber-jvm-reports-plugin-java)
 
 ## Background
 
