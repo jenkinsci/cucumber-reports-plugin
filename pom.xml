@@ -63,11 +63,26 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <!--<build>-->
+    		<!--<plugins>-->
+    			<!--<plugin>-->
+    				<!--<groupId>org.eclipse.hudson.tools</groupId>-->
+    				<!--<artifactId>maven-hpi-plugin</artifactId>-->
+    				<!--<version>${maven-hpi-plugin.version}</version>-->
+    			<!--</plugin>-->
+    		<!--</plugins>-->
+    	<!--</build>-->
+
+    	<!--<properties>-->
+    		<!--&lt;!&ndash; explicitly specifying the latest version here because one we get from-->
+    			<!--the parent POM tends to lag behind a bit&ndash;&gt; <maven-hpi-plugin.version>1.95</maven-hpi-plugin.version>-->
+    	<!--</properties>-->
+
     <dependencies>
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>0.0.22</version>
+            <version>0.0.21</version>
         </dependency>
 
     </dependencies>
