@@ -45,38 +45,41 @@
 
     <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
     <repositories>
-        <repository>
-            <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
-        </repository>
+    		<repository>
+    			<id>repo.jenkins-ci.org</id>
+    			<url>http://repo.jenkins-ci.org/public/</url>
+    		</repository>
+    	</repositories>
 
-        <repository>
-            <id>sonatype-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
+    	<pluginRepositories>
+    		<pluginRepository>
+    			<id>repo.jenkins-ci.org</id>
+    			<url>http://repo.jenkins-ci.org/public/</url>
+    		</pluginRepository>
+    	</pluginRepositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+    	<distributionManagement>
+            <repository>
+                			<id>repo.jenkins-ci.org</id>
+                			<url>http://repo.jenkins-ci.org/public/</url>
+                		</repository>
+    	</distributionManagement>
 
-    <!--<build>-->
-    		<!--<plugins>-->
-    			<!--<plugin>-->
-    				<!--<groupId>org.eclipse.hudson.tools</groupId>-->
-    				<!--<artifactId>maven-hpi-plugin</artifactId>-->
-    				<!--<version>${maven-hpi-plugin.version}</version>-->
-    			<!--</plugin>-->
-    		<!--</plugins>-->
-    	<!--</build>-->
+    	<build>
+    		<plugins>
+    			<plugin>
+    				<groupId>org.eclipse.hudson.tools</groupId>
+    				<artifactId>maven-hpi-plugin</artifactId>
+    				<version>${maven-hpi-plugin.version}</version>
+    			</plugin>
+    		</plugins>
+    	</build>
 
-    	<!--<properties>-->
-    		<!--&lt;!&ndash; explicitly specifying the latest version here because one we get from-->
-    			<!--the parent POM tends to lag behind a bit&ndash;&gt; <maven-hpi-plugin.version>1.95</maven-hpi-plugin.version>-->
-    	<!--</properties>-->
+    	<properties>
+    		<!-- explicitly specifying the latest version here because one we get from
+    			the parent POM tends to lag behind a bit--> <maven-hpi-plugin.version>1.95</maven-hpi-plugin.version>
+    	</properties>
+
 
     <dependencies>
         <dependency>
@@ -84,6 +87,5 @@
             <artifactId>cucumber-reporting</artifactId>
             <version>0.0.21</version>
         </dependency>
-
     </dependencies>
 </project>
