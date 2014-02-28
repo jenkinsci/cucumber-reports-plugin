@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
@@ -13,79 +14,81 @@
     <packaging>hpi</packaging>
 
     <scm>
-          <connection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</connection>
-          <developerConnection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</developerConnection>
-          <url>git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</url>
-      </scm>
+        <connection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</connection>
+        <developerConnection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git
+        </developerConnection>
+        <url>git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</url>
+    </scm>
 
-      <description>
-          This project provides pretty html reports for Cucumber. It works by generating html from the cucumber json
-          report formatter. So can be used anywhere a json report is generated. Current use is in the cucumber jenkins
-          plugin and a maven mojo to generate the same report from mvn command line when running locally.
-      </description>
+    <description>
+        This project provides pretty html reports for Cucumber. It works by generating html from the cucumber json
+        report formatter. So can be used anywhere a json report is generated. Current use is in the cucumber jenkins
+        plugin and a maven mojo to generate the same report from mvn command line when running locally.
+    </description>
 
     <licenses>
-           <license>
-               <comments>Use this project wherever you like</comments>
-               <name>LGPL 2.1</name>
-               <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-           </license>
-       </licenses>
+        <license>
+            <comments>Use this project wherever you like</comments>
+            <name>LGPL 2.1</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+        </license>
+    </licenses>
 
-       <developers>
-           <developer>
-               <id>kingsleyh</id>
-               <name>Kingsley Hendrickse</name>
-               <email>kingsley@masterthought.net</email>
-               <timezone>GMT</timezone>
-               <roles>
-               </roles>
-           </developer>
-       </developers>
+    <developers>
+        <developer>
+            <id>kingsleyh</id>
+            <name>Kingsley Hendrickse</name>
+            <email>kingsley@masterthought.net</email>
+            <timezone>GMT</timezone>
+            <roles>
+            </roles>
+        </developer>
+    </developers>
 
     <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
     <repositories>
-    		<repository>
-    			<id>repo.jenkins-ci.org</id>
-    			<url>http://repo.jenkins-ci.org/public/</url>
-    		</repository>
-    	</repositories>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </repository>
+    </repositories>
 
-    	<pluginRepositories>
-    		<pluginRepository>
-    			<id>repo.jenkins-ci.org</id>
-    			<url>http://repo.jenkins-ci.org/public/</url>
-    		</pluginRepository>
-    	</pluginRepositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
-    	<!--<distributionManagement>-->
-            <!--<repository>-->
-                			<!--<id>repo.jenkins-ci.org</id>-->
-                			<!--<url>http://repo.jenkins-ci.org/public/</url>-->
-                		<!--</repository>-->
-    	<!--</distributionManagement>-->
+    <distributionManagement>
+    <repository>
+    <id>repo.jenkins-ci.org</id>
+    <url>http://repo.jenkins-ci.org/public/</url>
+    </repository>
+    </distributionManagement>
 
     <!--<distributionManagement>-->
-       <!--<repository>-->
-         <!--<id>maven.jenkins-ci.org</id>-->
-         <!--<url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>-->
-       <!--</repository>-->
-     <!--</distributionManagement>-->
+    <!--<repository>-->
+    <!--<id>maven.jenkins-ci.org</id>-->
+    <!--<url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>-->
+    <!--</repository>-->
+    <!--</distributionManagement>-->
 
-    	<build>
-    		<plugins>
-    			<plugin>
-    				<groupId>org.eclipse.hudson.tools</groupId>
-    				<artifactId>maven-hpi-plugin</artifactId>
-    				<version>${maven-hpi-plugin.version}</version>
-    			</plugin>
-    		</plugins>
-    	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.hudson.tools</groupId>
+                <artifactId>maven-hpi-plugin</artifactId>
+                <version>${maven-hpi-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 
-    	<properties>
-    		<!-- explicitly specifying the latest version here because one we get from
-    			the parent POM tends to lag behind a bit--> <maven-hpi-plugin.version>1.95</maven-hpi-plugin.version>
-    	</properties>
+    <properties>
+        <!-- explicitly specifying the latest version here because one we get from
+            the parent POM tends to lag behind a bit-->
+        <maven-hpi-plugin.version>1.95</maven-hpi-plugin.version>
+    </properties>
 
 
     <dependencies>
