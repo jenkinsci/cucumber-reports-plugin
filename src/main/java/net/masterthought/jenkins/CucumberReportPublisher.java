@@ -56,40 +56,29 @@ public class CucumberReportPublisher extends Recorder {
 
         listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Html Reports ...");
 
-        File workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath());
-        if (!jsonReportDirectory.isEmpty()) {
-            workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath(), jsonReportDirectory);
+        // source directory (possibly on slave)
+        FilePath workspaceJsonReportDirectory;
+        if (jsonReportDirectory.isEmpty()) {
+          workspaceJsonReportDirectory = build.getWorkspace();
+        } else {
+          workspaceJsonReportDirectory = new FilePath(build.getWorkspace(), jsonReportDirectory);
         }
+
+        // target directory (always on master)
         File targetBuildDirectory = new File(build.getRootDir(), "cucumber-html-reports");
-
-        String buildNumber = Integer.toString(build.getNumber());
-        String buildProject = build.getProject().getName();
-
         if (!targetBuildDirectory.exists()) {
             targetBuildDirectory.mkdirs();
         }
 
-        // if we are on a slave
-        if (Computer.currentComputer() instanceof SlaveComputer) {
-            listener.getLogger().println("[CucumberReportPublisher] detected this build is running on a slave ");
-            FilePath projectWorkspaceOnSlave = build.getProject().getSomeWorkspace();
-            FilePath masterJsonReportDirectory = new FilePath(targetBuildDirectory);
-            listener.getLogger().println("[CucumberReportPublisher] copying json from: " + projectWorkspaceOnSlave.toURI() + "to reports directory: " + masterJsonReportDirectory.toURI());
-            projectWorkspaceOnSlave.copyRecursiveTo("**/*.json", "", masterJsonReportDirectory);
-        } else {
-            // if we are on the master
-            listener.getLogger().println("[CucumberReportPublisher] detected this build is running on the master ");
-            String[] files = findJsonFiles(workspaceJsonReportDirectory);
+        String buildNumber = Integer.toString(build.getNumber());
+        String buildProject = build.getProject().getName();
 
-            if (files.length != 0) {
-                listener.getLogger().println("[CucumberReportPublisher] copying json to reports directory: " + targetBuildDirectory);
-                for (String file : files) {
-                    FileUtils.copyFile(new File(workspaceJsonReportDirectory.getPath() + "/" + file), new File(targetBuildDirectory, file));
-                }
-            } else {
-                listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + workspaceJsonReportDirectory);
-            }
+        if (Computer.currentComputer() instanceof SlaveComputer) {
+          listener.getLogger().println("[CucumberReportPublisher] copying all json files from slave: " + workspaceJsonReportDirectory.getRemote() + " to master reports directory: " + targetBuildDirectory);
+        } else {
+          listener.getLogger().println("[CucumberReportPublisher] copying all json files from: " + workspaceJsonReportDirectory.getRemote() + " to reports directory: " + targetBuildDirectory);
         }
+        workspaceJsonReportDirectory.copyRecursiveTo("**/*.json", new FilePath(targetBuildDirectory));
 
         // generate the reports from the targetBuildDirectory
 		Result result = Result.NOT_BUILT;
