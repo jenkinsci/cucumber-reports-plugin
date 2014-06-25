@@ -31,15 +31,17 @@ public class CucumberReportPublisher extends Recorder {
     public final boolean undefinedFails;
     public final boolean noFlashCharts;
 	public final boolean ignoreFailedTests;
+    public final boolean parallelTesting;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, boolean skippedFails, boolean undefinedFails, boolean noFlashCharts, boolean ignoreFailedTests) {
+    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, boolean skippedFails, boolean undefinedFails, boolean noFlashCharts, boolean ignoreFailedTests, boolean parallelTesting) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.pluginUrlPath = pluginUrlPath;
         this.skippedFails = skippedFails;
         this.undefinedFails = undefinedFails;
         this.noFlashCharts = noFlashCharts;
 		this.ignoreFailedTests = ignoreFailedTests;
+        this.parallelTesting = parallelTesting;
     }
 
     private String[] findJsonFiles(File targetDirectory) {
@@ -93,7 +95,7 @@ public class CucumberReportPublisher extends Recorder {
             }
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
 
-            try {
+            try {                
                 ReportBuilder reportBuilder = new ReportBuilder(
                         fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory),
                         targetBuildDirectory,
@@ -106,7 +108,7 @@ public class CucumberReportPublisher extends Recorder {
                         true,
                         false,
                         "",
-                        false);
+                        false,parallelTesting);
                 reportBuilder.generateReports();
 
 				boolean buildSuccess = reportBuilder.getBuildStatus();

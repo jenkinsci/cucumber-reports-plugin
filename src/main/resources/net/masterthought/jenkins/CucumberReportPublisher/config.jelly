@@ -28,6 +28,9 @@
                 </f:entry>	
 			<f:entry title="Ignore failed tests" field="ignoreFailedTests" description="Tick this if you don't want the entire build to fail when these tests fail. If so, build becomes unstable">
 				<f:checkbox />
+        </f:entry>
+        <f:entry title="Parallel testing" field="parallelTesting" description="Tick this if you are going to run same test in parallel for multiple devices.">
+        <f:checkbox />
 			</f:entry>
         </f:advanced>
 </j:jelly>

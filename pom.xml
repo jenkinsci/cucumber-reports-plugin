@@ -48,8 +48,12 @@
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>http://repo.jenkins-ci.org/public/</url>            
         </repository>
+        <repository>
+            <id>repo.bodar.com</id>
+            <url>http://repo.bodar.com</url>
+          </repository>
     </repositories>
 
     <pluginRepositories>
@@ -82,5 +86,10 @@
             <artifactId>cucumber-reporting</artifactId>
             <version>0.0.23</version>
         </dependency>
+        <dependency>
+          <groupId>com.googlecode.totallylazy</groupId>
+          <artifactId>totallylazy</artifactId>
+          <version>1077</version>
+       </dependency>
     </dependencies>
 </project>
