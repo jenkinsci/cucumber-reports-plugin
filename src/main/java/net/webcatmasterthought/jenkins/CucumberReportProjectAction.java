@@ -1,4 +1,4 @@
-package net.masterthought.jenkins;
+package net.webcatmasterthought.jenkins;
 
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
@@ -34,14 +34,14 @@ public class CucumberReportProjectAction extends CucumberReportBaseAction implem
     }
 
     private File getProjectArchiveDir(AbstractItem project) {
-        return new File(project.getRootDir(), "cucumber-html-reports");
+        return new File(project.getRootDir(), "webcat-cucumber-html-reports");
     }
 
     /**
      * Gets the directory where the HTML report is stored for the given build.
      */
     private File getBuildArchiveDir(Run run) {
-        return new File(run.getRootDir(), "cucumber-html-reports");
+        return new File(run.getRootDir(), "webcat-cucumber-html-reports");
     }
 
 

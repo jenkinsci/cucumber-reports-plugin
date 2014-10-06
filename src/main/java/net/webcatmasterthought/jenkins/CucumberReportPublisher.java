@@ -1,4 +1,4 @@
-package net.masterthought.jenkins;
+package net.webcatmasterthought.jenkins;
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -10,7 +10,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
-import net.masterthought.cucumber.ReportBuilder;
+import net.webcatmasterthought.cucumber.ReportBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.AncestorInPath;
@@ -52,13 +52,13 @@ public class CucumberReportPublisher extends Recorder {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
             throws IOException, InterruptedException {
 
-        listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Html Reports ...");
+        listener.getLogger().println("[CucumberReportPublisher] Compiling Webcat Cucumber Html Reports ...");
 
         File workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath());
         if(!jsonReportDirectory.isEmpty()){
             workspaceJsonReportDirectory = new File(build.getWorkspace().toURI().getPath(), jsonReportDirectory);
         }
-        File targetBuildDirectory = new File(build.getRootDir(), "cucumber-html-reports");
+        File targetBuildDirectory = new File(build.getRootDir(), "webcat-cucumber-html-reports");
 
         String buildNumber = Integer.toString(build.getNumber());
         String buildProject = build.getProject().getName();
@@ -94,7 +94,7 @@ public class CucumberReportPublisher extends Recorder {
         // generate the reports from the targetBuildDirectory
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
         if (jsonReportFiles.length != 0) {
-            listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
+            listener.getLogger().println("[CucumberReportPublisher] Generating Webcat HTML reports");
 
             try {
                 ReportBuilder reportBuilder = new ReportBuilder(
@@ -108,7 +108,8 @@ public class CucumberReportPublisher extends Recorder {
                         !noFlashCharts,
                         true,
                         false,
-                        "");
+                        "",
+                        true);
                 reportBuilder.generateReports();
                 buildResult = reportBuilder.getBuildStatus();
             } catch (Exception e) {
@@ -139,7 +140,7 @@ public class CucumberReportPublisher extends Recorder {
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override
         public String getDisplayName() {
-            return "Publish cucumber results as a report";
+            return "Publish webcat-cucumber results as a report";
         }
 
 
