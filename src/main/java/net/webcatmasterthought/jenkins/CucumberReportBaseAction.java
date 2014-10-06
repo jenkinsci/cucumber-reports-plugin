@@ -1,4 +1,4 @@
-package net.masterthought.jenkins;
+package net.webcatmasterthought.jenkins;
 
 import hudson.FilePath;
 import hudson.PluginWrapper;
@@ -17,15 +17,15 @@ import java.io.IOException;
 public abstract class CucumberReportBaseAction implements Action {
     
     public String getUrlName(){
-        return "cucumber-html-reports";
+        return "webcat-cucumber-html-reports";
     }
     
     public String getDisplayName(){
-        return "Cucumber Reports";
+        return "WebCat Cucumber Reports";
     }
-    
+
     public String getIconFileName(){
-            return "/plugin/cucumber-reports/cuke.png";
+        return null;
     }
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {

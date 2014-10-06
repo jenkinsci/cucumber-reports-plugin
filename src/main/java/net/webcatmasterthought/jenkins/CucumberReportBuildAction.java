@@ -1,4 +1,4 @@
-package net.masterthought.jenkins;
+package net.webcatmasterthought.jenkins;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
@@ -20,7 +20,7 @@ public class CucumberReportBuildAction extends CucumberReportBaseAction {
 
     @Override
     protected File dir() {
-        return new File(build.getRootDir(), "cucumber-html-reports");
+        return new File(build.getRootDir(), "webcat-cucumber-html-reports");
     }
 
 }
