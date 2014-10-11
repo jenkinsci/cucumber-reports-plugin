@@ -108,7 +108,7 @@ public class CucumberReportPublisher extends Recorder {
                         true,
                         false,
                         "",
-                        false,parallelTesting);
+                        false);
                 reportBuilder.generateReports();
 
 				boolean buildSuccess = reportBuilder.getBuildStatus();
