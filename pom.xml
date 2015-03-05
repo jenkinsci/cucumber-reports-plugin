@@ -84,12 +84,12 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>0.0.23</version>
+            <version>0.0.24</version>
         </dependency>
         <dependency>
           <groupId>com.googlecode.totallylazy</groupId>
           <artifactId>totallylazy</artifactId>
-          <version>1077</version>
+          <version>1.20</version>
        </dependency>
     </dependencies>
 </project>
