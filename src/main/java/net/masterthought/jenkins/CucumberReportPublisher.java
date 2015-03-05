@@ -11,7 +11,6 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 import net.masterthought.cucumber.ReportBuilder;
-import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -25,8 +24,12 @@ import java.util.List;
 
 public class CucumberReportPublisher extends Recorder {
 
+    private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
+
     public final String jsonReportDirectory;
     public final String pluginUrlPath;
+    public final String fileIncludePattern;
+    public final String fileExcludePattern;
     public final boolean skippedFails;
     public final boolean undefinedFails;
     public final boolean noFlashCharts;
@@ -34,9 +37,11 @@ public class CucumberReportPublisher extends Recorder {
     public final boolean parallelTesting;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, boolean skippedFails, boolean undefinedFails, boolean noFlashCharts, boolean ignoreFailedTests, boolean parallelTesting) {
+    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, String fileIncludePattern, String fileExcludePattern, boolean skippedFails, boolean undefinedFails, boolean noFlashCharts, boolean ignoreFailedTests, boolean parallelTesting) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.pluginUrlPath = pluginUrlPath;
+        this.fileIncludePattern = fileIncludePattern;
+        this.fileExcludePattern = fileExcludePattern;
         this.skippedFails = skippedFails;
         this.undefinedFails = undefinedFails;
         this.noFlashCharts = noFlashCharts;
@@ -44,9 +49,14 @@ public class CucumberReportPublisher extends Recorder {
         this.parallelTesting = parallelTesting;
     }
 
-    private String[] findJsonFiles(File targetDirectory) {
+    private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
         DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setIncludes(new String[]{"**/*.json"});
+        if (fileIncludePattern == null || fileIncludePattern.isEmpty()) {
+            scanner.setIncludes(new String[]{DEFAULT_FILE_INCLUDE_PATTERN});
+        } else {
+            scanner.setIncludes(new String[]{fileIncludePattern});
+        }
+        scanner.setExcludes(new String[]{fileExcludePattern});
         scanner.setBasedir(targetDirectory);
         scanner.scan();
         return scanner.getIncludedFiles();
@@ -80,11 +90,11 @@ public class CucumberReportPublisher extends Recorder {
         } else {
             listener.getLogger().println("[CucumberReportPublisher] copying all json files from: " + workspaceJsonReportDirectory.getRemote() + " to reports directory: " + targetBuildDirectory);
         }
-        workspaceJsonReportDirectory.copyRecursiveTo("**/*.json", new FilePath(targetBuildDirectory));
+        workspaceJsonReportDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(targetBuildDirectory));
 
         // generate the reports from the targetBuildDirectory
 		Result result = Result.NOT_BUILT;
-        String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
+        String[] jsonReportFiles = findJsonFiles(targetBuildDirectory, fileIncludePattern, fileExcludePattern);
         if (jsonReportFiles.length != 0) {
 
             listener.getLogger().println("[CucumberReportPublisher] Found the following number of json files: " + jsonReportFiles.length);
