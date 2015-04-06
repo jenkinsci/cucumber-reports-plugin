@@ -71,12 +71,22 @@
                 <version>${maven-hpi-plugin.version}</version>
             </plugin>
         </plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<!-- work around MRELEASE-875 -->
+					<version>2.5</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
     </build>
 
     <properties>
         <!-- explicitly specifying the latest version here because one we get from
             the parent POM tends to lag behind a bit-->
-        <maven-hpi-plugin.version>1.95</maven-hpi-plugin.version>
+        <maven-hpi-plugin.version>1.106</maven-hpi-plugin.version>
     </properties>
 
 
