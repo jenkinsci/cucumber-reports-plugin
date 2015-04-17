@@ -56,7 +56,9 @@ public class CucumberReportPublisher extends Recorder {
         } else {
             scanner.setIncludes(new String[]{fileIncludePattern});
         }
-        scanner.setExcludes(new String[]{fileExcludePattern});
+        if (fileExcludePattern != null ) {
+            scanner.setExcludes(new String[]{fileExcludePattern});
+        }
         scanner.setBasedir(targetDirectory);
         scanner.scan();
         return scanner.getIncludedFiles();
