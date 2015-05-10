@@ -1,17 +1,17 @@
 package net.masterthought.jenkins;
 
+import hudson.model.ProminentProjectAction;
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
-import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
 
 import java.io.File;
 
 public class CucumberReportProjectAction extends CucumberReportBaseAction implements ProminentProjectAction {
+
     private final AbstractItem project;
 
     public CucumberReportProjectAction(AbstractItem project) {
-        super();
         this.project = project;
     }
 
@@ -43,7 +43,6 @@ public class CucumberReportProjectAction extends CucumberReportBaseAction implem
     private File getBuildArchiveDir(Run run) {
         return new File(run.getRootDir(), "cucumber-html-reports");
     }
-
 
     @Override
     protected String getTitle() {
