@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: net.masterthought:cucumber-reporting:0.0.24" level="project" />
+    <orderEntry type="library" name="Maven: net.masterthought:cucumber-reporting:0.1.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.2.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.velocity:velocity:1.7" level="project" />
     <orderEntry type="library" name="Maven: velocity-tools:velocity-tools:1.4" level="project" />
