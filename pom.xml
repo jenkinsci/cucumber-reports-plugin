@@ -18,7 +18,7 @@
         </developerConnection>
         <url>git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</url>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <description>
         This project provides pretty html reports for Cucumber. It works by generating html from the cucumber json
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>0.0.24</version>
+            <version>0.1.0</version>
         </dependency>
         <dependency>
           <groupId>com.googlecode.totallylazy</groupId>
