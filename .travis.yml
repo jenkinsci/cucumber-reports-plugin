@@ -1,0 +1,10 @@
+language: java
+
+jdk:
+
+  - oraclejdk7 
+  - openjdk7
+# TODO: temporarily skip JDK8 - for some reason tests fail:
+#  org.jvnet.hudson.test.JellyTestSuiteBuilder$JellyTestSuite(org.jvnet.hudson.test.junit.FailedTest): -1
+#  testCliSanity(org.jvnet.hudson.test.PluginAutomaticTestBuilder$CliSanityTest): second instance
+#  - oraclejdk8

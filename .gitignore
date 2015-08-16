@@ -1,6 +1,5 @@
-work
 target
-.DS_Store
-.log
 .idea
-velocity.log
+.classpath
+.project
+.settings/
