@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
@@ -13,11 +14,11 @@
     <packaging>hpi</packaging>
 
     <scm>
-        <connection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</connection>
-        <developerConnection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git
+        <connection>scm:git:git@github.com:damianszczepanik/cucumber-reporting-jenkins.git</connection>
+        <developerConnection>scm:git:git@github.com:damianszczepanik/cucumber-reporting-jenkins.git
         </developerConnection>
-        <url>git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</url>
-      <tag>HEAD</tag>
+        <url>git@github.com:damianszczepanik/cucumber-reporting-jenkins.git</url>
+        <tag>HEAD</tag>
     </scm>
 
     <description>
@@ -28,7 +29,6 @@
 
     <licenses>
         <license>
-            <comments>Use this project wherever you like</comments>
             <name>LGPL 2.1</name>
             <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
         </license>
@@ -38,23 +38,22 @@
         <developer>
             <id>kingsleyh</id>
             <name>Kingsley Hendrickse</name>
-            <email>kingsley@masterthought.net</email>
-            <timezone>GMT</timezone>
-            <roles>
-            </roles>
+            <email>kingsley.hendrickse@gmail.com</email>
+        </developer>
+        <developer>
+            <id>damianszczepanik</id>
+            <name>Damian Szczepanik</name>
+            <email>damianszczepanik@github</email>
         </developer>
     </developers>
 
-    <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
+    <!-- get every artifact through repo.jenkins-ci.org, which proxies all 
+        the artifacts that we need -->
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>            
+            <url>http://repo.jenkins-ci.org/public/</url>
         </repository>
-        <repository>
-            <id>repo.bodar.com</id>
-            <url>http://repo.bodar.com</url>
-          </repository>
     </repositories>
 
     <pluginRepositories>
@@ -69,38 +68,26 @@
             <plugin>
                 <groupId>org.eclipse.hudson.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
-                <version>${maven-hpi-plugin.version}</version>
+                <version>3.0.3</version>
             </plugin>
         </plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<!-- work around MRELEASE-875 -->
-					<version>2.5</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <!-- work around MRELEASE-875 -->
+                    <version>3.0-r1585899</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-
-    <properties>
-        <!-- explicitly specifying the latest version here because one we get from
-            the parent POM tends to lag behind a bit-->
-        <maven-hpi-plugin.version>1.106</maven-hpi-plugin.version>
-    </properties>
-
 
     <dependencies>
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.1</version>
         </dependency>
-        <dependency>
-          <groupId>com.googlecode.totallylazy</groupId>
-          <artifactId>totallylazy</artifactId>
-          <version>1.20</version>
-       </dependency>
     </dependencies>
 </project>
