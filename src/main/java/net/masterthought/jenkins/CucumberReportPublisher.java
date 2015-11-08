@@ -134,8 +134,6 @@ public class CucumberReportPublisher extends Recorder {
                         !noFlashCharts,
                         true,
                         false,
-                        "",
-                        false,
                         parallelTesting);
                 reportBuilder.generateReports();
 
