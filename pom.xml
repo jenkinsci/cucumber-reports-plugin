@@ -13,10 +13,10 @@
     <packaging>hpi</packaging>
 
     <scm>
-        <connection>scm:git:git@github.com:damianszczepanik/cucumber-reporting-jenkins.git</connection>
-        <developerConnection>scm:git:git@github.com:damianszczepanik/cucumber-reporting-jenkins.git
+        <connection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git
         </developerConnection>
-        <url>git@github.com:damianszczepanik/cucumber-reporting-jenkins.git</url>
+        <url>git@github.com:jenkinsci/cucumber-reports-plugin.git</url>
       <tag>HEAD</tag>
   </scm>
 
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>0.4.0</version>
+            <version>0.5.1</version>
         </dependency>
     </dependencies>
 </project>
