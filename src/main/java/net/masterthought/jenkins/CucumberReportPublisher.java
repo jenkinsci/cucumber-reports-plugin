@@ -1,21 +1,5 @@
 package net.masterthought.jenkins;
 
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.Action;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Computer;
-import hudson.slaves.SlaveComputer;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
-import hudson.util.FormValidation;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,12 +7,27 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import net.masterthought.cucumber.ReportBuilder;
-
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.Action;
+import hudson.model.BuildListener;
+import hudson.model.Computer;
+import hudson.model.Result;
+import hudson.slaves.SlaveComputer;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
+import hudson.util.FormValidation;
+import net.masterthought.cucumber.ReportBuilder;
 
 public class CucumberReportPublisher extends Recorder {
 
@@ -113,7 +112,7 @@ public class CucumberReportPublisher extends Recorder {
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory, fileIncludePattern, fileExcludePattern);
         if (jsonReportFiles.length > 0) {
             listener.getLogger().println(String.format("[CucumberReportPublisher] Found %d json files.", jsonReportFiles.length));
-            int jsonIndex = 0;
+            int jsonIndex = 1;
             for (String jsonReportFile : jsonReportFiles) {
                 listener.getLogger().println("[CucumberReportPublisher] " + jsonIndex + ". Found a json file: " + jsonReportFile);
                 jsonIndex++;
