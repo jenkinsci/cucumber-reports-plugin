@@ -1,5 +1,5 @@
-[![Build Status](https://img.shields.io/travis/damianszczepanik/cucumber-reporting/master.svg)](https://travis-ci.org/damianszczepanik/cucumber-reporting-jenkins)
-[![Maven Dependencies](https://www.versioneye.com/user/projects/55d093d515ff9b001c00008e/badge.svg)](https://www.versioneye.com/user/projects/55d093d515ff9b001c00008e?child=summary)
+[![Build Status](https://img.shields.io/travis/jenkinsci/cucumber-reports-plugin/master.svg)](https://travis-ci.org/https://travis-ci.org/jenkinsci/cucumber-reports-plugin)
+[![Maven Dependencies](https://www.versioneye.com/user/projects/5663e781f376cc003d0009df/badge.svg)](https://www.versioneye.com/user/projects/5663e781f376cc003d0009df?child=summary)
 
 
 # Publish pretty [cucumber-jvm](https://github.com/cucumber/cucumber-jvm) reports on [Jenkins](http://jenkins-ci.org/)
