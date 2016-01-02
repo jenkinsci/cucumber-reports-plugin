@@ -136,9 +136,7 @@ public class CucumberReportPublisher extends Recorder {
                         parallelTesting);
                 reportBuilder.generateReports();
 
-                boolean buildSuccess = reportBuilder.getBuildStatus();
-
-                if (buildSuccess) {
+                if (reportBuilder.hasBuildPassed()) {
                     result = Result.SUCCESS;
                 } else {
                     result = ignoreFailedTests ? Result.UNSTABLE : Result.FAILURE;
