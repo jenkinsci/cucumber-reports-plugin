@@ -4,7 +4,6 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>1.511</version>
-        <!-- which version of Jenkins is this plugin built against? -->
     </parent>
 
     <groupId>net.masterthought.jenkins</groupId>
@@ -35,14 +34,14 @@
 
     <developers>
         <developer>
-            <id>kingsleyh</id>
-            <name>Kingsley Hendrickse</name>
-            <email>kingsley.hendrickse@gmail.com</email>
-        </developer>
-        <developer>
             <id>damianszczepanik</id>
             <name>Damian Szczepanik</name>
             <email>damianszczepanik@github</email>
+        </developer>
+        <developer>
+            <id>kingsleyh</id>
+            <name>Kingsley Hendrickse</name>
+            <email>kingsley.hendrickse@gmail.com</email>
         </developer>
     </developers>
 
@@ -90,7 +89,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
 </project>
