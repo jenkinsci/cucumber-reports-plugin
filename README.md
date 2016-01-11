@@ -1,9 +1,10 @@
-[![Build Status](https://img.shields.io/travis/jenkinsci/cucumber-reports-plugin/master.svg)](https://travis-ci.org/jenkinsci/cucumber-reports-plugin)
+[![Build Travis](https://img.shields.io/travis/jenkinsci/cucumber-reports-plugin/master.svg)](https://travis-ci.org/jenkinsci/cucumber-reports-plugin)
+[![Build Jenkins](https://jenkins.ci.cloudbees.com/job/plugins/job/cucumber-reports-plugin/badge/icon)](https://jenkins.ci.cloudbees.com/job/plugins/job/cucumber-reports-plugin/)
+
 [![Maven Dependencies](https://www.versioneye.com/user/projects/5663e781f376cc003d0009df/badge.svg)](https://www.versioneye.com/user/projects/5663e781f376cc003d0009df?child=summary)
 
-
 # Publish pretty [cucumber-jvm](https://github.com/cucumber/cucumber-jvm) reports on [Jenkins](http://jenkins-ci.org/)
- 
+
 This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber --format json -o cucumber.json
 
 ## Put up a Bounty
