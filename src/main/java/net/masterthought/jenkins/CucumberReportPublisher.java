@@ -41,12 +41,13 @@ public class CucumberReportPublisher extends Recorder {
     public final boolean pendingFails;
     public final boolean undefinedFails;
     public final boolean missingFails;
-    public final boolean noFlashCharts;
     public final boolean ignoreFailedTests;
     public final boolean parallelTesting;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, String fileIncludePattern, String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails, boolean missingFails, boolean noFlashCharts, boolean ignoreFailedTests, boolean parallelTesting) {
+    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, String fileIncludePattern,
+            String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails,
+            boolean missingFails, boolean ignoreFailedTests, boolean parallelTesting) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.pluginUrlPath = pluginUrlPath;
         this.fileIncludePattern = fileIncludePattern;
@@ -57,7 +58,6 @@ public class CucumberReportPublisher extends Recorder {
         this.undefinedFails = undefinedFails;
         this.missingFails = missingFails;
 
-        this.noFlashCharts = noFlashCharts;
         this.ignoreFailedTests = ignoreFailedTests;
         this.parallelTesting = parallelTesting;
     }
@@ -130,9 +130,7 @@ public class CucumberReportPublisher extends Recorder {
                         pendingFails,
                         undefinedFails,
                         missingFails,
-                        !noFlashCharts,
                         true,
-                        false,
                         parallelTesting);
                 reportBuilder.generateReports();
 
@@ -178,7 +176,7 @@ public class CucumberReportPublisher extends Recorder {
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override
         public String getDisplayName() {
-            return "Publish cucumber results as a report";
+            return "Publish cucumber-jvm results as a report";
         }
 
         // Performs on-the-fly validation on the file mask wildcard.
