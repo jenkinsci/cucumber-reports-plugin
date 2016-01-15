@@ -27,6 +27,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 
 public class CucumberReportPublisher extends Recorder {
@@ -34,21 +35,22 @@ public class CucumberReportPublisher extends Recorder {
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
 
     public final String jsonReportDirectory;
-    public final String pluginUrlPath;
+    public final String jenkinsBasePath;
     public final String fileIncludePattern;
     public final String fileExcludePattern;
     public final boolean skippedFails;
     public final boolean pendingFails;
     public final boolean undefinedFails;
     public final boolean missingFails;
-    public final boolean noFlashCharts;
     public final boolean ignoreFailedTests;
     public final boolean parallelTesting;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, String fileIncludePattern, String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails, boolean missingFails, boolean noFlashCharts, boolean ignoreFailedTests, boolean parallelTesting) {
+    public CucumberReportPublisher(String jsonReportDirectory, String jenkinsBasePath, String fileIncludePattern,
+            String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails,
+            boolean missingFails, boolean ignoreFailedTests, boolean parallelTesting) {
         this.jsonReportDirectory = jsonReportDirectory;
-        this.pluginUrlPath = pluginUrlPath;
+        this.jenkinsBasePath = jenkinsBasePath;
         this.fileIncludePattern = fileIncludePattern;
         this.fileExcludePattern = fileExcludePattern;
 
@@ -57,7 +59,6 @@ public class CucumberReportPublisher extends Recorder {
         this.undefinedFails = undefinedFails;
         this.missingFails = missingFails;
 
-        this.noFlashCharts = noFlashCharts;
         this.ignoreFailedTests = ignoreFailedTests;
         this.parallelTesting = parallelTesting;
     }
@@ -65,9 +66,9 @@ public class CucumberReportPublisher extends Recorder {
     private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
         DirectoryScanner scanner = new DirectoryScanner();
         if (fileIncludePattern == null || fileIncludePattern.isEmpty()) {
-            scanner.setIncludes(new String[]{DEFAULT_FILE_INCLUDE_PATTERN});
+            scanner.setIncludes(new String[] { DEFAULT_FILE_INCLUDE_PATTERN });
         } else {
-            scanner.setIncludes(new String[]{fileIncludePattern});
+            scanner.setIncludes(new String[] { fileIncludePattern });
         }
         if (fileExcludePattern != null ) {
             scanner.setExcludes(new String[]{fileExcludePattern});
@@ -98,7 +99,7 @@ public class CucumberReportPublisher extends Recorder {
         }
 
         String buildNumber = Integer.toString(build.getNumber());
-        String buildProject = build.getProject().getName();
+        String projectName = build.getProject().getName();
 
         if (Computer.currentComputer() instanceof SlaveComputer) {
             listener.getLogger().println("[CucumberReportPublisher] Copying all json files from slave: " + workspaceJsonReportDirectory.getRemote() + " to master reports directory: " + targetBuildDirectory);
@@ -120,20 +121,15 @@ public class CucumberReportPublisher extends Recorder {
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
 
             try {
+                Configuration configuration = new Configuration(targetBuildDirectory, projectName);
+                configuration.setStatusFlags(skippedFails, pendingFails, undefinedFails, missingFails);
+                configuration.setParallelTesting(parallelTesting);
+                configuration.setJenkinsBasePath(jenkinsBasePath);
+                configuration.setRunWithJenkins(true);
+                configuration.setBuildNumber(buildNumber);
+
                 ReportBuilder reportBuilder = new ReportBuilder(
-                        fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory),
-                        targetBuildDirectory,
-                        pluginUrlPath,
-                        buildNumber,
-                        buildProject,
-                        skippedFails,
-                        pendingFails,
-                        undefinedFails,
-                        missingFails,
-                        !noFlashCharts,
-                        true,
-                        false,
-                        parallelTesting);
+                        fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), configuration);
                 reportBuilder.generateReports();
 
                 if (reportBuilder.hasBuildPassed()) {
@@ -178,7 +174,7 @@ public class CucumberReportPublisher extends Recorder {
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override
         public String getDisplayName() {
-            return "Publish cucumber results as a report";
+            return "Publish cucumber-jvm results as a report";
         }
 
         // Performs on-the-fly validation on the file mask wildcard.
