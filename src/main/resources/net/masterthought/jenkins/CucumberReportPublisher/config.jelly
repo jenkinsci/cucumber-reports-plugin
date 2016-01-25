@@ -27,13 +27,13 @@
     <f:entry title="Skipped steps fails the Build" field="skippedFails" description="Tick this if you want skipped steps to cause the build to fail">
       <f:checkbox />
     </f:entry>
-    <f:entry title="Skipped steps fails the Build" field="pendingFails" description="Tick this if you want pending steps to cause the build to fail">
+    <f:entry title="Pending steps fails the Build" field="pendingFails" description="Tick this if you want pending steps to cause the build to fail">
       <f:checkbox />
     </f:entry>
-    <f:entry title="Pending steps fails the Build" field="undefinedFails" description="Tick this if you want pending steps to cause the build to fail">
+    <f:entry title="Undefined steps fails the Build" field="undefinedFails" description="Tick this if you want undefined steps to cause the build to fail">
       <f:checkbox />
     </f:entry>
-    <f:entry title="Pending steps fails the Build" field="missingFails" description="Tick this if you want missing steps to cause the build to fail">
+    <f:entry title="Missing steps fails the Build" field="missingFails" description="Tick this if you want missing steps to cause the build to fail">
       <f:checkbox />
     </f:entry>
 
