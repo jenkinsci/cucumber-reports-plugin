@@ -1,8 +1,8 @@
 package net.masterthought.jenkins;
 
-import hudson.model.AbstractBuild;
-
 import java.io.File;
+
+import hudson.model.AbstractBuild;
 
 public class CucumberReportBuildAction extends CucumberReportBaseAction {
 
@@ -14,12 +14,11 @@ public class CucumberReportBuildAction extends CucumberReportBaseAction {
 
     @Override
     protected String getTitle() {
-        return this.build.getDisplayName() + " html3";
+        return this.build.getDisplayName();
     }
 
     @Override
     protected File dir() {
-        return new File(build.getRootDir(), "cucumber-html-reports");
+        return new File(build.getRootDir(), BASE_URL);
     }
-
 }
