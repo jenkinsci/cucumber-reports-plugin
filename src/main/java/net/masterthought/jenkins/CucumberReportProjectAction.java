@@ -1,32 +1,28 @@
 package net.masterthought.jenkins;
 
-import hudson.model.ProminentProjectAction;
+import java.io.File;
+
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
+import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
-
-import java.io.File;
 
 public class CucumberReportProjectAction extends CucumberReportBaseAction implements ProminentProjectAction {
 
-    private final AbstractItem project;
+    private final AbstractProject<?, ?> project;
 
     public CucumberReportProjectAction(AbstractItem project) {
-        this.project = project;
+        this.project = (AbstractProject) project;
     }
 
     @Override
     protected File dir() {
-        if (this.project instanceof AbstractProject) {
-            AbstractProject abstractProject = (AbstractProject) this.project;
+        Run<?, ?> run = this.project.getLastCompletedBuild();
+        if (run != null) {
+            File archiveDir = getBuildArchiveDir(run);
 
-            Run run = abstractProject.getLastCompletedBuild();
-            if (run != null) {
-                File javadocDir = getBuildArchiveDir(run);
-
-                if (javadocDir.exists()) {
-                    return javadocDir;
-                }
+            if (archiveDir.exists()) {
+                return archiveDir;
             }
         }
 
@@ -34,18 +30,16 @@ public class CucumberReportProjectAction extends CucumberReportBaseAction implem
     }
 
     private File getProjectArchiveDir(AbstractItem project) {
-        return new File(project.getRootDir(), "cucumber-html-reports");
+        return new File(project.getRootDir(), CucumberReportBaseAction.BASE_URL);
     }
 
-    /**
-     * Gets the directory where the HTML report is stored for the given build.
-     */
-    private File getBuildArchiveDir(Run run) {
-        return new File(run.getRootDir(), "cucumber-html-reports");
+    /** Gets the directory where the HTML report is stored for the given build. */
+    private File getBuildArchiveDir(Run<?, ?> run) {
+        return new File(run.getRootDir(), CucumberReportBaseAction.BASE_URL);
     }
 
     @Override
     protected String getTitle() {
-        return this.project.getDisplayName() + " html2";
+        return this.project.getDisplayName();
     }
 }

@@ -65,6 +65,7 @@ public class CucumberReportPublisher extends Recorder {
 
     private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
         DirectoryScanner scanner = new DirectoryScanner();
+
         if (fileIncludePattern == null || fileIncludePattern.isEmpty()) {
             scanner.setIncludes(new String[] { DEFAULT_FILE_INCLUDE_PATTERN });
         } else {
@@ -93,7 +94,7 @@ public class CucumberReportPublisher extends Recorder {
         }
 
         // target directory (always on master)
-        File targetBuildDirectory = new File(build.getRootDir(), "cucumber-html-reports");
+        File targetBuildDirectory = new File(build.getRootDir(), CucumberReportBaseAction.BASE_URL);
         if (!targetBuildDirectory.exists()) {
             targetBuildDirectory.mkdirs();
         }
@@ -109,7 +110,7 @@ public class CucumberReportPublisher extends Recorder {
         workspaceJsonReportDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(targetBuildDirectory));
 
         // generate the reports from the targetBuildDirectory
-        Result result = Result.NOT_BUILT;
+        Result result;
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory, fileIncludePattern, fileExcludePattern);
         if (jsonReportFiles.length > 0) {
             listener.getLogger().println(String.format("[CucumberReportPublisher] Found %d json files.", jsonReportFiles.length));
@@ -139,7 +140,6 @@ public class CucumberReportPublisher extends Recorder {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
                 result = Result.FAILURE;
                 listener.getLogger().println("[CucumberReportPublisher] there was an error generating the reports: " + e);
                 for(StackTraceElement error : e.getStackTrace()){
