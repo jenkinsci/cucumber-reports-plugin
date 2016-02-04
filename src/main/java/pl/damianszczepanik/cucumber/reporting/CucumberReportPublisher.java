@@ -1,4 +1,4 @@
-package net.masterthought.jenkins;
+package pl.damianszczepanik.cucumber.reporting;
 
 import java.io.File;
 import java.io.IOException;
@@ -174,11 +174,10 @@ public class CucumberReportPublisher extends Recorder {
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override
         public String getDisplayName() {
-            return "Publish cucumber-jvm results as a report";
+            return Messages.Configuration_DisplayName();
         }
 
-        // Performs on-the-fly validation on the file mask wildcard.
-        public FormValidation doCheck(@AncestorInPath AbstractProject project,
+        public FormValidation doCheck(@AncestorInPath AbstractProject<?, ?> project,
                                       @QueryParameter String value) throws IOException, ServletException {
             FilePath ws = project.getSomeWorkspace();
             return ws != null ? ws.validateRelativeDirectory(value) : FormValidation.ok();

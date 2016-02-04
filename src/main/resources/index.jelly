@@ -1,6 +1,0 @@
-<!--
-  This view is used to render the installed plugins page.
--->
-<div>
-  This plugin creates pretty cucumber-jvm html reports on jenkins
-</div>
