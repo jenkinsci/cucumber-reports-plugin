@@ -1,23 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.511</version>
+        <version>1.577</version>
     </parent>
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
     <version>1.2.2-SNAPSHOT</version>
     <packaging>hpi</packaging>
+    <!-- this name and URL are added by the Jenkins when displaying help.html file -->
+    <name>Cucumber-jvm reports</name>
+    <url>https://github.com/jenkinsci/cucumber-reports-plugin</url>
 
     <scm>
         <connection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git
-        </developerConnection>
+        <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</developerConnection>
         <url>git@github.com:jenkinsci/cucumber-reports-plugin.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <description>
         This project provides pretty html reports for Cucumber. It works by generating html from the cucumber json

@@ -1,8 +1,9 @@
-package net.masterthought.jenkins;
+package pl.damianszczepanik.cucumber.reporting;
 
 import java.io.File;
 
 import hudson.model.AbstractBuild;
+import pl.damianszczepanik.cucumber.reporting.CucumberReportBaseAction;
 
 public class CucumberReportBuildAction extends CucumberReportBaseAction {
 
