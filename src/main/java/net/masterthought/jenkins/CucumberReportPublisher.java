@@ -1,4 +1,4 @@
-package pl.damianszczepanik.cucumber.reporting;
+package net.masterthought.jenkins;
 
 import java.io.File;
 import java.io.IOException;

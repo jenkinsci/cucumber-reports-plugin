@@ -1,4 +1,4 @@
-package pl.damianszczepanik.cucumber.reporting;
+package net.masterthought.jenkins;
 
 import java.io.File;
 
@@ -6,7 +6,6 @@ import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
-import pl.damianszczepanik.cucumber.reporting.CucumberReportBaseAction;
 
 public class CucumberReportProjectAction extends CucumberReportBaseAction implements ProminentProjectAction {
 
