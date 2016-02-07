@@ -9,7 +9,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>1.2.2-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <!-- this name and URL are added by the Jenkins when displaying help.html file -->
     <name>Cucumber-jvm reports</name>
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>1.2.0</version>
+            <version>1.3.0</version>
         </dependency>
     </dependencies>
 </project>
