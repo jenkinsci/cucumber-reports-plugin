@@ -14,7 +14,8 @@ import hudson.model.DirectoryBrowserSupport;
 
 public abstract class CucumberReportBaseAction implements Action {
 
-    static final String BASE_URL = "cucumber-html-reports";
+    protected static final String BASE_URL = "cucumber-html-reports";
+
     private static final String DEFAULT_PAGE = "feature-overview.html";
 
     public String getUrlName() {
