@@ -2,13 +2,13 @@ package net.masterthought.jenkins;
 
 import java.io.File;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
 public class CucumberReportBuildAction extends CucumberReportBaseAction {
 
-    private final AbstractBuild<?, ?> build;
+    private final Run<?, ?> build;
 
-    public CucumberReportBuildAction(AbstractBuild<?, ?> build) {
+    public CucumberReportBuildAction(Run<?, ?> build) {
         this.build = build;
     }
 

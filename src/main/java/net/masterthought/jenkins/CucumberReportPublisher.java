@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import jenkins.tasks.SimpleBuildStep;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -15,12 +16,12 @@ import org.kohsuke.stapler.QueryParameter;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.BuildListener;
 import hudson.model.Computer;
 import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.slaves.SlaveComputer;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
@@ -30,7 +31,7 @@ import hudson.util.FormValidation;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 
-public class CucumberReportPublisher extends Recorder {
+public class CucumberReportPublisher extends Recorder implements SimpleBuildStep {
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
 
@@ -80,17 +81,16 @@ public class CucumberReportPublisher extends Recorder {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
-            throws IOException, InterruptedException {
-
+    public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
+            throws InterruptedException, IOException {
         listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Html Reports ...");
 
         // source directory (possibly on slave)
         FilePath workspaceJsonReportDirectory;
         if (jsonReportDirectory.isEmpty()) {
-            workspaceJsonReportDirectory = build.getWorkspace();
+            workspaceJsonReportDirectory = workspace;
         } else {
-            workspaceJsonReportDirectory = new FilePath(build.getWorkspace(), jsonReportDirectory);
+            workspaceJsonReportDirectory = new FilePath(workspace, jsonReportDirectory);
         }
 
         // target directory (always on master)
@@ -100,7 +100,7 @@ public class CucumberReportPublisher extends Recorder {
         }
 
         String buildNumber = Integer.toString(build.getNumber());
-        String projectName = build.getProject().getName();
+        String projectName = build.getParent().getName();
 
         if (Computer.currentComputer() instanceof SlaveComputer) {
             listener.getLogger().println("[CucumberReportPublisher] Copying all json files from slave: " + workspaceJsonReportDirectory.getRemote() + " to master reports directory: " + targetBuildDirectory);
@@ -153,8 +153,6 @@ public class CucumberReportPublisher extends Recorder {
 
         build.addAction(new CucumberReportBuildAction(build));
         build.setResult(result);
-
-        return true;
     }
 
     private List<String> fullPathToJsonFiles(String[] jsonFiles, File targetBuildDirectory) {
