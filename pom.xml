@@ -67,8 +67,8 @@
         <plugins>
         <!--  release with
         mvn clean release:prepare release:perform
-        - add "-Dusername=... -Dpassword=..." when above does not authorize correctly
-        - add "-Darguments="-DskipTests" only when tests locally don't pass
+        - add -Dusername=... -Dpassword=... when above does not authorize correctly
+        - add -Darguments="-DskipTests" only when tests locally don't pass
         once the release is completed, new version should be present here:
         http://repo.jenkins-ci.org/releases/net/masterthought/jenkins/cucumber-reports/
         and then later after synchronization also here:
