@@ -5,11 +5,11 @@
 
 # Publish pretty [cucumber-jvm](https://github.com/cucumber/cucumber-jvm) reports on [Jenkins](http://jenkins-ci.org/)
 
-This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber `--format json -o cucumber.json`
+This is a Java Jenkins plugin which publishes [pretty html reports](https://github.com/damianszczepanik/cucumber-reporting) showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber `--format json -o cucumber.json`
 
 ## Background
 
-Cucumber-JVM is a test automation tool following the principles of Behavioural Driven Design and living documentation. Specifications are written in a concise human readable form and executed in continuous integration. 
+Cucumber-JVM is a test automation tool following the principles of [Behavioural Driven Design](https://en.wikipedia.org/wiki/Behavior-driven_development) and living documentation. Specifications are written in a concise [human readable form](https://cucumber.io/docs/reference) and executed in continuous integration. 
 
 This plugin allows Jenkins to publish the results as pretty html reports hosted by the Jenkins build server. In order for this plugin to work you must be using the JUnit runner and generating a json report. The plugin converts the json report into an overview html linking to separate feature file htmls with stats and results. 
 
@@ -41,10 +41,9 @@ If you need more control over the plugin you can click the Advanced button for m
 2. Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
 3. Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
 4. Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
-5. Tick if you don't want the reports to be displayed in flash. Javascript will be used instead - see further down for more info on this
-6. Tick if you want failed test not to fail the entire build but make it unstable
+5. Tick if you want failed test not to fail the entire build but make it unstable
 
-When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the cucumber reports. There is a feature overview page:
+When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the [cucumber reports](https://github.com/damianszczepanik/cucumber-reporting). There is a feature overview page:
 
 ![feature overview page]
 (https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-overview.png)
