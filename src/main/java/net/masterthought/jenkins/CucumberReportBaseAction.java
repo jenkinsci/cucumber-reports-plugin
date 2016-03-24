@@ -11,12 +11,13 @@ import org.kohsuke.stapler.StaplerResponse;
 import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
+import net.masterthought.cucumber.ReportBuilder;
 
 public abstract class CucumberReportBaseAction implements Action {
 
     protected static final String BASE_URL = "cucumber-html-reports";
 
-    private static final String DEFAULT_PAGE = "feature-overview.html";
+    private static final String DEFAULT_PAGE = ReportBuilder.HOME_PAGE;
 
     public String getUrlName() {
         return BASE_URL;
