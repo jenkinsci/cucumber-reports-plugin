@@ -35,7 +35,8 @@ public abstract class CucumberReportBaseAction implements Action {
         // since Jenkins blocks JavaScript as described at
         // https://wiki.jenkins-ci.org/display/JENKINS/Configuring+Content+Security+Policy and fact that plugin uses JS
         // to display charts, following must be applied
-        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "");
+        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP",
+                "sandbox; script-src 'self' 'unsafe-inline'; default-src 'self'; img-src 'self'; style-src 'self';");
 
         DirectoryBrowserSupport dbs = new DirectoryBrowserSupport(this, new FilePath(dir()), getTitle(), getUrlName(),
                 false);
