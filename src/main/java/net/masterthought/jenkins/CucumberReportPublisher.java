@@ -100,7 +100,11 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         }
 
         String buildNumber = Integer.toString(build.getNumber());
-        String projectName = build.getParent().getName();
+        // this works for normal and multi-config/matrix jobs
+        // for matrix jobs, this will include the matrix job name and the specific
+        // configuration/permutation name as well. this also includes the '/' so
+        // we don't have to modify how the cucumber plugin report generator's links
+        String projectName = build.getParent().getFullName();
 
         if (Computer.currentComputer() instanceof SlaveComputer) {
             listener.getLogger().println("[CucumberReportPublisher] Copying all json files from slave: " + workspaceJsonReportDirectory.getRemote() + " to master reports directory: " + targetBuildDirectory);
