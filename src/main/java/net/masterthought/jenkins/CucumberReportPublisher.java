@@ -106,6 +106,16 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         // we don't have to modify how the cucumber plugin report generator's links
         String projectName = build.getParent().getFullName();
 
+        String thisBuildUrl = build.getUrl();
+        String previousBuildUrl = null;
+        if(build.getPreviousCompletedBuild() != null) {
+            previousBuildUrl = build.getPreviousCompletedBuild().getUrl();
+        }
+        String nextBuildUrl = null;
+        if(build.getNextBuild() != null) {
+             nextBuildUrl = build.getNextBuild().getUrl();
+        }
+
         if (Computer.currentComputer() instanceof SlaveComputer) {
             listener.getLogger().println("[CucumberReportPublisher] Copying all json files from slave: " + workspaceJsonReportDirectory.getRemote() + " to master reports directory: " + targetBuildDirectory);
         } else {
@@ -129,7 +139,9 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
                 Configuration configuration = new Configuration(targetBuildDirectory, projectName);
                 configuration.setStatusFlags(skippedFails, pendingFails, undefinedFails, missingFails);
                 configuration.setParallelTesting(parallelTesting);
-                configuration.setJenkinsBasePath(jenkinsBasePath);
+                configuration.setJenkinsBuildURL(thisBuildUrl);
+                configuration.setJenkinsPreviousBuildURL(previousBuildUrl);
+                configuration.setJenkinsNextBuildURL(nextBuildUrl);
                 configuration.setRunWithJenkins(true);
                 configuration.setBuildNumber(buildNumber);
 
