@@ -13,11 +13,6 @@ f.advanced(field:"help") {
     f.entry(title:_("fileExcludePattern.name"), description:_("fileExcludePattern.description"), field:"fileExcludePattern") {
         f.textbox()
     }
-
-    f.entry(title:_("jenkinsBasePath.name"), description:_("jenkinsBasePath.description"), field:"jenkinsBasePath") {
-        f.textbox()
-    }
-
     f.entry(title:_("skippedFails.name"), description:_("skippedFails.description"), field:"skippedFails") {
         f.checkbox()
     }

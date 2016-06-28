@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.AncestorInPath;
@@ -36,7 +37,6 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
 
     public final String jsonReportDirectory;
-    public final String jenkinsBasePath;
     public final String fileIncludePattern;
     public final String fileExcludePattern;
     public final boolean skippedFails;
@@ -47,11 +47,10 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     public final boolean parallelTesting;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String jenkinsBasePath, String fileIncludePattern,
+    public CucumberReportPublisher(String jsonReportDirectory, String fileIncludePattern,
             String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails,
             boolean missingFails, boolean ignoreFailedTests, boolean parallelTesting) {
         this.jsonReportDirectory = jsonReportDirectory;
-        this.jenkinsBasePath = jenkinsBasePath;
         this.fileIncludePattern = fileIncludePattern;
         this.fileExcludePattern = fileExcludePattern;
 
@@ -106,15 +105,13 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         // we don't have to modify how the cucumber plugin report generator's links
         String projectName = build.getParent().getFullName();
 
-        String thisBuildUrl = build.getUrl();
+        String rootURL = Jenkins.getInstance().getRootUrl();
+        String thisBuildUrl = rootURL + build.getUrl();
         String previousBuildUrl = null;
         if(build.getPreviousCompletedBuild() != null) {
-            previousBuildUrl = build.getPreviousCompletedBuild().getUrl();
+            previousBuildUrl = rootURL + build.getPreviousCompletedBuild().getUrl();
         }
-        String nextBuildUrl = null;
-        if(build.getNextBuild() != null) {
-             nextBuildUrl = build.getNextBuild().getUrl();
-        }
+        String projectUrl = rootURL + build.getParent().getUrl();
 
         if (Computer.currentComputer() instanceof SlaveComputer) {
             listener.getLogger().println("[CucumberReportPublisher] Copying all json files from slave: " + workspaceJsonReportDirectory.getRemote() + " to master reports directory: " + targetBuildDirectory);
@@ -141,7 +138,7 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
                 configuration.setParallelTesting(parallelTesting);
                 configuration.setJenkinsBuildURL(thisBuildUrl);
                 configuration.setJenkinsPreviousBuildURL(previousBuildUrl);
-                configuration.setJenkinsNextBuildURL(nextBuildUrl);
+                configuration.setJenkinsProjectURL(projectUrl);
                 configuration.setRunWithJenkins(true);
                 configuration.setBuildNumber(buildNumber);
 
