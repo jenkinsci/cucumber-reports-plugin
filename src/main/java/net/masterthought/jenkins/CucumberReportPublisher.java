@@ -5,14 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletException;
-
-import jenkins.tasks.SimpleBuildStep;
-import org.apache.tools.ant.DirectoryScanner;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -26,12 +18,15 @@ import hudson.slaves.SlaveComputer;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
-import hudson.util.FormValidation;
+import javax.annotation.Nonnull;
+import jenkins.tasks.SimpleBuildStep;
+import org.apache.tools.ant.DirectoryScanner;
+import org.kohsuke.stapler.DataBoundConstructor;
+
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 
-public class CucumberReportPublisher extends Recorder implements SimpleBuildStep {
+public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
 
@@ -46,10 +41,12 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     public final boolean ignoreFailedTests;
     public final boolean parallelTesting;
 
+    private File targetBuildDirectory;
+
     @DataBoundConstructor
     public CucumberReportPublisher(String jsonReportDirectory, String jenkinsBasePath, String fileIncludePattern,
-            String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails,
-            boolean missingFails, boolean ignoreFailedTests, boolean parallelTesting) {
+                                   String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails,
+                                   boolean missingFails, boolean ignoreFailedTests, boolean parallelTesting) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.jenkinsBasePath = jenkinsBasePath;
         this.fileIncludePattern = fileIncludePattern;
@@ -64,25 +61,26 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         this.parallelTesting = parallelTesting;
     }
 
-    private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
-        DirectoryScanner scanner = new DirectoryScanner();
+    @Override
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
+            throws InterruptedException, IOException {
 
-        if (fileIncludePattern == null || fileIncludePattern.isEmpty()) {
-            scanner.setIncludes(new String[] { DEFAULT_FILE_INCLUDE_PATTERN });
-        } else {
-            scanner.setIncludes(new String[] { fileIncludePattern });
+        targetBuildDirectory = new File(run.getRootDir(), CucumberReportBaseAction.BASE_URL);
+        if (!targetBuildDirectory.exists()) {
+            if (targetBuildDirectory.mkdirs()) {
+                throw new IOException("Could not create: " + targetBuildDirectory.getAbsolutePath());
+            }
         }
-        if (fileExcludePattern != null ) {
-            scanner.setExcludes(new String[]{fileExcludePattern});
-        }
-        scanner.setBasedir(targetDirectory);
-        scanner.scan();
-        return scanner.getIncludedFiles();
+
+        generateReport(run, workspace, listener);
+
+        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(targetBuildDirectory, CucumberReportBaseAction.BASE_URL,
+                ReportBuilder.HOME_PAGE, CucumberReportBaseAction.ICON_NAME, Messages.SidePanel_DisplayName());
+        run.addAction(caa);
     }
 
-    @Override
-    public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener)
-            throws InterruptedException, IOException {
+
+    private void generateReport(Run<?, ?> build, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
         listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Html Reports ...");
 
         // source directory (possibly on slave)
@@ -91,12 +89,6 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
             workspaceJsonReportDirectory = workspace;
         } else {
             workspaceJsonReportDirectory = new FilePath(workspace, jsonReportDirectory);
-        }
-
-        // target directory (always on master)
-        File targetBuildDirectory = new File(build.getRootDir(), CucumberReportBaseAction.BASE_URL);
-        if (!targetBuildDirectory.exists()) {
-            targetBuildDirectory.mkdirs();
         }
 
         String buildNumber = Integer.toString(build.getNumber());
@@ -146,8 +138,8 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
             } catch (Exception e) {
                 result = Result.FAILURE;
                 listener.getLogger().println("[CucumberReportPublisher] there was an error generating the reports: " + e);
-                for(StackTraceElement error : e.getStackTrace()){
-                   listener.getLogger().println(error);
+                for (StackTraceElement error : e.getStackTrace()) {
+                    listener.getLogger().println(error);
                 }
             }
         } else {
@@ -155,8 +147,23 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
             listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + targetBuildDirectory);
         }
 
-        build.addAction(new CucumberReportBuildAction(build));
         build.setResult(result);
+    }
+
+    private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
+        DirectoryScanner scanner = new DirectoryScanner();
+
+        if (fileIncludePattern == null || fileIncludePattern.isEmpty()) {
+            scanner.setIncludes(new String[]{DEFAULT_FILE_INCLUDE_PATTERN});
+        } else {
+            scanner.setIncludes(new String[]{fileIncludePattern});
+        }
+        if (fileExcludePattern != null) {
+            scanner.setExcludes(new String[]{fileExcludePattern});
+        }
+        scanner.setBasedir(targetDirectory);
+        scanner.scan();
+        return scanner.getIncludedFiles();
     }
 
     private List<String> fullPathToJsonFiles(String[] jsonFiles, File targetBuildDirectory) {
@@ -165,6 +172,11 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
             fullPathList.add(new File(targetBuildDirectory, file).getAbsolutePath());
         }
         return fullPathList;
+    }
+
+    @Override
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
     }
 
     @Override
@@ -179,19 +191,9 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
             return Messages.Configuration_DisplayName();
         }
 
-        public FormValidation doCheck(@AncestorInPath AbstractProject<?, ?> project,
-                                      @QueryParameter String value) throws IOException, ServletException {
-            FilePath ws = project.getSomeWorkspace();
-            return ws != null ? ws.validateRelativeDirectory(value) : FormValidation.ok();
-        }
-
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
         }
-    }
-
-    public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.NONE;
     }
 }
