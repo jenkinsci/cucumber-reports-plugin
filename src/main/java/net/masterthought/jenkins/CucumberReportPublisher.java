@@ -67,7 +67,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         targetBuildDirectory = new File(run.getRootDir(), CucumberReportBaseAction.BASE_URL);
         if (!targetBuildDirectory.exists()) {
-            if (targetBuildDirectory.mkdirs()) {
+            if (!targetBuildDirectory.mkdirs()) {
                 throw new IOException("Could not create: " + targetBuildDirectory.getAbsolutePath());
             }
         }
