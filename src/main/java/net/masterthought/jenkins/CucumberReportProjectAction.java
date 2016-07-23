@@ -1,10 +1,10 @@
 package net.masterthought.jenkins;
 
-import java.io.File;
-
 import hudson.model.AbstractProject;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
+
+import net.masterthought.cucumber.ReportBuilder;
 
 public class CucumberReportProjectAction extends CucumberReportBaseAction implements ProminentProjectAction {
 
@@ -15,30 +15,22 @@ public class CucumberReportProjectAction extends CucumberReportBaseAction implem
     }
 
     @Override
-    protected File dir() {
+    public String getUrlName() {
         Run<?, ?> run = this.project.getLastCompletedBuild();
         if (run != null) {
-            File archiveDir = getBuildArchiveDir(run);
-
-            if (archiveDir.exists()) {
-                return archiveDir;
-            }
+            // TODO: leading / must be added to make this url absolute but it also finally duplicates //
+            return extractBuildNumber(run.getUrl()) + "/" + CucumberReportBaseAction.BASE_URL + "/" + ReportBuilder.HOME_PAGE;
         }
 
-        return getProjectArchiveDir();
+        // none build was completed, report is yet not available
+        return "";
     }
 
-    private File getProjectArchiveDir() {
-        return new File(project.getRootDir(), CucumberReportBaseAction.BASE_URL);
-    }
-
-    /** Gets the directory where the HTML report is stored for the given build. */
-    private File getBuildArchiveDir(Run<?, ?> run) {
-        return new File(run.getRootDir(), CucumberReportBaseAction.BASE_URL);
-    }
-
-    @Override
-    protected String getTitle() {
-        return this.project.getDisplayName();
+    private String extractBuildNumber(String url) {
+        // basic url format -> job/cucumber/125/
+        // view url format  -> view/myview/job/cucumber/126/
+        String buildNumber = url.substring(0, url.length() - 1);
+        buildNumber = buildNumber.substring(buildNumber.lastIndexOf("/") + 1);
+        return buildNumber;
     }
 }

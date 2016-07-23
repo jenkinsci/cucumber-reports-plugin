@@ -1,9 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.577</version>
+        <version>2.9</version>
+        <relativePath/>
     </parent>
 
     <groupId>net.masterthought.jenkins</groupId>
@@ -48,7 +52,7 @@
         </developer>
     </developers>
 
-    <!-- get every artifact through repo.jenkins-ci.org, which proxies all 
+    <!-- get every artifact through repo.jenkins-ci.org, which proxies all
         the artifacts that we need -->
     <repositories>
         <repository>
@@ -66,15 +70,15 @@
 
     <build>
         <plugins>
-        <!--  release with
-        mvn clean release:prepare release:perform
-        - add -Dusername=... -Dpassword=... when above does not authorize correctly
-        - add -Darguments="-DskipTests" only when tests locally don't pass
-        once the release is completed, new version should be present here:
-        http://repo.jenkins-ci.org/releases/net/masterthought/jenkins/cucumber-reports/
-        and then later after synchronization also here:
-        http://updates.jenkins-ci.org/update-center.json
-         -->
+            <!--  release with
+            mvn clean release:prepare release:perform
+            - add -Dusername=... -Dpassword=... when above does not authorize correctly
+            - add -Darguments="-DskipTests" only when tests locally don't pass
+            once the release is completed, new version should be present here:
+            http://repo.jenkins-ci.org/releases/net/masterthought/jenkins/cucumber-reports/
+            and then later after synchronization also here:
+            http://updates.jenkins-ci.org/update-center.json
+             -->
             <plugin>
                 <groupId>org.eclipse.hudson.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
