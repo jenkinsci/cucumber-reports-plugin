@@ -18,8 +18,7 @@ public class CucumberReportProjectAction extends CucumberReportBaseAction implem
     public String getUrlName() {
         Run<?, ?> run = this.project.getLastCompletedBuild();
         if (run != null) {
-            // TODO: leading / must be added to make this url absolute but it also finally duplicates //
-            return extractBuildNumber(run.getUrl()) + "/" + CucumberReportBaseAction.BASE_URL + "/" + ReportBuilder.HOME_PAGE;
+            return extractBuildNumber(run.getUrl()) + "/" + ReportBuilder.BASE_DIRECTORY + "/" + ReportBuilder.HOME_PAGE;
         }
 
         // none build was completed, report is yet not available

@@ -65,17 +65,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
 
-        targetBuildDirectory = new File(run.getRootDir(), CucumberReportBaseAction.BASE_URL);
-        if (!targetBuildDirectory.exists()) {
-            if (!targetBuildDirectory.mkdirs()) {
-                throw new IOException("Could not create: " + targetBuildDirectory.getAbsolutePath());
-            }
-        }
+        targetBuildDirectory = run.getRootDir();
 
         generateReport(run, workspace, listener);
 
-        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(targetBuildDirectory, CucumberReportBaseAction.BASE_URL,
-                ReportBuilder.HOME_PAGE, CucumberReportBaseAction.ICON_NAME, Messages.SidePanel_DisplayName());
+        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY),
+                ReportBuilder.BASE_DIRECTORY, ReportBuilder.HOME_PAGE, CucumberReportBaseAction.ICON_NAME, Messages.SidePanel_DisplayName());
         run.addAction(caa);
     }
 
