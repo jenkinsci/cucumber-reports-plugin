@@ -6,14 +6,13 @@ import net.masterthought.cucumber.ReportBuilder;
 
 public abstract class CucumberReportBaseAction implements Action {
 
-    protected static final String BASE_URL = "cucumber-html-reports";
     protected static final String ICON_NAME = "/plugin/cucumber-reports/icon.png";
 
     private static final String DEFAULT_PAGE = ReportBuilder.HOME_PAGE;
 
     @Override
     public String getUrlName() {
-        return BASE_URL;
+        return ReportBuilder.HOME_PAGE;
     }
 
     @Override
