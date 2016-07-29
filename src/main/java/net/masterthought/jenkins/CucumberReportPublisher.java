@@ -1,30 +1,24 @@
 package net.masterthought.jenkins;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.Computer;
-import hudson.model.Result;
-import hudson.model.Run;
-import hudson.model.TaskListener;
+import hudson.model.*;
 import hudson.slaves.SlaveComputer;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
+import net.masterthought.cucumber.Configuration;
+import net.masterthought.cucumber.ReportBuilder;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import net.masterthought.cucumber.Configuration;
-import net.masterthought.cucumber.ReportBuilder;
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
@@ -37,7 +31,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public final boolean skippedFails;
     public final boolean pendingFails;
     public final boolean undefinedFails;
-    public final boolean missingFails;
     public final boolean ignoreFailedTests;
     public final boolean parallelTesting;
 
@@ -46,7 +39,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @DataBoundConstructor
     public CucumberReportPublisher(String jsonReportDirectory, String jenkinsBasePath, String fileIncludePattern,
                                    String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails,
-                                   boolean missingFails, boolean ignoreFailedTests, boolean parallelTesting) {
+                                   boolean ignoreFailedTests, boolean parallelTesting) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.jenkinsBasePath = jenkinsBasePath;
         this.fileIncludePattern = fileIncludePattern;
@@ -55,7 +48,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.skippedFails = skippedFails;
         this.pendingFails = pendingFails;
         this.undefinedFails = undefinedFails;
-        this.missingFails = missingFails;
 
         this.ignoreFailedTests = ignoreFailedTests;
         this.parallelTesting = parallelTesting;
@@ -114,7 +106,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
             try {
                 Configuration configuration = new Configuration(targetBuildDirectory, projectName);
-                configuration.setStatusFlags(skippedFails, pendingFails, undefinedFails, missingFails);
+                configuration.setStatusFlags(skippedFails, pendingFails, undefinedFails);
                 configuration.setParallelTesting(parallelTesting);
                 configuration.setJenkinsBasePath(jenkinsBasePath);
                 configuration.setRunWithJenkins(true);
