@@ -103,43 +103,32 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // generate the reports from the targetBuildDirectory
         Result result;
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory, fileIncludePattern, fileExcludePattern);
-        if (jsonReportFiles.length > 0) {
-            listener.getLogger().println(String.format("[CucumberReportPublisher] Found %d json files.", jsonReportFiles.length));
-            int jsonIndex = 1;
-            for (String jsonReportFile : jsonReportFiles) {
-                listener.getLogger().println("[CucumberReportPublisher] " + jsonIndex + ". Found a json file: " + jsonReportFile);
-                jsonIndex++;
+        listener.getLogger().println(String.format("[CucumberReportPublisher] Found %d json files.", jsonReportFiles.length));
+
+        try {
+            Configuration configuration = new Configuration(targetBuildDirectory, projectName);
+            configuration.setStatusFlags(skippedFails, pendingFails, undefinedFails, missingFails);
+            configuration.setParallelTesting(parallelTesting);
+            configuration.setJenkinsBasePath(jenkinsBasePath);
+            configuration.setRunWithJenkins(true);
+            configuration.setBuildNumber(buildNumber);
+
+            ReportBuilder reportBuilder = new ReportBuilder(
+                    fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), configuration);
+            reportBuilder.generateReports();
+
+            if (reportBuilder.hasBuildPassed()) {
+                result = Result.SUCCESS;
+            } else {
+                result = ignoreFailedTests ? Result.UNSTABLE : Result.FAILURE;
             }
-            listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
 
-            try {
-                Configuration configuration = new Configuration(targetBuildDirectory, projectName);
-                configuration.setStatusFlags(skippedFails, pendingFails, undefinedFails, missingFails);
-                configuration.setParallelTesting(parallelTesting);
-                configuration.setJenkinsBasePath(jenkinsBasePath);
-                configuration.setRunWithJenkins(true);
-                configuration.setBuildNumber(buildNumber);
-
-                ReportBuilder reportBuilder = new ReportBuilder(
-                        fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), configuration);
-                reportBuilder.generateReports();
-
-                if (reportBuilder.hasBuildPassed()) {
-                    result = Result.SUCCESS;
-                } else {
-                    result = ignoreFailedTests ? Result.UNSTABLE : Result.FAILURE;
-                }
-
-            } catch (Exception e) {
-                result = Result.FAILURE;
-                listener.getLogger().println("[CucumberReportPublisher] there was an error generating the reports: " + e);
-                for (StackTraceElement error : e.getStackTrace()) {
-                    listener.getLogger().println(error);
-                }
+        } catch (Exception e) {
+            result = Result.FAILURE;
+            listener.getLogger().println("[CucumberReportPublisher] there was an error generating the reports: " + e);
+            for (StackTraceElement error : e.getStackTrace()) {
+                listener.getLogger().println(error);
             }
-        } else {
-            result = Result.SUCCESS;
-            listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + targetBuildDirectory);
         }
 
         build.setResult(result);
