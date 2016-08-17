@@ -15,7 +15,7 @@
     <packaging>hpi</packaging>
 
     <!-- This name and URL are added by the Jenkins when displaying help.html file -->
-    <name>Cucumber-jvm reports</name>
+    <name>Cucumber-JVM reports</name>
     <url>https://github.com/jenkinsci/cucumber-reports-plugin</url>
 
     <scm>

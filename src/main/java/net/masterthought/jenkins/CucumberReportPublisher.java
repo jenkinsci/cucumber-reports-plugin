@@ -76,7 +76,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
 
     private void generateReport(Run<?, ?> build, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
-        listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Html Reports ...");
+        listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Reports ...");
 
         // source directory (possibly on slave)
         FilePath workspaceJsonReportDirectory;
@@ -91,7 +91,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // for matrix jobs, this will include the matrix job name and the specific
         // configuration/permutation name as well. this also includes the '/' so
         // we don't have to modify how the cucumber plugin report generator's links
-        String projectName = build.getParent().getFullName();
+        String projectName = build.getParent().getDisplayName();
 
         if (Computer.currentComputer() instanceof SlaveComputer) {
             listener.getLogger().println("[CucumberReportPublisher] Copying all json files from slave: " + workspaceJsonReportDirectory.getRemote() + " to master reports directory: " + targetBuildDirectory);
