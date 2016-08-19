@@ -11,7 +11,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>2.8.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <!-- This name and URL are added by the Jenkins when displaying help.html file -->
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>2.8.0</version>
+            <version>3.0.0</version>
         </dependency>
     </dependencies>
 </project>

@@ -10,12 +10,9 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Computer;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.slaves.SlaveComputer;
-import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import javax.annotation.Nonnull;
@@ -26,38 +23,51 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
+import net.masterthought.cucumber.Reportable;
 
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
 
+    private final static String REPORTS_DIR = "cucumber-reports";
+    private final static String TRENDS_FILE = "cucumber-trends.json";
+
     public final String jsonReportDirectory;
-    public final String jenkinsBasePath;
     public final String fileIncludePattern;
     public final String fileExcludePattern;
-    public final boolean skippedFails;
-    public final boolean pendingFails;
-    public final boolean undefinedFails;
-    public final boolean ignoreFailedTests;
+
+    public final int failedStepsNumber;
+    public final int skippedStepsNumber;
+    public final int pendingStepsNumber;
+    public final int undefinedStepsNumber;
+    public final int failedScenariosNumber;
+    public final int failedFeaturesNumber;
+    public final Result buildStatus;
+
     public final boolean parallelTesting;
+    public final String jenkinsBasePath;
 
     private File targetBuildDirectory;
 
+
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String jenkinsBasePath, String fileIncludePattern,
-                                   String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails,
-                                   boolean ignoreFailedTests, boolean parallelTesting) {
+    public CucumberReportPublisher(String jsonReportDirectory, String fileIncludePattern, String fileExcludePattern,
+                                   int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
+                                   int undefinedStepsNumber, int failedScenariosNumber, int failedFeaturesNumber,
+                                   String buildStatus, boolean parallelTesting, String jenkinsBasePath) {
+
         this.jsonReportDirectory = jsonReportDirectory;
-        this.jenkinsBasePath = jenkinsBasePath;
         this.fileIncludePattern = fileIncludePattern;
         this.fileExcludePattern = fileExcludePattern;
-
-        this.skippedFails = skippedFails;
-        this.pendingFails = pendingFails;
-        this.undefinedFails = undefinedFails;
-
-        this.ignoreFailedTests = ignoreFailedTests;
+        this.failedStepsNumber = failedStepsNumber;
+        this.skippedStepsNumber = skippedStepsNumber;
+        this.pendingStepsNumber = pendingStepsNumber;
+        this.undefinedStepsNumber = undefinedStepsNumber;
+        this.failedScenariosNumber = failedScenariosNumber;
+        this.failedFeaturesNumber = failedFeaturesNumber;
+        this.buildStatus = buildStatus == null ? null : Result.fromString(buildStatus);
         this.parallelTesting = parallelTesting;
+        this.jenkinsBasePath = jenkinsBasePath;
     }
 
     @Override
@@ -73,9 +83,16 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         run.addAction(caa);
     }
 
-
     private void generateReport(Run<?, ?> build, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
-        listener.getLogger().println("[CucumberReportPublisher] Compiling Cucumber Reports ...");
+        log(listener, "Preparing Cucumber Reports");
+
+        // create directory where trends will be stored
+        final File trendsDir = new File(build.getParent().getRootDir(), REPORTS_DIR);
+        if (!trendsDir.exists()) {
+            if (!trendsDir.mkdir()) {
+                throw new IllegalStateException("Could not create directory: " + trendsDir);
+            }
+        }
 
         // source directory (possibly on slave)
         FilePath workspaceJsonReportDirectory;
@@ -92,46 +109,31 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // we don't have to modify how the cucumber plugin report generator's links
         String projectName = build.getParent().getDisplayName();
 
-        if (Computer.currentComputer() instanceof SlaveComputer) {
-            listener.getLogger().println("[CucumberReportPublisher] Copying all json files from slave: " + workspaceJsonReportDirectory.getRemote() + " to master reports directory: " + targetBuildDirectory);
-        } else {
-            listener.getLogger().println("[CucumberReportPublisher] Copying all json files from: " + workspaceJsonReportDirectory.getRemote() + " to reports directory: " + targetBuildDirectory);
-        }
-        workspaceJsonReportDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(targetBuildDirectory));
+        int copiedFiles = workspaceJsonReportDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(targetBuildDirectory));
+        log(listener, String.format("Copied %d json files from \"%s\" to reports directory \"%s\"",
+                copiedFiles, workspaceJsonReportDirectory.getRemote(), targetBuildDirectory));
 
         // generate the reports from the targetBuildDirectory
-        Result result;
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory, fileIncludePattern, fileExcludePattern);
-        listener.getLogger().println(String.format("[CucumberReportPublisher] Found %d json files:", jsonReportFiles.length));
-        listener.getLogger().println(StringUtils.join(jsonReportFiles, ",\n"));
+        log(listener, String.format("Found %d json files.", jsonReportFiles.length));
 
-            try {
-                Configuration configuration = new Configuration(targetBuildDirectory, projectName);
-                configuration.setStatusFlags(skippedFails, pendingFails, undefinedFails);
-                configuration.setParallelTesting(parallelTesting);
-                configuration.setJenkinsBasePath(jenkinsBasePath);
-                configuration.setRunWithJenkins(true);
-                configuration.setBuildNumber(buildNumber);
+        Configuration configuration = new Configuration(targetBuildDirectory, projectName);
+        configuration.setParallelTesting(parallelTesting);
+        configuration.setJenkinsBasePath(jenkinsBasePath);
+        configuration.setRunWithJenkins(true);
+        configuration.setBuildNumber(buildNumber);
+        configuration.setTrendsStatsFile(new File(trendsDir, TRENDS_FILE));
 
-            ReportBuilder reportBuilder = new ReportBuilder(
-                    fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), configuration);
-            reportBuilder.generateReports();
+        ReportBuilder reportBuilder = new ReportBuilder(
+                fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), configuration);
+        Reportable result = reportBuilder.generateReports();
 
-            if (reportBuilder.hasBuildPassed()) {
-                result = Result.SUCCESS;
-            } else {
-                result = ignoreFailedTests ? Result.UNSTABLE : Result.FAILURE;
-            }
-
-        } catch (Exception e) {
-            result = Result.FAILURE;
-            listener.getLogger().println("[CucumberReportPublisher] there was an error generating the reports: " + e);
-            for (StackTraceElement error : e.getStackTrace()) {
-                listener.getLogger().println(error);
+        if (hasReportFailed(result, listener)) {
+            // redefine build result if it was provided by plugin configuration
+            if (buildStatus != null) {
+                build.setResult(buildStatus);
             }
         }
-
-        build.setResult(result);
     }
 
     private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
@@ -158,6 +160,52 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return fullPathList;
     }
 
+    boolean hasReportFailed(Reportable result, TaskListener listener) {
+        // happens when the resport could not be generated
+        if (result == null) {
+            log(listener, "Missing report result - report was not successfully completed");
+            return true;
+        }
+
+        if (result.getFailedSteps() > failedStepsNumber) {
+            log(listener, String.format("Found %d failed steps, while expected not more than %d",
+                    result.getFailedSteps(), failedStepsNumber));
+            return true;
+        }
+        if (result.getSkippedSteps() > skippedStepsNumber) {
+            log(listener, String.format("Found %d skipped steps, while expected not more than %d",
+                    result.getSkippedSteps(), skippedStepsNumber));
+            return true;
+        }
+        if (result.getPendingSteps() > pendingStepsNumber) {
+            log(listener, String.format("Found %d pending steps, while expected not more than %d",
+                    result.getPendingSteps(), pendingStepsNumber));
+            return true;
+        }
+        if (result.getUndefinedSteps() > undefinedStepsNumber) {
+            log(listener, String.format("Found %d undefined steps, while expected not more than %d",
+                    result.getUndefinedSteps(), undefinedStepsNumber));
+            return true;
+        }
+
+        if (result.getFailedScenarios() > failedScenariosNumber) {
+            log(listener, String.format("Found %d failed scenarios, while expected not more than %d",
+                    result.getFailedScenarios(), failedScenariosNumber));
+            return true;
+        }
+        if (result.getFailedFeatures() > failedFeaturesNumber) {
+            log(listener, String.format("Found %d failed features, while expected not more than %d",
+                    result.getFailedFeatures(), failedFeaturesNumber));
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void log(TaskListener listener, String message) {
+        listener.getLogger().println("[CucumberReport] " + message);
+    }
+
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
@@ -169,15 +217,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     @Extension
-    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-        @Override
-        public String getDisplayName() {
-            return Messages.Configuration_DisplayName();
-        }
-
-        @Override
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return true;
-        }
+    public static class DescriptorImpl extends CucumberReportBuildStepDescriptor {
     }
 }

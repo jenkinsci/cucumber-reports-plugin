@@ -1,0 +1,95 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:advanced>
+        <f:section title="${%jsonReportDirectory}">
+            <f:entry title="${%jsonReportDirectory.title}"
+                     field="jsonReportDirectory"
+                     description="${%jsonReportDirectory.description}">
+                <f:textbox/>
+            </f:entry>
+
+            <f:entry
+                    title="${%fileIncludePattern.title}"
+                    field="fileIncludePattern"
+                    description="${%fileIncludePattern.description}">
+                <f:textbox default="**/*.json"/>
+            </f:entry>
+            <f:entry
+                    title="${%fileExcludePattern.title}"
+                    field="fileExcludePattern"
+                    description="${%fileExcludePattern.description}">
+                <f:textbox/>
+            </f:entry>
+        </f:section>
+
+
+        <f:section title="${%buildResult}">
+            <f:description>
+                ${%buildResult.description}
+            </f:description>
+            <f:entry
+                    title="${%failedStepsNumber.title}"
+                    field="failedStepsNumber"
+                    description="${%failedStepsNumber.description}">
+                <f:textbox default="0"/>
+            </f:entry>
+            <f:entry
+                    title="${%skippedStepsNumber.title}"
+                    field="skippedStepsNumber"
+                    description="${%skippedStepsNumber.description}">
+                <f:textbox default="0"/>
+            </f:entry>
+            <f:entry
+                    title="${%pendingStepsNumber.title}"
+                    field="pendingStepsNumber"
+                    description="${%pendingStepsNumber.description}">
+                <f:textbox default="0"/>
+            </f:entry>
+            <f:entry
+                    title="${%undefinedStepsNumber.title}"
+                    field="undefinedStepsNumber"
+                    description="${%undefinedStepsNumber.description}">
+                <f:textbox default="0"/>
+            </f:entry>
+
+            <f:entry
+                    title="${%failedScenariosNumber.title}"
+                    field="failedScenariosNumber"
+                    description="${%failedScenariosNumber.description}">
+                <f:textbox default="0"/>
+            </f:entry>
+            <f:entry
+                    title="${%failedFeaturesNumber.title}"
+                    field="failedFeaturesNumber"
+                    description="${%failedFeaturesNumber.description}">
+                <f:textbox default="0"/>
+            </f:entry>
+
+            <f:entry
+                    title="${%buildStatus.title}"
+                    field="buildStatus"
+                    description="${%buildStatus.description}">
+                <f:select/>
+            </f:entry>
+
+        </f:section>
+
+        <f:section title="Others">
+        <f:entry
+                title="${%parallelTesting.title}"
+                field="parallelTesting"
+                description="${%parallelTesting.description}">
+            <f:checkbox/>
+        </f:entry>
+        <f:entry
+                title="${%jenkinsBasePath.title}"
+                field="jenkinsBasePath"
+                description="${%jenkinsBasePath.description}">
+            <f:textbox/>
+        </f:entry>
+        </f:section>
+
+    </f:advanced>
+</j:jelly>
+
