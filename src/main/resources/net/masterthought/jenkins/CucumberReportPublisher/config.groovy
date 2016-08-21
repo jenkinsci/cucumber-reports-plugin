@@ -27,9 +27,6 @@ f.advanced(field: "help") {
     f.entry(title: _("undefinedFails.name"), description: _("undefinedFails.description"), field: "undefinedFails") {
         f.checkbox()
     }
-    f.entry(title: _("missingFails.name"), description: _("missingFails.description"), field: "missingFails") {
-        f.checkbox()
-    }
 
     f.entry(title: _("ignoreFailedTests.name"), description: _("ignoreFailedTests.description"), field: "ignoreFailedTests") {
         f.checkbox()
