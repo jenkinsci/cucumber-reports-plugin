@@ -1,24 +1,31 @@
 package net.masterthought.jenkins;
 
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.*;
-import hudson.slaves.SlaveComputer;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Publisher;
-import jenkins.tasks.SimpleBuildStep;
-import net.masterthought.cucumber.Configuration;
-import net.masterthought.cucumber.ReportBuilder;
-import org.apache.tools.ant.DirectoryScanner;
-import org.kohsuke.stapler.DataBoundConstructor;
-
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractProject;
+import hudson.model.Action;
+import hudson.model.Computer;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.slaves.SlaveComputer;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
+import javax.annotation.Nonnull;
+import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tools.ant.DirectoryScanner;
+import org.kohsuke.stapler.DataBoundConstructor;
+
+import net.masterthought.cucumber.Configuration;
+import net.masterthought.cucumber.ReportBuilder;
 
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
@@ -95,7 +102,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // generate the reports from the targetBuildDirectory
         Result result;
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory, fileIncludePattern, fileExcludePattern);
-        listener.getLogger().println(String.format("[CucumberReportPublisher] Found %d json files.", jsonReportFiles.length));
+        listener.getLogger().println(String.format("[CucumberReportPublisher] Found %d json files:", jsonReportFiles.length));
+        listener.getLogger().println(StringUtils.join(jsonReportFiles, ",\n"));
 
             try {
                 Configuration configuration = new Configuration(targetBuildDirectory, projectName);
