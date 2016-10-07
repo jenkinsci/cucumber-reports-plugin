@@ -70,7 +70,7 @@
     <build>
         <plugins>
             <!--  release with
-            mvn clean release:prepare release:perform -Dusername=... -Dpassword=...
+            mvn clean release:prepare release:perform
             once the release is completed, new version should be present here:
             http://repo.jenkins-ci.org/releases/net/masterthought/jenkins/cucumber-reports/
             and later after synchronization also here:
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
         </dependency>
     </dependencies>
 </project>
