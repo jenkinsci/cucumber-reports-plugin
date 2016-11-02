@@ -34,6 +34,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public final String jsonReportDirectory;
     public final String fileIncludePattern;
     public final String fileExcludePattern;
+    public final int trendsLimit;
 
     public final int failedStepsNumber;
     public final int skippedStepsNumber;
@@ -51,13 +52,14 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     @DataBoundConstructor
     public CucumberReportPublisher(String jsonReportDirectory, String fileIncludePattern, String fileExcludePattern,
-                                   int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
+                                   int trendsLimit, int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
                                    int undefinedStepsNumber, int failedScenariosNumber, int failedFeaturesNumber,
                                    String buildStatus, boolean parallelTesting, String jenkinsBasePath) {
 
         this.jsonReportDirectory = jsonReportDirectory;
         this.fileIncludePattern = fileIncludePattern;
         this.fileExcludePattern = fileExcludePattern;
+        this.trendsLimit = trendsLimit;
         this.failedStepsNumber = failedStepsNumber;
         this.skippedStepsNumber = skippedStepsNumber;
         this.pendingStepsNumber = pendingStepsNumber;
@@ -121,7 +123,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setJenkinsBasePath(jenkinsBasePath);
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
-        configuration.setTrendsStatsFile(new File(trendsDir, TRENDS_FILE));
+        configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
 
         ReportBuilder reportBuilder = new ReportBuilder(
                 fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), configuration);

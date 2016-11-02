@@ -21,6 +21,12 @@
                     description="${%fileExcludePattern.description}">
                 <f:textbox/>
             </f:entry>
+            <f:entry
+                    title="${%trendsLimit.title}"
+                    field="trendsLimit"
+                    description="${%trendsLimit.description}">
+                <f:textbox default="0"/>
+            </f:entry>
         </f:section>
 
 
