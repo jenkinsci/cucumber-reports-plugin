@@ -30,6 +30,10 @@ public class CucumberReportBuildStepDescriptor extends BuildStepDescriptor<Publi
     }
 
 
+    public FormValidation doCheckTrendsLimit(@QueryParameter String value) {
+        return isValidNumber(value);
+    }
+
     public FormValidation doCheckFailedStepsNumber(@QueryParameter String value) {
         return isValidNumber(value);
     }
