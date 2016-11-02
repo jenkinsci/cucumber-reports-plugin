@@ -17,7 +17,6 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
 
