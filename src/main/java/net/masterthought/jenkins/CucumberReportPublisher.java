@@ -45,13 +45,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public final Result buildStatus;
 
     public final boolean parallelTesting;
-    public final String jenkinsBasePath;
 
     @DataBoundConstructor
     public CucumberReportPublisher(String jsonReportDirectory, String fileIncludePattern, String fileExcludePattern,
                                    int trendsLimit, int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
                                    int undefinedStepsNumber, int failedScenariosNumber, int failedFeaturesNumber,
-                                   String buildStatus, boolean parallelTesting, String jenkinsBasePath) {
+                                   String buildStatus, boolean parallelTesting) {
 
         this.jsonReportDirectory = jsonReportDirectory;
         this.fileIncludePattern = fileIncludePattern;
@@ -65,7 +64,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.failedFeaturesNumber = failedFeaturesNumber;
         this.buildStatus = buildStatus == null ? null : Result.fromString(buildStatus);
         this.parallelTesting = parallelTesting;
-        this.jenkinsBasePath = jenkinsBasePath;
     }
 
     @Override
@@ -117,7 +115,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         Configuration configuration = new Configuration(directoryForReport, projectName);
         configuration.setParallelTesting(parallelTesting);
-        configuration.setJenkinsBasePath(jenkinsBasePath);
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
