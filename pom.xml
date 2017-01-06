@@ -27,8 +27,8 @@
 
     <description>
         This project provides pretty html reports for Cucumber. It works by generating html from the cucumber json
-        report formatter. So can be used anywhere a json report is generated. Current use is in the cucumber jenkins
-        plugin and a maven mojo to generate the same report from mvn command line when running locally.
+        report formatter. Can be used anywhere a json report is generated (Java, Ruby, JavaScript and other
+        implementations).
     </description>
 
     <licenses>
@@ -99,7 +99,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>3.3.0</version>
+            <version>3.4.0</version>
         </dependency>
     </dependencies>
 </project>
