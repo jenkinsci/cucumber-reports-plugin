@@ -3,13 +3,16 @@ package net.masterthought.jenkins;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.AbstractDescribableImpl;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -42,15 +45,17 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public final int undefinedStepsNumber;
     public final int failedScenariosNumber;
     public final int failedFeaturesNumber;
-    public final Result buildStatus;
-
     public final boolean parallelTesting;
+
+    public List<Classification> classifications = Collections.emptyList();
+
+    public final Result buildStatus;
 
     @DataBoundConstructor
     public CucumberReportPublisher(String jsonReportDirectory, String fileIncludePattern, String fileExcludePattern,
                                    int trendsLimit, int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
                                    int undefinedStepsNumber, int failedScenariosNumber, int failedFeaturesNumber,
-                                   String buildStatus, boolean parallelTesting) {
+                                   String buildStatus, boolean parallelTesting, List<Classification> classifications) {
 
         this.jsonReportDirectory = jsonReportDirectory;
         this.fileIncludePattern = fileIncludePattern;
@@ -64,6 +69,14 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.failedFeaturesNumber = failedFeaturesNumber;
         this.buildStatus = buildStatus == null ? null : Result.fromString(buildStatus);
         this.parallelTesting = parallelTesting;
+        // don't store the classifications if there was no element provided
+        if (classifications != null) {
+            this.classifications = classifications;
+        }
+    }
+
+    public List<Classification> getClassifications() {
+        return classifications;
     }
 
     @Override
@@ -105,7 +118,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             log(listener, jsonFile);
         }
 
-
         String buildNumber = Integer.toString(build.getNumber());
         // this works for normal and multi-config/matrix jobs
         // for matrix jobs, this will include the matrix job name and the specific
@@ -118,6 +130,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
+        for (Classification classification : classifications) {
+            configuration.addClassifications(classification.key, classification.value);
+        }
 
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
         Reportable result = reportBuilder.generateReports();
@@ -211,6 +226,27 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
         return new CucumberReportProjectAction(project);
+    }
+
+    public static class Classification extends AbstractDescribableImpl<Classification> {
+
+        String key;
+        String value;
+
+        @DataBoundConstructor
+        public Classification(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Extension
+        public static class DescriptorImpl extends Descriptor<Classification> {
+
+            @Override
+            public String getDisplayName() {
+                return "";
+            }
+        }
     }
 
     @Extension

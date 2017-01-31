@@ -81,13 +81,19 @@
 
         </f:section>
 
-        <f:section title="Others">
-        <f:entry
-                title="${%parallelTesting.title}"
-                field="parallelTesting"
-                description="${%parallelTesting.description}">
-            <f:checkbox/>
-        </f:entry>
+        <f:section title="${%otherSection}">
+            <f:entry
+                    title="${%parallelTesting.title}"
+                    field="parallelTesting"
+                    description="${%parallelTesting.description}">
+                <f:checkbox/>
+            </f:entry>
+
+            <f:entry
+                    field="classifications"
+                    description="${%classifications.description}">
+                <f:repeatableProperty field="classifications"/>
+            </f:entry>
         </f:section>
 
     </f:advanced>
