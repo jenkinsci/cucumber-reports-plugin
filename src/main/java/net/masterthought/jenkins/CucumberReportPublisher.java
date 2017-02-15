@@ -20,6 +20,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -70,7 +71,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.buildStatus = buildStatus == null ? null : Result.fromString(buildStatus);
         this.parallelTesting = parallelTesting;
         // don't store the classifications if there was no element provided
-        if (classifications != null) {
+        if (CollectionUtils.isNotEmpty(classifications)) {
             this.classifications = classifications;
         }
     }
@@ -130,8 +131,10 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
-        for (Classification classification : classifications) {
-            configuration.addClassifications(classification.key, classification.value);
+        if (CollectionUtils.isNotEmpty(classifications)) {
+            for (Classification classification : classifications) {
+                configuration.addClassifications(classification.key, classification.value);
+            }
         }
 
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
