@@ -1,14 +1,5 @@
 package net.masterthought.jenkins;
 
-import hudson.Util;
-import hudson.model.Action;
-import hudson.util.HttpResponses;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.ServletException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,6 +13,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import hudson.Util;
+import hudson.model.Action;
+import hudson.util.HttpResponses;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.ServletException;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * This class implements a solution to serving various reports using JavaScript, Flash, etc. from Jenkins.
@@ -172,7 +172,7 @@ public class SafeArchiveServingAction implements Action {
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Serving " + req.getRestOfPath());
         }
-        if (req.getRestOfPath().equals("")) {
+        if (req.getRestOfPath().isEmpty()) {
             // serve the index page
             if (LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.log(Level.FINEST, "Redirecting to index file");
