@@ -117,7 +117,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // exclude JSONs that should be skipped (as configured by the user)
         String[] jsonReportFiles = findJsonFiles(directoryJsonCache, fileIncludePattern, fileExcludePattern);
         List<String> jsonFilesToProcess = fullPathToJsonFiles(jsonReportFiles, directoryJsonCache);
-        log(listener, String.format("Filtered out %d json files:", jsonReportFiles.length));
+        log(listener, String.format("Processing %d json files:", jsonReportFiles.length));
         for (String jsonFile : jsonFilesToProcess) {
             log(listener, jsonFile);
         }
