@@ -21,8 +21,10 @@ import hudson.tasks.Publisher;
 import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
@@ -38,7 +40,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public final String jsonReportDirectory;
     public final String fileIncludePattern;
     public final String fileExcludePattern;
-    public final int trendsLimit;
 
     public final int failedStepsNumber;
     public final int skippedStepsNumber;
@@ -46,30 +47,33 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public final int undefinedStepsNumber;
     public final int failedScenariosNumber;
     public final int failedFeaturesNumber;
-    public final boolean parallelTesting;
+    public final String buildStatus;
 
-    public List<Classification> classifications = Collections.emptyList();
-
-    public final Result buildStatus;
+    private int trendsLimit;
+    private boolean parallelTesting;
+    private List<Classification> classifications = Collections.emptyList();
 
     @DataBoundConstructor
     public CucumberReportPublisher(String jsonReportDirectory, String fileIncludePattern, String fileExcludePattern,
-                                   int trendsLimit, int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
+                                   int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
                                    int undefinedStepsNumber, int failedScenariosNumber, int failedFeaturesNumber,
-                                   String buildStatus, boolean parallelTesting, List<Classification> classifications) {
+                                   String buildStatus) {
 
         this.jsonReportDirectory = jsonReportDirectory;
         this.fileIncludePattern = fileIncludePattern;
         this.fileExcludePattern = fileExcludePattern;
-        this.trendsLimit = trendsLimit;
         this.failedStepsNumber = failedStepsNumber;
         this.skippedStepsNumber = skippedStepsNumber;
         this.pendingStepsNumber = pendingStepsNumber;
         this.undefinedStepsNumber = undefinedStepsNumber;
         this.failedScenariosNumber = failedScenariosNumber;
         this.failedFeaturesNumber = failedFeaturesNumber;
-        this.buildStatus = buildStatus == null ? null : Result.fromString(buildStatus);
-        this.parallelTesting = parallelTesting;
+
+        this.buildStatus = buildStatus;
+    }
+
+    @DataBoundSetter
+    public void setClassifications(List<Classification> classifications) {
         // don't store the classifications if there was no element provided
         if (CollectionUtils.isNotEmpty(classifications)) {
             this.classifications = classifications;
@@ -78,6 +82,20 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     public List<Classification> getClassifications() {
         return classifications;
+    }
+
+    @DataBoundSetter
+    public void setTrendsLimit(int trendsLimit) {
+        this.trendsLimit = trendsLimit;
+    }
+
+    public int getTrendsLimit() {
+        return trendsLimit;
+    }
+
+    @DataBoundSetter
+    public void setParallelTesting(boolean parallelTesting) {
+        this.parallelTesting = parallelTesting;
     }
 
     @Override
@@ -147,7 +165,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             // redefine build result if it was provided by plugin configuration
             if (buildStatus != null) {
                 log(listener, "Build status is changed to " + buildStatus.toString());
-                build.setResult(buildStatus);
+                build.setResult(Result.fromString(buildStatus));
             } else {
                 log(listener, "Build status is left unchanged");
             }
@@ -157,12 +175,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
         DirectoryScanner scanner = new DirectoryScanner();
 
-        if (fileIncludePattern == null || fileIncludePattern.isEmpty()) {
+        if (StringUtils.isEmpty(fileIncludePattern)) {
             scanner.setIncludes(new String[]{DEFAULT_FILE_INCLUDE_PATTERN});
         } else {
             scanner.setIncludes(new String[]{fileIncludePattern});
         }
-        if (fileExcludePattern != null) {
+        if (StringUtils.isNotEmpty(fileExcludePattern)) {
             scanner.setExcludes(new String[]{fileExcludePattern});
         }
         scanner.setBasedir(targetDirectory);
@@ -236,8 +254,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     public static class Classification extends AbstractDescribableImpl<Classification> {
 
-        String key;
-        String value;
+        public String key;
+        public String value;
 
         @DataBoundConstructor
         public Classification(String key, String value) {
