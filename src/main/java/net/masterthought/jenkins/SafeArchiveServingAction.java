@@ -6,22 +6,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import hudson.FilePath;
 import hudson.Util;
 import hudson.model.Action;
+import hudson.model.DirectoryBrowserSupport;
 import hudson.util.HttpResponses;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletException;
+
+import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * This class implements a solution to serving various reports using JavaScript, Flash, etc. from Jenkins.
@@ -55,6 +63,7 @@ public class SafeArchiveServingAction implements Action {
     private final String title;
 
     private final List<String> safeExtensions;
+    private Set<File> safeDirectories;
 
     /**
      * Create a safe archive serving action.
@@ -77,7 +86,15 @@ public class SafeArchiveServingAction implements Action {
         this.indexFile = indexFile;
         this.iconName = iconName;
         this.title = title;
-        this.safeExtensions = Collections.unmodifiableList(Arrays.asList(safeExtensions));
+        this.safeExtensions = unmodifiableList(asList(safeExtensions));
+
+        this.safeDirectories = unmodifiableSet(new HashSet<>(asList(
+                rootDir,
+                new File(rootDir, "css"),
+                new File(rootDir, "fonts"),
+                new File(rootDir, "js"),
+                new File(rootDir, "images")
+        )));
     }
 
     private void addFile(String relativePath, String checksum) {
@@ -167,7 +184,7 @@ public class SafeArchiveServingAction implements Action {
         return rootDir;
     }
 
-    public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+    public HttpResponse doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Serving " + req.getRestOfPath());
@@ -201,8 +218,7 @@ public class SafeArchiveServingAction implements Action {
                 LOGGER.log(Level.FINEST, "Serving safe file: " + fileName);
             }
 
-            serveFile(file, req, rsp);
-            return;
+            return serveFile(file);
         }
 
         // if we're here, we know it's not a safe file type based on name
@@ -248,16 +264,38 @@ public class SafeArchiveServingAction implements Action {
             throw HttpResponses.forbidden();
         }
 
-        serveFile(file, req, rsp);
+        return serveFile(file);
 
     }
 
-    private void serveFile(File file, StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        // serve the file without Content-Security-Policy
-        long lastModified = file.lastModified();
-        long length = file.length();
-        try (InputStream in = new FileInputStream(file)) {
-            rsp.serveFile(req, in, lastModified, -1, length, file.getName());
+    private HttpResponse serveFile(File file) throws IOException, ServletException {
+        if(safeDirectories.contains(file.getParentFile())){
+            // Reports in safe directories can be trusted and must be served
+            // without Content-Security-Policy to display reports properly
+            return new UnsafeDirectoryBrowserSupport(file);
+        } else {
+            // Other can (such as embeddings) can not be trusted,and must
+            // be served with Content-Security-Policy
+            return new DirectoryBrowserSupport(this, new FilePath(rootDir), title, iconName, false);
+        }
+    }
+
+    private static final class UnsafeDirectoryBrowserSupport implements HttpResponse{
+
+        private final File file;
+
+        UnsafeDirectoryBrowserSupport(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public void generateResponse(StaplerRequest req, StaplerResponse rsp, Object node) throws IOException, ServletException {
+            // serve the file without Content-Security-Policy
+            long lastModified = file.lastModified();
+            long length = file.length();
+            try (InputStream in = new FileInputStream(file)) {
+                rsp.serveFile(req, in, lastModified, -1, length, file.getName());
+            }
         }
     }
 
