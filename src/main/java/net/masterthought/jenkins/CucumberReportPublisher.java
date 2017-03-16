@@ -9,6 +9,7 @@ import java.util.List;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -23,6 +24,8 @@ import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
+import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
+import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -154,7 +157,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
         if (CollectionUtils.isNotEmpty(classifications)) {
             for (Classification classification : classifications) {
-                configuration.addClassifications(classification.key, classification.value);
+                configuration.addClassifications(classification.key,
+                        evaluaeMacro(build, listener, classification.value));
             }
         }
 
@@ -196,7 +200,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return fullPathList;
     }
 
-    boolean hasReportFailed(Reportable result, TaskListener listener) {
+    private boolean hasReportFailed(Reportable result, TaskListener listener) {
         // happens when the resport could not be generated
         if (result == null) {
             log(listener, "Missing report result - report was not successfully completed");
@@ -236,6 +240,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         }
 
         return false;
+    }
+
+    private String evaluaeMacro(Run<?, ?> build, TaskListener listener, String value) throws InterruptedException, IOException {
+        try {
+            return TokenMacro.expandAll((AbstractBuild) build, listener, value);
+        } catch (MacroEvaluationException e) {
+            log(listener, String.format("Could not evaluate macro '%s': %s", value, e.getMessage()));
+            return value;
+        }
     }
 
     private static void log(TaskListener listener, String message) {
