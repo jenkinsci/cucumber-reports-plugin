@@ -22,7 +22,7 @@ import hudson.util.HttpResponses;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletException;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -155,7 +155,6 @@ public class SafeArchiveServingAction implements Action {
         processDirectory(getRootDir(), null);
     }
 
-
     private boolean isSafeFileType(String filename) {
         for (String extension : this.safeExtensions) {
             if (filename.endsWith("." + extension)) {
@@ -269,7 +268,10 @@ public class SafeArchiveServingAction implements Action {
     }
 
     private HttpResponse serveFile(File file) throws IOException, ServletException {
-        if(safeDirectories.contains(file.getParentFile())){
+        if (CollectionUtils.isEmpty(safeDirectories)) {
+            // this is to keep compatibility with older reports for which the collection might not be initiated
+            return new UnsafeDirectoryBrowserSupport(file);
+        } else if (safeDirectories.contains(file.getParentFile())) {
             // Reports in safe directories can be trusted and must be served
             // without Content-Security-Policy to display reports properly
             return new UnsafeDirectoryBrowserSupport(file);
