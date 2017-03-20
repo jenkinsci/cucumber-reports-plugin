@@ -12,8 +12,13 @@ import java.util.logging.Logger;
 /**
  * Convenience implementation of {@link SafeArchiveServingAction} for runs that starts a scan on being attached to the
  * build.
+ *
+ * @deprecated functionality moved to action package.
  */
+@Deprecated
 public class SafeArchiveServingRunAction extends SafeArchiveServingAction implements RunAction2 {
+
+    private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingRunAction.class.getName());
 
     public SafeArchiveServingRunAction(File rootDir, String urlName, String indexFile, String iconName, String title, String... safeExtensions) {
         super(rootDir, urlName, indexFile, iconName, title, safeExtensions);
@@ -23,7 +28,7 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
     public void onAttached(Run<?, ?> r) {
         try {
             processDirectory();
-        } catch (IOException|NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException ex) {
             LOGGER.log(Level.WARNING, "Exception scanning " + r.getRootDir(), ex);
         }
     }
@@ -32,6 +37,4 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
     public void onLoad(Run<?, ?> r) {
 
     }
-
-    private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingRunAction.class.getName());
 }

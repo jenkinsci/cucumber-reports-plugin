@@ -11,8 +11,6 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractDescribableImpl;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -206,9 +204,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         generateReport(run, workspace, listener);
 
-        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY),
-                ReportBuilder.BASE_DIRECTORY, ReportBuilder.HOME_PAGE, CucumberReportBaseAction.ICON_NAME, Messages.SidePanel_DisplayName());
-        run.replaceAction(caa);
     }
 
     private void generateReport(Run<?, ?> build, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
@@ -357,11 +352,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
-    }
-
-    @Override
-    public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new CucumberReportProjectAction(project);
     }
 
     public static class Classification extends AbstractDescribableImpl<Classification> implements Serializable {
