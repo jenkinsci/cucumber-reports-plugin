@@ -10,7 +10,6 @@ import java.util.List;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -161,7 +160,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             for (Classification classification : classifications) {
                 log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
                 configuration.addClassifications(classification.key,
-                        evaluateMacro(build, listener, classification.value));
+                        evaluateMacro(build, workspace, listener, classification.value));
             }
         }
 
@@ -245,9 +244,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return false;
     }
 
-    private String evaluateMacro(Run<?, ?> build, TaskListener listener, String value) throws InterruptedException, IOException {
+    private String evaluateMacro(Run<?, ?> build, FilePath workspace, TaskListener listener, String value) throws InterruptedException, IOException {
         try {
-            return TokenMacro.expandAll((AbstractBuild) build, listener, value);
+            return TokenMacro.expandAll(build, workspace, listener, value);
         } catch (MacroEvaluationException e) {
             log(listener, String.format("Could not evaluate macro '%s': %s", value, e.getMessage()));
             return value;
