@@ -250,9 +250,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         } catch (MacroEvaluationException e) {
             log(listener, String.format("Could not evaluate macro '%s': %s", value, e.getMessage()));
             return value;
-        } catch (ClassCastException e) {
-            log(listener, String.format("ClassCastException '%s': %s", value, e.getMessage()));
-            return value;
         }
     }
 
