@@ -2,6 +2,7 @@ package net.masterthought.jenkins;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -155,9 +156,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
         if (CollectionUtils.isNotEmpty(classifications)) {
+            log(listener, String.format("%d classifications to be added in the report", classifications.size()));
             for (Classification classification : classifications) {
+                log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
                 configuration.addClassifications(classification.key,
-                        evaluaeMacro(build, workspace, listener, classification.value));
+                        evaluateMacro(build, workspace, listener, classification.value));
             }
         }
 
@@ -241,7 +244,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return false;
     }
 
-    private String evaluaeMacro(Run<?, ?> build, FilePath workspace, TaskListener listener, String value) throws InterruptedException, IOException {
+    private String evaluateMacro(Run<?, ?> build, FilePath workspace, TaskListener listener, String value) throws InterruptedException, IOException {
         try {
             return TokenMacro.expandAll(build, workspace, listener, value);
         } catch (MacroEvaluationException e) {
@@ -264,7 +267,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return new CucumberReportProjectAction(project);
     }
 
-    public static class Classification extends AbstractDescribableImpl<Classification> {
+    public static class Classification extends AbstractDescribableImpl<Classification> implements Serializable {
 
         public String key;
         public String value;
