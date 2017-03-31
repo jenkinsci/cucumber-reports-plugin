@@ -101,6 +101,10 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.parallelTesting = parallelTesting;
     }
 
+    public boolean isParallelTesting() {
+        return this.parallelTesting;
+    }
+
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
