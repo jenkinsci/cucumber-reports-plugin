@@ -128,11 +128,13 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         }
 
         // source directory (possibly on slave)
-        FilePath inputDirectory = new FilePath(workspace, jsonReportDirectory);
+        String parsedJsonReportDirectory = evaluateMacro(build, workspace, listener, jsonReportDirectory);
+        log(listener, String.format("JSON report directory is \"%s\"", parsedJsonReportDirectory));
+        FilePath inputDirectory = new FilePath(workspace, parsedJsonReportDirectory);
 
         File directoryForReport = build.getRootDir();
         File directoryJsonCache = new File(directoryForReport, ReportBuilder.BASE_DIRECTORY + File.separatorChar + ".cache");
-        if (directoryJsonCache.mkdir()) {
+        if (!directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
         int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(directoryJsonCache));
