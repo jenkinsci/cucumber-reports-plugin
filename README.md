@@ -29,11 +29,11 @@ You must use a **Freestyle project type** in jenkins.
 With the cucumber-reports plugin installed in Jenkins, you simply check the "Publish cucumber results as a report" box in the
 publish section of the build config:
 
-(https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/publish-box.png)
+![](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/publish-box.png)
 
 If you need more control over the plugin you can click the Advanced button for more options:
 
-(https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced-publish-box.png)
+![](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced-publish-box.png)
 
 1. Leave empty for the plugin to automagically find your json files or enter the path to the json reports relative to the workspace if for some reason the automagic doesn't work for you
 2. Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
@@ -43,35 +43,29 @@ If you need more control over the plugin you can click the Advanced button for m
 
 When a build runs that publishes cucumber results it will put a link in the sidepanel to the [cucumber reports](https://github.com/damianszczepanik/cucumber-reporting). There is a feature overview page:
 
-![feature overview page]
-(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-overview.png)
+![feature overview page](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-overview.png)
 
 And there are also feature specific results pages:
 
-![feature specific page passing]
-(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-passed.png)
+![feature specific page passing](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-passed.png)
 
 And useful information for failures:
 
-![feature specific page failing]
-(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-failed.png)
+![feature specific page failing](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-failed.png)
 
 If you have tags in your cucumber features you can see a tag overview:
 
-![Tag overview]
-(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-overview.png)
+![Tag overview](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-overview.png)
 
 And you can drill down into tag specific reports:
 
-![Tag report]
-(https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-report.png)
+![Tag report](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-report.png)
 
 ## Advanced Configuration Options
 
 There are 4 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
 
-![Advanced Configuration]
-(https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced_options.png)
+![Advanced Configuration](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced_options.png)
 
 The first setting is Skipped steps fail the build - so if you tick this any steps that are skipped during executions will be marked as failed and will cause the build to fail:
 
@@ -92,5 +86,4 @@ Make sure you have configured cucumber to run with the JUnit runner and to gener
 
 ## Develop
 
-Interested in contributing to the Jenkins cucumber-reports plugin?  Great!  Start [here]
-(https://github.com/jenkinsci/cucumber-reports-plugin).
+Interested in contributing to the Jenkins cucumber-reports plugin?  Great!  Start [here](https://github.com/jenkinsci/cucumber-reports-plugin).
