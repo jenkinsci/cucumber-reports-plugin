@@ -134,7 +134,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         File directoryForReport = build.getRootDir();
         File directoryJsonCache = new File(directoryForReport, ReportBuilder.BASE_DIRECTORY + File.separatorChar + ".cache");
-        if (!directoryJsonCache.mkdirs()) {
+        if (!directoryJsonCache.exists() && !directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
         int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(directoryJsonCache));
