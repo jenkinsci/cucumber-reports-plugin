@@ -61,6 +61,31 @@ And you can drill down into tag specific reports:
 
 ![Tag report](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-report.png)
 
+### Pipeline usage
+
+```groovy
+ pipeline {
+     
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                //run your build
+                sh 'mvn clean verify'
+            }
+            post {
+                always {
+                    //generate cucumber reports
+                    cucumber '**/*.json'
+                }
+            }
+        }
+    }
+}
+
+```
+
 ## Advanced Configuration Options
 
 There are 4 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
