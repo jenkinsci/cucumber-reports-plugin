@@ -1,0 +1,25 @@
+pipeline {
+
+    agent any
+
+    tools {
+        maven 'M3'
+        jdk 'JDK8'
+    }
+
+    stages {
+
+        stage('Run tests') {
+            steps {
+                sh 'mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false'
+            }
+        }
+
+        stage('Generate Reports') {
+            steps {
+                cucumber '**/cucumber-*.json'
+            }
+        }
+    }
+
+}
