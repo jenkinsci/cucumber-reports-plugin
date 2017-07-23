@@ -24,8 +24,8 @@ import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
-import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -33,6 +33,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 import net.masterthought.cucumber.Reportable;
+import net.masterthought.cucumber.sorting.SortingMethod;
 
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
@@ -51,10 +52,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int undefinedStepsNumber;
     private int failedScenariosNumber;
     private int failedFeaturesNumber;
-    private String buildStatus;
+    private String buildStatus = SortingMethod.NATURAL.name();
 
     private int trendsLimit;
     private boolean parallelTesting;
+    private String sortingMethod;
     private List<Classification> classifications = Collections.emptyList();
 
     @DataBoundConstructor
@@ -66,7 +68,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public CucumberReportPublisher(String jsonReportDirectory, String fileIncludePattern, String fileExcludePattern,
                                    int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
                                    int undefinedStepsNumber, int failedScenariosNumber, int failedFeaturesNumber,
-                                   String buildStatus) {
+                                   String buildStatus, String sortingMethod) {
 
         this.jsonReportDirectory = jsonReportDirectory;
         this.fileIncludePattern = fileIncludePattern;
@@ -79,6 +81,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.failedFeaturesNumber = failedFeaturesNumber;
 
         this.buildStatus = buildStatus;
+        this.sortingMethod = sortingMethod;
     }
 
     private static void log(TaskListener listener, String message) {
@@ -200,6 +203,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.parallelTesting = parallelTesting;
     }
 
+    @DataBoundSetter
+    public void setSortingMethod(String sortingMethod) {
+        this.sortingMethod = sortingMethod;
+    }
+
+    public String getSortingMethod() {
+        return sortingMethod;
+    }
+
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
@@ -256,6 +268,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
+        configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
+
         if (CollectionUtils.isNotEmpty(classifications)) {
             log(listener, String.format("%d classifications to be added in the report", classifications.size()));
             for (Classification classification : classifications) {
@@ -387,6 +401,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     @Extension
     @Symbol("cucumber")
-    public static class DescriptorImpl extends CucumberReportBuildStepDescriptor {
+    public static class BuildStatusesDescriptorImpl extends CucumberReportDescriptor {
     }
 }

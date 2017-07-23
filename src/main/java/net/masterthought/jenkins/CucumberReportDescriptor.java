@@ -8,7 +8,9 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import org.kohsuke.stapler.QueryParameter;
 
-public class CucumberReportBuildStepDescriptor extends BuildStepDescriptor<Publisher> {
+import net.masterthought.cucumber.sorting.SortingMethod;
+
+public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
 
     @Override
     public String getDisplayName() {
@@ -70,5 +72,13 @@ public class CucumberReportBuildStepDescriptor extends BuildStepDescriptor<Publi
         } catch (NumberFormatException e) {
             return FormValidation.error(Messages.Configuration_notValidNumber());
         }
+    }
+
+    // names must refer to the field name
+    public ListBoxModel doFillSortingMethodItems() {
+        return new ListBoxModel(
+                // default option should be listed first
+                new ListBoxModel.Option(Messages.SortingMethod_ALPHABETICAL(), SortingMethod.ALPHABETICAL.name()),
+                new ListBoxModel.Option(Messages.SortingMethod_NATURAL(), SortingMethod.NATURAL.name()));
     }
 }

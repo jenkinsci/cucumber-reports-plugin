@@ -78,7 +78,6 @@
                     description="${%buildStatus.description}">
                 <f:select/>
             </f:entry>
-
         </f:section>
 
         <f:section title="${%otherSection}">
@@ -90,10 +89,18 @@
             </f:entry>
 
             <f:entry
+                    title="${%sortingMethod.title}"
+                    field="sortingMethod"
+                    description="${%sortingMethod.description}">
+                <f:select/>
+            </f:entry>
+
+            <f:entry
                     field="classifications"
                     description="${%classifications.description}">
                 <f:repeatableProperty field="classifications"/>
             </f:entry>
+
         </f:section>
 
     </f:advanced>

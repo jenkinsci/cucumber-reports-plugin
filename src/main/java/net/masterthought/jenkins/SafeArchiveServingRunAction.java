@@ -1,13 +1,13 @@
 package net.masterthought.jenkins;
 
-import hudson.model.Run;
-import jenkins.model.RunAction2;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import hudson.model.Run;
+import jenkins.model.RunAction2;
 
 /**
  * Convenience implementation of {@link SafeArchiveServingAction} for runs that starts a scan on being attached to the
@@ -23,14 +23,13 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
     public void onAttached(Run<?, ?> r) {
         try {
             processDirectory();
-        } catch (IOException|NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException ex) {
             LOGGER.log(Level.WARNING, "Exception scanning " + r.getRootDir(), ex);
         }
     }
 
     @Override
     public void onLoad(Run<?, ?> r) {
-
     }
 
     private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingRunAction.class.getName());
