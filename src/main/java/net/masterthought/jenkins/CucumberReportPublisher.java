@@ -268,7 +268,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
-        configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
+        configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
 
         if (CollectionUtils.isNotEmpty(classifications)) {
             log(listener, String.format("%d classifications to be added in the report", classifications.size()));
