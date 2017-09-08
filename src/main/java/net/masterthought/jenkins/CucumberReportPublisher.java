@@ -52,7 +52,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int undefinedStepsNumber;
     private int failedScenariosNumber;
     private int failedFeaturesNumber;
-    private String buildStatus = SortingMethod.NATURAL.name();
+    private String buildStatus;
 
     private int trendsLimit;
     private boolean parallelTesting;
