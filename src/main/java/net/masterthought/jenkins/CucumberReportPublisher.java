@@ -52,11 +52,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int undefinedStepsNumber;
     private int failedScenariosNumber;
     private int failedFeaturesNumber;
-    private String buildStatus = SortingMethod.NATURAL.name();
+    private String buildStatus;
 
     private int trendsLimit;
     private boolean parallelTesting;
-    private String sortingMethod;
+    private String sortingMethod = SortingMethod.NATURAL.name();
     private List<Classification> classifications = Collections.emptyList();
 
     @DataBoundConstructor
@@ -268,7 +268,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
-        configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
+        configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
 
         if (CollectionUtils.isNotEmpty(classifications)) {
             log(listener, String.format("%d classifications to be added in the report", classifications.size()));
