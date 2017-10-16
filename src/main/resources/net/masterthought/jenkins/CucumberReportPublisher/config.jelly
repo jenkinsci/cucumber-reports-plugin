@@ -22,6 +22,12 @@
                 <f:textbox/>
             </f:entry>
             <f:entry
+                    title="${%metadatafilePattern.title}"
+                    field="metadatafilePattern"
+                    description="${%metadatafilePattern.description}">
+                <f:textbox/>
+            </f:entry>
+            <f:entry
                     title="${%trendsLimit.title}"
                     field="trendsLimit"
                     description="${%trendsLimit.description}">

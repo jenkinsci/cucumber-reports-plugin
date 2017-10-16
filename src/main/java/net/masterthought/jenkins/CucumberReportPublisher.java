@@ -1,11 +1,11 @@
 package net.masterthought.jenkins;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.nio.file.Paths;
+import java.util.*;
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -58,6 +58,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private boolean parallelTesting;
     private String sortingMethod = SortingMethod.NATURAL.name();
     private List<Classification> classifications = Collections.emptyList();
+    //TODO: Change This To Be Read By Jenkins...
+    private String metaDataFilePattern = "Aca_System_Tests_Version_Info_*.properties";
 
     @DataBoundConstructor
     public CucumberReportPublisher(String fileIncludePattern) {
@@ -212,6 +214,16 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return sortingMethod;
     }
 
+    //TODO: Have These Settings Populated By Jenkins...
+    @DataBoundSetter
+    public void setMetaDataFilePattern(String metaDataFilePattern) {
+        this.metaDataFilePattern = metaDataFilePattern;
+    }
+
+    public String getMetaDataFilePattern() {
+        return metaDataFilePattern;
+    }
+
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
@@ -271,14 +283,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // null checker because of the regression in 3.10.2
         configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
 
-        if (CollectionUtils.isNotEmpty(classifications)) {
-            log(listener, String.format("%d classifications to be added in the report", classifications.size()));
-            for (Classification classification : classifications) {
-                log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
-                configuration.addClassifications(classification.key,
-                        evaluateMacro(build, workspace, listener, classification.value));
-            }
-        }
+        log(listener, String.format("Adding %d classifications sourced from jenkins configuration interface!", classifications.size()));
+
+        addClassificationsToBuildReport(build,workspace,listener,configuration,classifications);
+
+        List<Classification> sourcedFromMetaDataFiles = fetchMetaDataClassifications(listener);
+
+        log(listener, String.format("Adding %d classifications sourced from metadata file pattern %s!", sourcedFromMetaDataFiles.size(), metaDataFilePattern));
+
+        addClassificationsToBuildReport(build,workspace,listener,configuration,sourcedFromMetaDataFiles);
 
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
         Reportable result = reportBuilder.generateReports();
@@ -367,6 +380,99 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             log(listener, String.format("Could not evaluate macro '%s': %s", value, e.getMessage()));
         }
         return value;
+    }
+
+    private void addClassificationsToBuildReport(Run<?, ?> build, FilePath workspace, TaskListener listener, Configuration configuration, List<Classification> listToAdd) throws InterruptedException, IOException {
+
+        if (CollectionUtils.isNotEmpty(listToAdd)) {
+            for (Classification classification : listToAdd) {
+                log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
+                configuration.addClassifications(classification.key, evaluateMacro(build, workspace, listener, classification.value));
+            }
+        }
+
+    }
+
+
+    private List<Classification> fetchMetaDataClassifications(TaskListener listener) throws IOException {
+
+        List<Classification> allSourcedFromFiles = new ArrayList<>();
+
+        DirectoryScanner scanner = new DirectoryScanner();
+
+        scanner.setIncludes(new String[]{metaDataFilePattern});
+
+        String baseDirectory = Paths.get(jsonReportDirectory).normalize().toAbsolutePath().toString();
+
+        scanner.setBasedir(baseDirectory);
+
+        scanner.setCaseSensitive(false);
+
+        scanner.scan();
+
+        List<String> files = getFullMetaDataPath(scanner.getIncludedFiles(), baseDirectory);
+
+        for (String file : files) {
+
+            log(listener, String.format("Processing MetadataFile - %s", file));
+
+            List<Classification> classificationsSourcedFromFile = processMetaDataFile(file);
+
+            if (CollectionUtils.isNotEmpty(allSourcedFromFiles)) {
+
+                allSourcedFromFiles.addAll(classificationsSourcedFromFile);
+
+            } else {
+
+                allSourcedFromFiles = classificationsSourcedFromFile;
+            }
+
+        }
+
+        return allSourcedFromFiles;
+
+    }
+
+    private List<String> getFullMetaDataPath(String[] files, String propertiesDirectory) {
+
+        List<String> fullPathList = new ArrayList<>();
+
+        for (String file : files) {
+            fullPathList.add(propertiesDirectory + File.separator + file);
+        }
+
+        return fullPathList;
+
+    }
+
+    private List<Classification> processMetaDataFile(String file) throws IOException {
+
+        List<Classification> classificationsSourcedFromFile = new ArrayList<>();
+
+        File metaDataFileInstance = new File(file);
+
+        FileInputStream fileInput = new FileInputStream(metaDataFileInstance);
+
+        Properties properties = new Properties();
+
+        properties.load(fileInput);
+
+        fileInput.close();
+
+        Enumeration enuKeys = properties.keys();
+
+        while (enuKeys.hasMoreElements()) {
+
+            String key = (String) enuKeys.nextElement();
+
+            String value = properties.getProperty(key);
+
+            classificationsSourcedFromFile.add(new Classification(key, value));
+
+        }
+
+        return classificationsSourcedFromFile;
+
     }
 
     @Override
