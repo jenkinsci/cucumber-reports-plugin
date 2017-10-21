@@ -22,9 +22,9 @@
                 <f:textbox/>
             </f:entry>
             <f:entry
-                    title="${%metadatafilePattern.title}"
-                    field="metadatafilePattern"
-                    description="${%metadatafilePattern.description}">
+                    title="${%metaDataFilePattern.title}"
+                    field="metaDataFilePattern"
+                    description="${%metaDataFilePattern.description}">
                 <f:textbox/>
             </f:entry>
             <f:entry

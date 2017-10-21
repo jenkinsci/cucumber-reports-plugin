@@ -38,6 +38,7 @@ import net.masterthought.cucumber.sorting.SortingMethod;
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
+    private final static String DEFAULT_FILE_INCLUDE_PATTERN_PROPERTIES = "**/*.properties";
 
     private final static String TRENDS_DIR = "cucumber-reports";
     private final static String TRENDS_FILE = "cucumber-trends.json";
@@ -58,8 +59,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private boolean parallelTesting;
     private String sortingMethod = SortingMethod.NATURAL.name();
     private List<Classification> classifications = Collections.emptyList();
-    //TODO: Change This To Be Read By Jenkins...
-    private String metaDataFilePattern = "Aca_System_Tests_Version_Info_*.properties";
+    private  String metaDataFilePattern = "";
 
     @DataBoundConstructor
     public CucumberReportPublisher(String fileIncludePattern) {
@@ -81,7 +81,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.undefinedStepsNumber = undefinedStepsNumber;
         this.failedScenariosNumber = failedScenariosNumber;
         this.failedFeaturesNumber = failedFeaturesNumber;
-
         this.buildStatus = buildStatus;
         this.sortingMethod = sortingMethod;
     }
@@ -214,7 +213,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return sortingMethod;
     }
 
-    //TODO: Have These Settings Populated By Jenkins...
     @DataBoundSetter
     public void setMetaDataFilePattern(String metaDataFilePattern) {
         this.metaDataFilePattern = metaDataFilePattern;
@@ -256,9 +254,14 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (!directoryJsonCache.exists() && !directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
+        //Copies Json Files To Cache...
         int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d json files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFiles, inputDirectory.getRemote(), directoryJsonCache));
+        //Copies Properties Files To Cache...
+        int copiedFilesProperties = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_PROPERTIES, new FilePath(directoryJsonCache));
+        log(listener, String.format("Copied %d properties files from workspace \"%s\" to reports directory \"%s\"",
+                copiedFilesProperties, inputDirectory.getRemote(), directoryJsonCache));
 
         // exclude JSONs that should be skipped (as configured by the user)
         String[] jsonReportFiles = findJsonFiles(directoryJsonCache, fileIncludePattern, fileExcludePattern);
@@ -287,9 +290,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         addClassificationsToBuildReport(build,workspace,listener,configuration,classifications);
 
-        List<Classification> sourcedFromMetaDataFiles = fetchMetaDataClassifications(listener);
+        List<Classification> sourcedFromMetaDataFiles = fetchMetaDataClassifications(directoryJsonCache, listener);
 
-        log(listener, String.format("Adding %d classifications sourced from metadata file pattern %s!", sourcedFromMetaDataFiles.size(), metaDataFilePattern));
+        log(listener, String.format("Adding %d classifications sourced from metadata file pattern '%s'!",sourcedFromMetaDataFiles.size(),metaDataFilePattern));
 
         addClassificationsToBuildReport(build,workspace,listener,configuration,sourcedFromMetaDataFiles);
 
@@ -393,8 +396,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     }
 
-
-    private List<Classification> fetchMetaDataClassifications(TaskListener listener) throws IOException {
+    private List<Classification> fetchMetaDataClassifications(File targetDirectory, TaskListener listener) throws IOException {
 
         List<Classification> allSourcedFromFiles = new ArrayList<>();
 
@@ -402,15 +404,13 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         scanner.setIncludes(new String[]{metaDataFilePattern});
 
-        String baseDirectory = Paths.get(jsonReportDirectory).normalize().toAbsolutePath().toString();
-
-        scanner.setBasedir(baseDirectory);
+        scanner.setBasedir(targetDirectory);
 
         scanner.setCaseSensitive(false);
 
         scanner.scan();
 
-        List<String> files = getFullMetaDataPath(scanner.getIncludedFiles(), baseDirectory);
+        List<String> files = getFullMetaDataPath(scanner.getIncludedFiles(), targetDirectory.toString());
 
         for (String file : files) {
 
