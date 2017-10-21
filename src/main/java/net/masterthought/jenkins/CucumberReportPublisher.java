@@ -447,31 +447,33 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     private List<Classification> processMetaDataFile(String file) throws IOException {
 
-        List<Classification> classificationsSourcedFromFile = new ArrayList<>();
-
         File metaDataFileInstance = new File(file);
 
-        FileInputStream fileInput = new FileInputStream(metaDataFileInstance);
+        try(FileInputStream fileInput = new FileInputStream(metaDataFileInstance);) {
 
-        Properties properties = new Properties();
+            List<Classification> classificationsSourcedFromFile = new ArrayList<>();
 
-        properties.load(fileInput);
+            Properties properties = new Properties();
 
-        fileInput.close();
+            properties.load(fileInput);
 
-        Enumeration enuKeys = properties.keys();
+            Enumeration enuKeys = properties.keys();
 
-        while (enuKeys.hasMoreElements()) {
+            while (enuKeys.hasMoreElements()) {
 
-            String key = (String) enuKeys.nextElement();
+                String key = (String) enuKeys.nextElement();
 
-            String value = properties.getProperty(key);
+                String value = properties.getProperty(key);
 
-            classificationsSourcedFromFile.add(new Classification(key, value));
+                classificationsSourcedFromFile.add(new Classification(key, value));
 
+            }
+
+            return classificationsSourcedFromFile;
+
+        } catch (IOException ioExp) {
+            throw ioExp;
         }
-
-        return classificationsSourcedFromFile;
 
     }
 
