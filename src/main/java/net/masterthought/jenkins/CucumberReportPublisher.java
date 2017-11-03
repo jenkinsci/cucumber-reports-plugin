@@ -1,11 +1,11 @@
 package net.masterthought.jenkins;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -38,7 +38,7 @@ import net.masterthought.cucumber.sorting.SortingMethod;
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
-    private final static String DEFAULT_FILE_INCLUDE_PATTERN_PROPERTIES = "**/*.properties";
+    private final static String DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS = "**/*.properties";
 
     private final static String TRENDS_DIR = "cucumber-reports";
     private final static String TRENDS_FILE = "cucumber-trends.json";
@@ -59,7 +59,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private boolean parallelTesting;
     private String sortingMethod = SortingMethod.NATURAL.name();
     private List<Classification> classifications = Collections.emptyList();
-    private  String metaDataFilePattern = "";
+    private String classificationsFilePattern = "";
 
     @DataBoundConstructor
     public CucumberReportPublisher(String fileIncludePattern) {
@@ -214,12 +214,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     @DataBoundSetter
-    public void setMetaDataFilePattern(String metaDataFilePattern) {
-        this.metaDataFilePattern = metaDataFilePattern;
+    public void setClassificationsFilePattern(String classificationsFilePattern) {
+        this.classificationsFilePattern = classificationsFilePattern;
     }
 
-    public String getMetaDataFilePattern() {
-        return metaDataFilePattern;
+    public String getClassificationsFilePattern() {
+        return classificationsFilePattern;
     }
 
     @Override
@@ -258,8 +258,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d json files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFiles, inputDirectory.getRemote(), directoryJsonCache));
-        //Copies Properties Files To Cache...
-        int copiedFilesProperties = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_PROPERTIES, new FilePath(directoryJsonCache));
+        //Copies Classifications Files To Cache...
+        int copiedFilesProperties = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d properties files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFilesProperties, inputDirectory.getRemote(), directoryJsonCache));
 
@@ -287,14 +287,14 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
 
         log(listener, String.format("Adding %d classifications sourced from jenkins configuration interface!", classifications.size()));
+        if (CollectionUtils.isNotEmpty(classifications)) {
+            addClassificationsToBuildReport(build, workspace, listener, configuration, classifications);
+        }
 
-        addClassificationsToBuildReport(build,workspace,listener,configuration,classifications);
-
-        List<Classification> sourcedFromMetaDataFiles = fetchMetaDataClassifications(directoryJsonCache, listener);
-
-        log(listener, String.format("Adding %d classifications sourced from metadata file pattern '%s'!",sourcedFromMetaDataFiles.size(),metaDataFilePattern));
-
-        addClassificationsToBuildReport(build,workspace,listener,configuration,sourcedFromMetaDataFiles);
+        List<String> classificationFiles = fetchPropertyFiles(directoryJsonCache, listener);
+        if(CollectionUtils.isNotEmpty(classificationFiles)) {
+            configuration.addClassificationFiles(classificationFiles);
+        }
 
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
         Reportable result = reportBuilder.generateReports();
@@ -386,95 +386,34 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     private void addClassificationsToBuildReport(Run<?, ?> build, FilePath workspace, TaskListener listener, Configuration configuration, List<Classification> listToAdd) throws InterruptedException, IOException {
-
-        if (CollectionUtils.isNotEmpty(listToAdd)) {
-            for (Classification classification : listToAdd) {
-                log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
-                configuration.addClassifications(classification.key, evaluateMacro(build, workspace, listener, classification.value));
-            }
+        for (Classification classification : listToAdd) {
+            log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
+            configuration.addClassifications(classification.key, evaluateMacro(build, workspace, listener, classification.value));
         }
-
     }
 
-    private List<Classification> fetchMetaDataClassifications(File targetDirectory, TaskListener listener) throws IOException {
-
-        List<Classification> allSourcedFromFiles = new ArrayList<>();
-
-        DirectoryScanner scanner = new DirectoryScanner();
-
-        scanner.setIncludes(new String[]{metaDataFilePattern});
-
-        scanner.setBasedir(targetDirectory);
-
-        scanner.setCaseSensitive(false);
-
-        scanner.scan();
-
-        List<String> files = getFullMetaDataPath(scanner.getIncludedFiles(), targetDirectory.toString());
-
-        for (String file : files) {
-
-            log(listener, String.format("Processing MetadataFile - %s", file));
-
-            List<Classification> classificationsSourcedFromFile = processMetaDataFile(file);
-
-            if (CollectionUtils.isNotEmpty(allSourcedFromFiles)) {
-
-                allSourcedFromFiles.addAll(classificationsSourcedFromFile);
-
-            } else {
-
-                allSourcedFromFiles = classificationsSourcedFromFile;
+    private List<String> fetchPropertyFiles(File targetDirectory, TaskListener listener) {
+        List<String> propertyFiles = new ArrayList<>();
+        if (StringUtils.isNotEmpty(classificationsFilePattern)) {
+            DirectoryScanner scanner = new DirectoryScanner();
+            scanner.setIncludes(new String[]{classificationsFilePattern});
+            scanner.setBasedir(targetDirectory);
+            scanner.setCaseSensitive(false);
+            scanner.scan();
+            propertyFiles = getFullMetaDataPath(scanner.getIncludedFiles(), targetDirectory.toString());
+            for (String propertyFile : propertyFiles) {
+                log(listener, String.format("Found Properties File - %s ", propertyFile));
             }
-
         }
-
-        return allSourcedFromFiles;
-
+        return propertyFiles;
     }
 
     private List<String> getFullMetaDataPath(String[] files, String propertiesDirectory) {
-
         List<String> fullPathList = new ArrayList<>();
-
         for (String file : files) {
             fullPathList.add(propertiesDirectory + File.separator + file);
         }
-
         return fullPathList;
-
-    }
-
-    private List<Classification> processMetaDataFile(String file) throws IOException {
-
-        File metaDataFileInstance = new File(file);
-
-        try(FileInputStream fileInput = new FileInputStream(metaDataFileInstance);) {
-
-            List<Classification> classificationsSourcedFromFile = new ArrayList<>();
-
-            Properties properties = new Properties();
-
-            properties.load(fileInput);
-
-            Enumeration enuKeys = properties.keys();
-
-            while (enuKeys.hasMoreElements()) {
-
-                String key = (String) enuKeys.nextElement();
-
-                String value = properties.getProperty(key);
-
-                classificationsSourcedFromFile.add(new Classification(key, value));
-
-            }
-
-            return classificationsSourcedFromFile;
-
-        } catch (IOException ioExp) {
-            throw ioExp;
-        }
-
     }
 
     @Override
