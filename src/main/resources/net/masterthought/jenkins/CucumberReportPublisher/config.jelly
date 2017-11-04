@@ -22,6 +22,12 @@
                 <f:textbox/>
             </f:entry>
             <f:entry
+                    title="${%classificationsFilePattern.title}"
+                    field="classificationsFilePattern"
+                    description="${%classificationsFilePattern.description}">
+                <f:textbox/>
+            </f:entry>
+            <f:entry
                     title="${%trendsLimit.title}"
                     field="trendsLimit"
                     description="${%trendsLimit.description}">

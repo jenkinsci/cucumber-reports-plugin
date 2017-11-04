@@ -38,6 +38,7 @@ import net.masterthought.cucumber.sorting.SortingMethod;
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
+    private final static String DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS = "**/*.properties";
 
     private final static String TRENDS_DIR = "cucumber-reports";
     private final static String TRENDS_FILE = "cucumber-trends.json";
@@ -58,6 +59,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private boolean parallelTesting;
     private String sortingMethod = SortingMethod.NATURAL.name();
     private List<Classification> classifications = Collections.emptyList();
+    private String classificationsFilePattern = "";
 
     @DataBoundConstructor
     public CucumberReportPublisher(String fileIncludePattern) {
@@ -79,7 +81,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.undefinedStepsNumber = undefinedStepsNumber;
         this.failedScenariosNumber = failedScenariosNumber;
         this.failedFeaturesNumber = failedFeaturesNumber;
-
         this.buildStatus = buildStatus;
         this.sortingMethod = sortingMethod;
     }
@@ -212,6 +213,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return sortingMethod;
     }
 
+    @DataBoundSetter
+    public void setClassificationsFilePattern(String classificationsFilePattern) {
+        this.classificationsFilePattern = classificationsFilePattern;
+    }
+
+    public String getClassificationsFilePattern() {
+        return classificationsFilePattern;
+    }
+
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
@@ -244,9 +254,14 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (!directoryJsonCache.exists() && !directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
+        //Copies Json Files To Cache...
         int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d json files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFiles, inputDirectory.getRemote(), directoryJsonCache));
+        //Copies Classifications Files To Cache...
+        int copiedFilesProperties = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS, new FilePath(directoryJsonCache));
+        log(listener, String.format("Copied %d properties files from workspace \"%s\" to reports directory \"%s\"",
+                copiedFilesProperties, inputDirectory.getRemote(), directoryJsonCache));
 
         // exclude JSONs that should be skipped (as configured by the user)
         String[] jsonReportFiles = findJsonFiles(directoryJsonCache, fileIncludePattern, fileExcludePattern);
@@ -271,13 +286,14 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // null checker because of the regression in 3.10.2
         configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
 
+        log(listener, String.format("Adding %d classifications sourced from jenkins configuration interface!", classifications.size()));
         if (CollectionUtils.isNotEmpty(classifications)) {
-            log(listener, String.format("%d classifications to be added in the report", classifications.size()));
-            for (Classification classification : classifications) {
-                log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
-                configuration.addClassifications(classification.key,
-                        evaluateMacro(build, workspace, listener, classification.value));
-            }
+            addClassificationsToBuildReport(build, workspace, listener, configuration, classifications);
+        }
+
+        List<String> classificationFiles = fetchPropertyFiles(directoryJsonCache, listener);
+        if(CollectionUtils.isNotEmpty(classificationFiles)) {
+            configuration.addClassificationFiles(classificationFiles);
         }
 
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
@@ -367,6 +383,37 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             log(listener, String.format("Could not evaluate macro '%s': %s", value, e.getMessage()));
         }
         return value;
+    }
+
+    private void addClassificationsToBuildReport(Run<?, ?> build, FilePath workspace, TaskListener listener, Configuration configuration, List<Classification> listToAdd) throws InterruptedException, IOException {
+        for (Classification classification : listToAdd) {
+            log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
+            configuration.addClassifications(classification.key, evaluateMacro(build, workspace, listener, classification.value));
+        }
+    }
+
+    private List<String> fetchPropertyFiles(File targetDirectory, TaskListener listener) {
+        List<String> propertyFiles = new ArrayList<>();
+        if (StringUtils.isNotEmpty(classificationsFilePattern)) {
+            DirectoryScanner scanner = new DirectoryScanner();
+            scanner.setIncludes(new String[]{classificationsFilePattern});
+            scanner.setBasedir(targetDirectory);
+            scanner.setCaseSensitive(false);
+            scanner.scan();
+            propertyFiles = getFullMetaDataPath(scanner.getIncludedFiles(), targetDirectory.toString());
+            for (String propertyFile : propertyFiles) {
+                log(listener, String.format("Found Properties File - %s ", propertyFile));
+            }
+        }
+        return propertyFiles;
+    }
+
+    private List<String> getFullMetaDataPath(String[] files, String propertiesDirectory) {
+        List<String> fullPathList = new ArrayList<>();
+        for (String file : files) {
+            fullPathList.add(propertiesDirectory + File.separator + file);
+        }
+        return fullPathList;
     }
 
     @Override
