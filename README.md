@@ -1,5 +1,4 @@
 [![Build Travis](https://img.shields.io/travis/jenkinsci/cucumber-reports-plugin/master.svg)](https://travis-ci.org/jenkinsci/cucumber-reports-plugin)
-[![Build Jenkins](https://jenkins.ci.cloudbees.com/job/plugins/job/cucumber-reports-plugin/badge/icon)](https://jenkins.ci.cloudbees.com/job/plugins/job/cucumber-reports-plugin/)
 
 [![Maven Dependencies](https://www.versioneye.com/user/projects/5663e781f376cc003d0009df/badge.svg)](https://www.versioneye.com/user/projects/5663e781f376cc003d0009df?child=summary)
 
