@@ -286,8 +286,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // null checker because of the regression in 3.10.2
         configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
 
-        log(listener, String.format("Adding %d classifications sourced from jenkins configuration interface!", classifications.size()));
         if (CollectionUtils.isNotEmpty(classifications)) {
+            log(listener, String.format("Adding %d classifications", classifications.size()));
             addClassificationsToBuildReport(build, workspace, listener, configuration, classifications);
         }
 
