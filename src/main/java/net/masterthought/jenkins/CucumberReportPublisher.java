@@ -312,6 +312,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
         DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(targetDirectory);
 
         if (StringUtils.isEmpty(fileIncludePattern)) {
             scanner.setIncludes(new String[]{DEFAULT_FILE_INCLUDE_PATTERN});
