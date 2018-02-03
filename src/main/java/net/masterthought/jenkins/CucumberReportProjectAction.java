@@ -3,9 +3,12 @@ package net.masterthought.jenkins;
 import hudson.model.AbstractProject;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
-
 import net.masterthought.cucumber.ReportBuilder;
 
+/**
+ * @deprecated functionality moved to action package.
+ */
+@Deprecated
 public class CucumberReportProjectAction extends CucumberReportBaseAction implements ProminentProjectAction {
 
     private final AbstractProject<?, ?> project;
