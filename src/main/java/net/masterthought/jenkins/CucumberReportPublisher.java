@@ -302,7 +302,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (hasReportFailed(result, listener)) {
             // redefine build result if it was provided by plugin configuration
             if (buildStatus != null) {
-                log(listener, "Build status is changed to " + buildStatus.toString());
+                log(listener, "Build status is changed to " + buildStatus);
                 build.setResult(Result.fromString(buildStatus));
             } else {
                 log(listener, "Build status is left unchanged");
