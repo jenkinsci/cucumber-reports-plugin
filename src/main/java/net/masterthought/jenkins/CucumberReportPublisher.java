@@ -421,11 +421,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return BuildStepMonitor.NONE;
     }
 
-    @Override
-    public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new CucumberReportProjectAction(project);
-    }
-
     public static class Classification extends AbstractDescribableImpl<Classification> implements Serializable {
 
         public String key;
