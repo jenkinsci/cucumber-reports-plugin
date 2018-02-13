@@ -1,16 +1,15 @@
 package net.masterthought.jenkins;
 
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
-
 import net.masterthought.cucumber.ReportBuilder;
 
 public class CucumberReportProjectAction extends CucumberReportBaseAction implements ProminentProjectAction {
 
-    private final AbstractProject<?, ?> project;
+    private final Job<?, ?> project;
 
-    public CucumberReportProjectAction(AbstractProject<?, ?> project) {
+    public CucumberReportProjectAction(Job<?, ?> project) {
         this.project = project;
     }
 
