@@ -228,7 +228,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         generateReport(run, workspace, listener);
 
-        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY),
+        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(run, new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY),
                 ReportBuilder.BASE_DIRECTORY, ReportBuilder.HOME_PAGE, CucumberReportBaseAction.ICON_NAME, Messages.SidePanel_DisplayName());
         run.replaceAction(caa);
     }
@@ -420,11 +420,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
-    }
-
-    @Override
-    public Action getProjectAction(AbstractProject<?, ?> project) {
-        return new CucumberReportProjectAction(project);
     }
 
     public static class Classification extends AbstractDescribableImpl<Classification> implements Serializable {
