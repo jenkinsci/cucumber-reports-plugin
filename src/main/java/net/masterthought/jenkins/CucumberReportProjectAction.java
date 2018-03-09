@@ -3,6 +3,7 @@ package net.masterthought.jenkins;
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
+
 import net.masterthought.cucumber.ReportBuilder;
 
 public class CucumberReportProjectAction extends CucumberReportBaseAction implements ProminentProjectAction {
@@ -17,18 +18,10 @@ public class CucumberReportProjectAction extends CucumberReportBaseAction implem
     public String getUrlName() {
         Run<?, ?> run = this.project.getLastCompletedBuild();
         if (run != null) {
-            return extractBuildNumber(run.getUrl()) + "/" + ReportBuilder.BASE_DIRECTORY + "/" + ReportBuilder.HOME_PAGE;
+            return run.getNumber() + "/" + ReportBuilder.BASE_DIRECTORY + "/" + ReportBuilder.HOME_PAGE;
         }
 
         // none build was completed, report is yet not available
         return "";
-    }
-
-    private String extractBuildNumber(String url) {
-        // basic url format -> job/cucumber/125/
-        // view url format  -> view/myview/job/cucumber/126/
-        String buildNumber = url.substring(0, url.length() - 1);
-        buildNumber = buildNumber.substring(buildNumber.lastIndexOf("/") + 1);
-        return buildNumber;
     }
 }
