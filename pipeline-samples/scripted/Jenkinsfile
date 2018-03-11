@@ -1,0 +1,17 @@
+node('master'){
+
+    stage('Checkout'){
+        checkout scm
+    }
+
+    stage('Build'){
+        withEnv(["JAVA_HOME=${ tool 'JDK8' }", "PATH+MAVEN=${tool 'M3'}/bin:${env.JAVA_HOME}/bin"]) {
+            sh 'mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false'
+        }
+    }
+
+    stage('Generate Reports'){
+        cucumber '**/cucumber-*.json'
+    }
+
+}

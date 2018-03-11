@@ -85,6 +85,10 @@ And you can drill down into tag specific reports:
 
 ```
 
+The report will show up when browsing individual builds. Report display at the project level is currently not supported.
+A full list of possible configuration options can be found via the pipeline snippet generator.
+For more information and examples, consult the [pipeline samples directory](https://github.com/jenkinsci/cucumber-reports-plugin/tree/master/pipeline-samples) over at Github
+
 ## Advanced Configuration Options
 
 There are 4 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
