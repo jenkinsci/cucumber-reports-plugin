@@ -11,7 +11,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>3.19.1</version>
+    <version>3.19.2-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <!-- This name and URL are added by the Jenkins when displaying help.html file -->
@@ -22,7 +22,7 @@
         <connection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</developerConnection>
         <url>git@github.com:jenkinsci/cucumber-reports-plugin.git</url>
-        <tag>cucumber-reports-3.19.1</tag>
+        <tag>cucumber-reports-3.4.0</tag>
     </scm>
 
     <description>
