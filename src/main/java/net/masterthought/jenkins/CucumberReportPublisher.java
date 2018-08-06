@@ -2,17 +2,17 @@ package net.masterthought.jenkins;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractDescribableImpl;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -234,7 +234,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     private void generateReport(Run<?, ?> build, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
-        log(listener, "Preparing Cucumber Reports");
+
+        log(listener, "Preparing Cucumber Reports: " + getPomVersion(listener));
 
         // create directory where trends will be stored
         final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR);
@@ -307,6 +308,18 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             } else {
                 log(listener, "Build status is left unchanged");
             }
+        }
+    }
+
+    private String getPomVersion(TaskListener listener) {
+        Properties properties = new Properties();
+        try (InputStream inputStream = this.getClass().getClassLoader()
+                .getResourceAsStream("plugin.properties")) {
+            properties.load(inputStream);
+            return properties.getProperty("plugin.version");
+        } catch (IOException e) {
+            log(listener, e.getMessage());
+            return "";
         }
     }
 
