@@ -56,6 +56,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private String buildStatus;
 
     private int trendsLimit;
+    private boolean trendsDisabled;
     private boolean parallelTesting;
     private String sortingMethod = SortingMethod.NATURAL.name();
     private List<Classification> classifications = Collections.emptyList();
@@ -112,6 +113,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @DataBoundSetter
     public void setTrendsLimit(int trendsLimit) {
         this.trendsLimit = trendsLimit;
+    }
+
+    public boolean isTrendsDisabled() {
+        return trendsDisabled;
+    }
+
+    @DataBoundSetter
+    public void setTrendsDisabled(boolean trendsDisabled) {
+        this.trendsDisabled = trendsDisabled;
     }
 
     public String getFileExcludePattern() {
@@ -283,7 +293,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setParallelTesting(parallelTesting);
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
-        configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
+        if (isTrendsDisabled()) {
+            configuration.setTrendsStatsFile(null);
+        } else {
+            configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
+        }
         // null checker because of the regression in 3.10.2
         configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
 

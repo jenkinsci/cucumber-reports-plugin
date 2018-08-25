@@ -33,6 +33,12 @@
                     description="${%trendsLimit.description}">
                 <f:textbox default="0"/>
             </f:entry>
+            <f:entry
+                    title="${%trendsDisabled.title}"
+                    field="trendsDisabled"
+                    description="${%trendsDisabled.description}">
+                <f:checkbox/>
+            </f:entry>
         </f:section>
 
 
