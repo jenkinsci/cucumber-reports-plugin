@@ -283,7 +283,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setParallelTesting(parallelTesting);
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
-        configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
+        // disable trends
+        if (trendsLimit == -1) {
+            configuration.setTrendsStatsFile(null);
+        } else {
+            configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
+        }
         // null checker because of the regression in 3.10.2
         configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
 
