@@ -85,6 +85,27 @@ And you can drill down into tag specific reports:
 
 ```
 
+### Raw DSL - This should be utilized after build steps
+
+```groovy
+configure { project ->
+ project / 'publishers' << 'net.masterthought.jenkins.CucumberReportPublisher' {
+  fileIncludePattern '**/*.json'
+  fileExcludePattern ''
+  jsonReportDirectory ''
+  failedStepsNumber '0'
+  skippedStepsNumber '0'
+  pendingStepsNumber '0'
+  undefinedStepsNumber '0'
+  failedScenariosNumber '0'
+  failedFeaturesNumber '0'
+  buildStatus 'FAILURE'  //other option is 'UNSTABLE' - if you'd like it left unchanged, don't provide a value
+  trendsLimit '0'
+  parallelTesting 'false' // other option is true
+  sortingMethod 'ALPHABETICAL'
+}
+```
+
 ## Advanced Configuration Options
 
 There are 4 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
