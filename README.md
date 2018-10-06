@@ -40,25 +40,29 @@ If you need more control over the plugin you can click the Advanced button for m
 4. Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
 5. Tick if you want failed test not to fail the entire build but make it unstable
 
-When a build runs that publishes cucumber results it will put a link in the sidepanel to the [cucumber reports](https://github.com/damianszczepanik/cucumber-reporting). There is a feature overview page:
+## Advanced Configuration Options
 
-![feature overview page](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-overview.png)
+There are 4 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
 
-And there are also feature specific results pages:
+![Advanced Configuration](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced_options.png)
 
-![feature specific page passing](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-passed.png)
+The first setting is Skipped steps fail the build - so if you tick this any steps that are skipped during executions will be marked as failed and will cause the build to fail:
 
-And useful information for failures:
+If you check both skipped and not implemented fails the build then your report will look something like this:
 
-![feature specific page failing](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-failed.png)
 
-If you have tags in your cucumber features you can see a tag overview:
+Make sure you have configured cucumber to run with the JUnit runner and to generate a json report: (note - you can add other formatters in if you like e.g. pretty - but only the json formatter is required for the reports to work)
 
-![Tag overview](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-overview.png)
+    import cucumber.junit.Cucumber;
+    import org.junit.runner.RunWith;
 
-And you can drill down into tag specific reports:
+    @RunWith(Cucumber.class)
+    @Cucumber.Options(format = {"json:target/cucumber.json"})
+    public class MyTest {
 
-![Tag report](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-report.png)
+    }
+
+## Automated configuration
 
 ### Pipeline usage
 
@@ -85,27 +89,46 @@ And you can drill down into tag specific reports:
 
 ```
 
-## Advanced Configuration Options
+### Raw DSL - This should be utilized after build steps
 
-There are 4 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
+```groovy
+configure { project ->
+ project / 'publishers' << 'net.masterthought.jenkins.CucumberReportPublisher' {
+  fileIncludePattern '**/*.json'
+  fileExcludePattern ''
+  jsonReportDirectory ''
+  failedStepsNumber '0'
+  skippedStepsNumber '0'
+  pendingStepsNumber '0'
+  undefinedStepsNumber '0'
+  failedScenariosNumber '0'
+  failedFeaturesNumber '0'
+  buildStatus 'FAILURE'  //other option is 'UNSTABLE' - if you'd like it left unchanged, don't provide a value
+  trendsLimit '0'
+  parallelTesting 'false' // other option is true
+  sortingMethod 'ALPHABETICAL'
+}
+```
 
-![Advanced Configuration](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced_options.png)
+When a build runs that publishes cucumber results it will put a link in the sidepanel to the [cucumber reports](https://github.com/damianszczepanik/cucumber-reporting). There is a feature overview page:
 
-The first setting is Skipped steps fail the build - so if you tick this any steps that are skipped during executions will be marked as failed and will cause the build to fail:
+![feature overview page](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-overview.png)
 
-If you check both skipped and not implemented fails the build then your report will look something like this:
+And there are also feature specific results pages:
 
+![feature specific page passing](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-passed.png)
 
-Make sure you have configured cucumber to run with the JUnit runner and to generate a json report: (note - you can add other formatters in if you like e.g. pretty - but only the json formatter is required for the reports to work)
+And useful information for failures:
 
-    import cucumber.junit.Cucumber;
-    import org.junit.runner.RunWith;
+![feature specific page failing](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-failed.png)
 
-    @RunWith(Cucumber.class)
-    @Cucumber.Options(format = {"json:target/cucumber.json"})
-    public class MyTest {
+If you have tags in your cucumber features you can see a tag overview:
 
-    }
+![Tag overview](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-overview.png)
+
+And you can drill down into tag specific reports:
+
+![Tag report](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/tag-report.png)
 
 ## Develop
 
