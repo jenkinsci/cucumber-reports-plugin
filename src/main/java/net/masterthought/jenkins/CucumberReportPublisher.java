@@ -33,6 +33,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 import net.masterthought.cucumber.Reportable;
+import net.masterthought.cucumber.reducers.ReducingMethod;
 import net.masterthought.cucumber.sorting.SortingMethod;
 
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
@@ -56,9 +57,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private String buildStatus;
 
     private int trendsLimit;
-    private boolean parallelTesting;
-    private String sortingMethod = SortingMethod.NATURAL.name();
-    private List<Classification> classifications = Collections.emptyList();
+    private String reducingMethod;
+    private String sortingMethod;
+    private List<Classification> classifications;
     private String classificationsFilePattern = "";
 
     @DataBoundConstructor
@@ -66,23 +67,21 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.fileIncludePattern = fileIncludePattern;
     }
 
-    @Deprecated
-    public CucumberReportPublisher(String jsonReportDirectory, String fileIncludePattern, String fileExcludePattern,
-                                   int failedStepsNumber, int skippedStepsNumber, int pendingStepsNumber,
-                                   int undefinedStepsNumber, int failedScenariosNumber, int failedFeaturesNumber,
-                                   String buildStatus, String sortingMethod) {
-
-        this.jsonReportDirectory = jsonReportDirectory;
-        this.fileIncludePattern = fileIncludePattern;
-        this.fileExcludePattern = fileExcludePattern;
-        this.failedStepsNumber = failedStepsNumber;
-        this.skippedStepsNumber = skippedStepsNumber;
-        this.pendingStepsNumber = pendingStepsNumber;
-        this.undefinedStepsNumber = undefinedStepsNumber;
-        this.failedScenariosNumber = failedScenariosNumber;
-        this.failedFeaturesNumber = failedFeaturesNumber;
-        this.buildStatus = buildStatus;
-        this.sortingMethod = sortingMethod;
+    /**
+     * This method, invoked after object is resurrected from persistence,
+     * to keep backward compatibility.
+     */
+    protected Object readResolve() {
+        if (classifications == null) {
+            classifications = Collections.emptyList();
+        }
+        if (reducingMethod == null) {
+            reducingMethod = ReducingMethod.NONE.name();
+        }
+        if (sortingMethod == null) {
+            sortingMethod = SortingMethod.NATURAL.name();
+        }
+        return this;
     }
 
     private static void log(TaskListener listener, String message) {
@@ -195,15 +194,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.buildStatus = buildStatus;
     }
 
-    public boolean isParallelTesting() {
-        return this.parallelTesting;
-    }
-
-    @DataBoundSetter
-    public void setParallelTesting(boolean parallelTesting) {
-        this.parallelTesting = parallelTesting;
-    }
-
     @DataBoundSetter
     public void setSortingMethod(String sortingMethod) {
         this.sortingMethod = sortingMethod;
@@ -211,6 +201,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     public String getSortingMethod() {
         return sortingMethod;
+    }
+
+    @DataBoundSetter
+    public void setReducingMethod(String reducingMethod) {
+        this.reducingMethod = reducingMethod;
+    }
+
+    public String getReducingMethod() {
+        return this.reducingMethod;
     }
 
     @DataBoundSetter
@@ -235,7 +234,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     private void generateReport(Run<?, ?> build, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
 
-        log(listener, "Preparing Cucumber Reports: " + getPomVersion(listener));
+        log(listener, "Using Cucumber Reports version " + getPomVersion(listener));
 
         // create directory where trends will be stored
         final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR);
@@ -259,7 +258,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d json files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFiles, inputDirectory.getRemote(), directoryJsonCache));
-        //Copies Classifications Files To Cache...
+        // copies Classifications Files To Cache...
         int copiedFilesProperties = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d properties files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFilesProperties, inputDirectory.getRemote(), directoryJsonCache));
@@ -280,12 +279,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         String projectName = build.getParent().getDisplayName();
 
         Configuration configuration = new Configuration(directoryForReport, projectName);
-        configuration.setParallelTesting(parallelTesting);
         configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
-        // null checker because of the regression in 3.10.2
-        configuration.setSortingMethod(sortingMethod == null ? SortingMethod.NATURAL : SortingMethod.valueOf(sortingMethod));
+        configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
+        configuration.setReducingMethod(ReducingMethod.valueOf(reducingMethod));
 
         if (CollectionUtils.isNotEmpty(classifications)) {
             log(listener, String.format("Adding %d classifications", classifications.size()));
