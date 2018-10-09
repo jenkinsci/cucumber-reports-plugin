@@ -88,10 +88,10 @@
 
         <f:section title="${%otherSection}">
             <f:entry
-                    title="${%parallelTesting.title}"
-                    field="parallelTesting"
-                    description="${%parallelTesting.description}">
-                <f:checkbox/>
+                    title="${%reducingMethod.title}"
+                    field="reducingMethod"
+                    description="${%reducingMethod.description}">
+                <f:select/>
             </f:entry>
 
             <f:entry
