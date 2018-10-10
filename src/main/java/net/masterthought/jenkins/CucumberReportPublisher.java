@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -55,6 +56,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int failedScenariosNumber;
     private int failedFeaturesNumber;
     private String buildStatus;
+    private boolean stopBuildOnFailure = false;
 
     private int trendsLimit;
     private String reducingMethod;
@@ -195,6 +197,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     @DataBoundSetter
+    public void setStopBuildOnFailure(boolean stopBuildOnFailure) {
+        this.stopBuildOnFailure = stopBuildOnFailure;
+    }
+
+    public boolean getStopBuildOnFailure() {
+        return stopBuildOnFailure;
+    }
+
+    @DataBoundSetter
     public void setSortingMethod(String sortingMethod) {
         this.sortingMethod = sortingMethod;
     }
@@ -299,6 +310,10 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         Reportable result = reportBuilder.generateReports();
 
         if (hasReportFailed(result, listener)) {
+            if(stopBuildOnFailure) {
+                throw new AbortException(Messages.StopOnBuildFailure_FailNote());
+            }
+
             // redefine build result if it was provided by plugin configuration
             if (buildStatus != null) {
                 log(listener, "Build status is changed to " + buildStatus);
