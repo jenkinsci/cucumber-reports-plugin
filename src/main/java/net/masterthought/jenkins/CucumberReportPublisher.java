@@ -71,7 +71,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
      * This method, invoked after object is resurrected from persistence,
      * to keep backward compatibility.
      */
-    protected Object readResolve() {
+    protected void keepBackwardCompatibility() {
         if (classifications == null) {
             classifications = Collections.emptyList();
         }
@@ -81,7 +81,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
         }
-        return this;
     }
 
     private static void log(TaskListener listener, String message) {
@@ -224,6 +223,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
+
+        keepBackwardCompatibility();
 
         generateReport(run, workspace, listener);
 
