@@ -56,7 +56,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int failedScenariosNumber;
     private int failedFeaturesNumber;
     private String buildStatus;
-    private boolean stopBuildOnFailure = false;
+    private boolean stopBuildOnFailure;
 
     private int trendsLimit;
     private String reducingMethod;
@@ -310,16 +310,16 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         Reportable result = reportBuilder.generateReports();
 
         if (hasReportFailed(result, listener)) {
-            if(stopBuildOnFailure) {
-                throw new AbortException(Messages.StopOnBuildFailure_FailNote());
-            }
-
             // redefine build result if it was provided by plugin configuration
             if (buildStatus != null) {
                 log(listener, "Build status is changed to " + buildStatus);
                 build.setResult(Result.fromString(buildStatus));
             } else {
                 log(listener, "Build status is left unchanged");
+            }
+
+            if (stopBuildOnFailure) {
+                throw new AbortException(Messages.StopOnBuildFailure_FailNote());
             }
         }
     }
