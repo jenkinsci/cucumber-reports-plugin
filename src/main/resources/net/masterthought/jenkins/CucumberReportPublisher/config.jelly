@@ -84,6 +84,13 @@
                     description="${%buildStatus.description}">
                 <f:select/>
             </f:entry>
+
+            <f:entry
+                    title="${%stopBuildOnFailure.title}"
+                    field="stopBuildOnFailure"
+                    description="${%stopBuildOnFailure.description}">
+                <f:checkbox/>
+            </f:entry>
         </f:section>
 
         <f:section title="${%presentation}">
