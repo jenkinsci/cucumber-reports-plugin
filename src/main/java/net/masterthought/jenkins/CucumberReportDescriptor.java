@@ -8,7 +8,6 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import org.kohsuke.stapler.QueryParameter;
 
-import net.masterthought.cucumber.reducers.ReducingMethod;
 import net.masterthought.cucumber.sorting.SortingMethod;
 
 public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
@@ -81,13 +80,5 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
                 // default option should be listed first
                 new ListBoxModel.Option(Messages.SortingMethod_ALPHABETICAL(), SortingMethod.ALPHABETICAL.name()),
                 new ListBoxModel.Option(Messages.SortingMethod_NATURAL(), SortingMethod.NATURAL.name()));
-    }
-
-    // names must refer to the field name
-    public ListBoxModel doFillReducingMethodItems() {
-        return new ListBoxModel(
-                // default option should be listed first
-                new ListBoxModel.Option(Messages.ReducingMethod_NONE(), ReducingMethod.NONE.name()),
-                new ListBoxModel.Option(Messages.ReducingMethod_MERGE_FEATURES_BY_ID(), ReducingMethod.MERGE_FEATURES_BY_ID.name()));
     }
 }

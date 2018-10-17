@@ -86,25 +86,27 @@
             </f:entry>
         </f:section>
 
-        <f:section title="${%otherSection}">
-            <f:entry
-                    title="${%reducingMethod.title}"
-                    field="reducingMethod"
-                    description="${%reducingMethod.description}">
-                <f:select/>
-            </f:entry>
+        <f:section title="${%presentation}">
 
             <f:entry
                     title="${%sortingMethod.title}"
-                    field="sortingMethod"
-                    description="${%sortingMethod.description}">
+                    field="sortingMethod">
                 <f:select/>
             </f:entry>
 
             <f:entry
                     field="classifications"
-                    description="${%classifications.description}">
+                    title="${%classifications.title}">
                 <f:repeatableProperty field="classifications"/>
+            </f:entry>
+
+            <f:entry
+                    title="${%reducingMethods.title}"
+                    field="reducingMethods">
+
+                <f:checkbox title="${%reducingMethods.mergeFeaturesById.title}"
+                                field="mergeFeaturesById"/>
+
             </f:entry>
 
         </f:section>
