@@ -57,9 +57,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private String buildStatus;
 
     private int trendsLimit;
-    private String reducingMethod;
     private String sortingMethod;
     private List<Classification> classifications;
+    private boolean mergeFeaturesById;
     private String classificationsFilePattern = "";
 
     @DataBoundConstructor
@@ -74,9 +74,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     protected void keepBackwardCompatibility() {
         if (classifications == null) {
             classifications = Collections.emptyList();
-        }
-        if (reducingMethod == null) {
-            reducingMethod = ReducingMethod.NONE.name();
         }
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
@@ -203,21 +200,21 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     @DataBoundSetter
-    public void setReducingMethod(String reducingMethod) {
-        this.reducingMethod = reducingMethod;
-    }
-
-    public String getReducingMethod() {
-        return this.reducingMethod;
-    }
-
-    @DataBoundSetter
     public void setClassificationsFilePattern(String classificationsFilePattern) {
         this.classificationsFilePattern = classificationsFilePattern;
     }
 
     public String getClassificationsFilePattern() {
         return classificationsFilePattern;
+    }
+
+    @DataBoundSetter
+    public void setMergeFeaturesById(boolean mergeFeaturesById) {
+        this.mergeFeaturesById = mergeFeaturesById;
+    }
+
+    public boolean getMergeFeaturesById() {
+        return mergeFeaturesById;
     }
 
     @Override
@@ -284,7 +281,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
         configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
-        configuration.setReducingMethod(ReducingMethod.valueOf(reducingMethod));
+        if (mergeFeaturesById) {
+            configuration.addReducingMethod(ReducingMethod.MERGE_FEATURES_BY_ID);
+        }
 
         if (CollectionUtils.isNotEmpty(classifications)) {
             log(listener, String.format("Adding %d classifications", classifications.size()));
