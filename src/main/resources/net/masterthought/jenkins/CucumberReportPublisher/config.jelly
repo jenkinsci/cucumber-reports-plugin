@@ -86,9 +86,8 @@
             </f:entry>
 
             <f:entry
-                    title="${%stopBuildOnFailure.title}"
-                    field="stopBuildOnFailure"
-                    description="${%stopBuildOnFailure.description}">
+                    title="${%stopBuildOnFailedReport.title}"
+                    field="stopBuildOnFailedReport">
                 <f:checkbox/>
             </f:entry>
         </f:section>

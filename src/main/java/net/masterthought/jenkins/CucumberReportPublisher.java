@@ -56,7 +56,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int failedScenariosNumber;
     private int failedFeaturesNumber;
     private String buildStatus;
-    private boolean stopBuildOnFailure;
+    private boolean stopBuildOnFailedReport;
 
     private int trendsLimit;
     private String sortingMethod;
@@ -193,12 +193,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     @DataBoundSetter
-    public void setStopBuildOnFailure(boolean stopBuildOnFailure) {
-        this.stopBuildOnFailure = stopBuildOnFailure;
+    public void setStopBuildOnFailedReport(boolean stopBuildOnFailedReport) {
+        this.stopBuildOnFailedReport = stopBuildOnFailedReport;
     }
 
-    public boolean getStopBuildOnFailure() {
-        return stopBuildOnFailure;
+    public boolean getStopBuildOnFailedReport() {
+        return stopBuildOnFailedReport;
     }
 
     @DataBoundSetter
@@ -318,8 +318,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
                 log(listener, "Build status is left unchanged");
             }
 
-            if (stopBuildOnFailure) {
-                throw new AbortException(Messages.StopOnBuildFailure_FailNote());
+            if (stopBuildOnFailedReport) {
+                throw new AbortException(Messages.StopBuildOnFailedReport_FailNote());
             }
         }
     }
