@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -55,6 +56,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int failedScenariosNumber;
     private int failedFeaturesNumber;
     private String buildStatus;
+    private boolean stopBuildOnFailedReport;
 
     private int trendsLimit;
     private String sortingMethod;
@@ -191,6 +193,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     @DataBoundSetter
+    public void setStopBuildOnFailedReport(boolean stopBuildOnFailedReport) {
+        this.stopBuildOnFailedReport = stopBuildOnFailedReport;
+    }
+
+    public boolean getStopBuildOnFailedReport() {
+        return stopBuildOnFailedReport;
+    }
+
+    @DataBoundSetter
     public void setSortingMethod(String sortingMethod) {
         this.sortingMethod = sortingMethod;
     }
@@ -305,6 +316,10 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
                 build.setResult(Result.fromString(buildStatus));
             } else {
                 log(listener, "Build status is left unchanged");
+            }
+
+            if (stopBuildOnFailedReport) {
+                throw new AbortException(Messages.StopBuildOnFailedReport_FailNote());
             }
         }
     }
