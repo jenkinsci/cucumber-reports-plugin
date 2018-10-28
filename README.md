@@ -67,26 +67,19 @@ Make sure you have configured cucumber to run with the JUnit runner and to gener
 ### Pipeline usage
 
 ```groovy
- pipeline {
-     
-    agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                //run your build
-                sh 'mvn clean verify'
-            }
-            post {
-                always {
-                    //generate cucumber reports
-                    cucumber '**/*.json'
-                }
-            }
-        }
+node {
+    stage('Generate HTML report') {
+        cucumber buildStatus: 'UNSTABLE',
+                fileIncludePattern: '**/*.json',
+                trendsLimit: 10,
+                classifications: [
+                    [
+                        'key': 'Browser',
+                        'value': 'Firefox'
+                    ]
+                ]
     }
 }
-
 ```
 
 ### Raw DSL - This should be utilized after build steps
@@ -105,7 +98,6 @@ configure { project ->
   failedFeaturesNumber '0'
   buildStatus 'FAILURE'  //other option is 'UNSTABLE' - if you'd like it left unchanged, don't provide a value
   trendsLimit '0'
-  parallelTesting 'false' // other option is true
   sortingMethod 'ALPHABETICAL'
 }
 ```
