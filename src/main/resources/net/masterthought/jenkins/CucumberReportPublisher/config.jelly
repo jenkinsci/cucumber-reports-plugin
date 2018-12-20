@@ -111,7 +111,10 @@
                     field="reducingMethods">
 
                 <f:checkbox title="${%reducingMethods.mergeFeaturesById.title}"
-                                field="mergeFeaturesById"/>
+                            field="mergeFeaturesById"/>
+                <br/>
+                <f:checkbox title="${%reducingMethods.skipEmptyJSONFiles.title}"
+                            field="skipEmptyJSONFiles"/>
 
             </f:entry>
 

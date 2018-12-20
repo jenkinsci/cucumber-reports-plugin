@@ -62,6 +62,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private String sortingMethod;
     private List<Classification> classifications;
     private boolean mergeFeaturesById;
+    private boolean skipEmptyJSONFiles;
     private String classificationsFilePattern = "";
 
     @DataBoundConstructor
@@ -228,6 +229,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return mergeFeaturesById;
     }
 
+    @DataBoundSetter
+    public void setSkipEmptyJSONFiles(boolean skipEmptyJSONFiles) {
+        this.skipEmptyJSONFiles = skipEmptyJSONFiles;
+    }
+
+    public boolean getSkipEmptyJSONFiles() {
+        return skipEmptyJSONFiles;
+    }
+
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
@@ -294,6 +304,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
         if (mergeFeaturesById) {
             configuration.addReducingMethod(ReducingMethod.MERGE_FEATURES_BY_ID);
+        }
+        if (skipEmptyJSONFiles) {
+            configuration.addReducingMethod(ReducingMethod.SKIP_EMPTY_JSON_FILES);
         }
 
         if (CollectionUtils.isNotEmpty(classifications)) {
