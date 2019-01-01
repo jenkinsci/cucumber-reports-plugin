@@ -23,6 +23,7 @@ import hudson.tasks.Publisher;
 import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.jenkinsci.Symbol;
@@ -39,7 +40,7 @@ import net.masterthought.cucumber.sorting.SortingMethod;
 
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
-    private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
+    private final static String DEFAULT_FILE_INCLUDE_PATTERN_JSONS = "**/*.json";
     private final static String DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS = "**/*.properties";
 
     private final static String TRENDS_DIR = "cucumber-reports";
@@ -273,11 +274,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (!directoryJsonCache.exists() && !directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
-        //Copies Json Files To Cache...
-        int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN, new FilePath(directoryJsonCache));
+        // copies JSON files to cache...
+        int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_JSONS, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d json files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFiles, inputDirectory.getRemote(), directoryJsonCache));
-        // copies Classifications Files To Cache...
+        // copies Classifications files to cache...
         int copiedFilesProperties = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d properties files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFilesProperties, inputDirectory.getRemote(), directoryJsonCache));
@@ -335,6 +336,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
                 throw new AbortException(Messages.StopBuildOnFailedReport_FailNote());
             }
         }
+
+        // removes cache which may run out of the free space on storage
+        FileUtils.deleteQuietly(directoryJsonCache);
     }
 
     private String getPomVersion(TaskListener listener) {
@@ -354,7 +358,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         scanner.setBasedir(targetDirectory);
 
         if (StringUtils.isEmpty(fileIncludePattern)) {
-            scanner.setIncludes(new String[]{DEFAULT_FILE_INCLUDE_PATTERN});
+            scanner.setIncludes(new String[]{DEFAULT_FILE_INCLUDE_PATTERN_JSONS});
         } else {
             scanner.setIncludes(new String[]{fileIncludePattern});
         }
