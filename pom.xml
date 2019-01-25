@@ -15,12 +15,20 @@
     <name>Cucumber reports</name>
     <url>https://github.com/jenkinsci/cucumber-reports-plugin</url>
 
+    <properties>
+        <java.level>8</java.level>
+    </properties>
+
     <scm>
         <connection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</developerConnection>
         <url>git@github.com:jenkinsci/cucumber-reports-plugin.git</url>
         <tag>cucumber-reports-4.1.0</tag>
     </scm>
+    <ciManagement>
+        <system>travis</system>
+        <url>https://travis-ci.org/damianszczepanik/cucumber-reporting</url>
+    </ciManagement>
 
     <licenses>
         <license>
@@ -111,7 +119,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>4.3.0</version>
+            <version>4.4.0</version>
         </dependency>
     </dependencies>
 </project>
