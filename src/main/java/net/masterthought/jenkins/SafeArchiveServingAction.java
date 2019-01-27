@@ -148,7 +148,6 @@ public class SafeArchiveServingAction implements Action {
      * safe.
      *
      * @throws NoSuchAlgorithmException If the platform does unexpectedly not support SHA-1
-     * @throws IOException
      */
     public void processDirectory() throws NoSuchAlgorithmException, IOException {
         LOGGER.log(Level.FINE, "Scanning " + getRootDir());
