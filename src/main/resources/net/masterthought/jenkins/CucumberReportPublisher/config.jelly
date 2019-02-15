@@ -67,6 +67,40 @@
                 <f:textbox default="-1"/>
             </f:entry>
 
+
+            <f:entry
+                    title="${%failedStepsPercentage.title}"
+                    field="failedStepsPercentage">
+                <f:textbox default="0"/>
+            </f:entry>
+            <f:entry
+                    title="${%skippedStepsPercentage.title}"
+                    field="skippedStepsPercentage">
+                <f:textbox default="0"/>
+            </f:entry>
+            <f:entry
+                    title="${%pendingStepsPercentage.title}"
+                    field="pendingStepsPercentage">
+                <f:textbox default="0"/>
+            </f:entry>
+            <f:entry
+                    title="${%undefinedStepsPercentage.title}"
+                    field="undefinedStepsPercentage">
+                <f:textbox default="0"/>
+            </f:entry>
+
+            <f:entry
+                    title="${%failedScenariosPercentage.title}"
+                    field="failedScenariosPercentage">
+                <f:textbox default="0"/>
+            </f:entry>
+            <f:entry
+                    title="${%failedFeaturesPercentage.title}"
+                    field="failedFeaturesPercentage">
+                <f:textbox default="0"/>
+            </f:entry>
+
+
             <f:entry
                     title="${%buildStatus.title}"
                     field="buildStatus">
