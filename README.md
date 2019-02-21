@@ -1,7 +1,5 @@
 [![Build Travis](https://img.shields.io/travis/jenkinsci/cucumber-reports-plugin/master.svg)](https://travis-ci.org/jenkinsci/cucumber-reports-plugin)
 
-[![Maven Dependencies](https://www.versioneye.com/user/projects/5663e781f376cc003d0009df/badge.svg)](https://www.versioneye.com/user/projects/5663e781f376cc003d0009df?child=summary)
-
 # Publish pretty [cucumber](https://cucumber.io/) reports on [Jenkins](http://jenkins-ci.org/)
 
 This is a Java Jenkins plugin which publishes [pretty html reports](https://github.com/damianszczepanik/cucumber-reporting) showing the results of cucumber runs. To use with regular cucumber just make sure to run cucumber like this: cucumber `--plugin json -o cucumber.json`
