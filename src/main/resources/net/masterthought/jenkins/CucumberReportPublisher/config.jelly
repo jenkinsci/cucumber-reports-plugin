@@ -38,33 +38,33 @@
             <f:entry
                     title="${%failedStepsNumber.title}"
                     field="failedStepsNumber">
-                <f:textbox default="0"/>
+                <f:textbox default="-1"/>
             </f:entry>
             <f:entry
                     title="${%skippedStepsNumber.title}"
                     field="skippedStepsNumber">
-                <f:textbox default="0"/>
+                <f:textbox default="-1"/>
             </f:entry>
             <f:entry
                     title="${%pendingStepsNumber.title}"
                     field="pendingStepsNumber">
-                <f:textbox default="0"/>
+                <f:textbox default="-1"/>
             </f:entry>
             <f:entry
                     title="${%undefinedStepsNumber.title}"
                     field="undefinedStepsNumber">
-                <f:textbox default="0"/>
+                <f:textbox default="-1"/>
             </f:entry>
 
             <f:entry
                     title="${%failedScenariosNumber.title}"
                     field="failedScenariosNumber">
-                <f:textbox default="0"/>
+                <f:textbox default="-1"/>
             </f:entry>
             <f:entry
                     title="${%failedFeaturesNumber.title}"
                     field="failedFeaturesNumber">
-                <f:textbox default="0"/>
+                <f:textbox default="-1"/>
             </f:entry>
 
             <f:entry

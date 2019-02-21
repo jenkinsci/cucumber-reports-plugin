@@ -61,13 +61,15 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
     private static FormValidation isValidNumber(String value) {
-        int intValue;
         try {
-            intValue = Integer.parseInt(value);
+            int intValue = Integer.parseInt(value);
+            if (intValue == -1) {
+                return FormValidation.warning(Messages.Configuration_skipValidation());
+            }
             if (intValue >= 0) {
                 return FormValidation.ok();
             } else {
-                return FormValidation.error(Messages.Configuration_notValidNumberRange());
+                return FormValidation.error(Messages.Configuration_notValidNumber());
             }
         } catch (NumberFormatException e) {
             return FormValidation.error(Messages.Configuration_notValidNumber());

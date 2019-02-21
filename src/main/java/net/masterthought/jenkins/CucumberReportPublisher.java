@@ -311,7 +311,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         }
 
         if (CollectionUtils.isNotEmpty(classifications)) {
-            log(listener, String.format("Adding %d classifications", classifications.size()));
+            log(listener, String.format("Adding %d classification(s)", classifications.size()));
             addClassificationsToBuildReport(build, workspace, listener, configuration, classifications);
         }
 
@@ -379,40 +379,40 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     private boolean hasReportFailed(Reportable result, TaskListener listener) {
-        // happens when the resport could not be generated
+        // happens when the report could not be generated
         if (result == null) {
             log(listener, "Missing report result - report was not successfully completed");
             return true;
         }
 
-        if (result.getFailedSteps() > failedStepsNumber) {
-            log(listener, String.format("Found %d failed steps, while expected not more than %d",
+        if (failedStepsNumber != -1 && result.getFailedSteps() > failedStepsNumber) {
+            log(listener, String.format("Found %d failed steps, while expected at most %d",
                     result.getFailedSteps(), failedStepsNumber));
             return true;
         }
-        if (result.getSkippedSteps() > skippedStepsNumber) {
-            log(listener, String.format("Found %d skipped steps, while expected not more than %d",
+        if (skippedStepsNumber != -1 && result.getSkippedSteps() > skippedStepsNumber) {
+            log(listener, String.format("Found %d skipped steps, while expected at most %d",
                     result.getSkippedSteps(), skippedStepsNumber));
             return true;
         }
-        if (result.getPendingSteps() > pendingStepsNumber) {
-            log(listener, String.format("Found %d pending steps, while expected not more than %d",
+        if (pendingStepsNumber != -1 && result.getPendingSteps() > pendingStepsNumber) {
+            log(listener, String.format("Found %d pending steps, while expected at most %d",
                     result.getPendingSteps(), pendingStepsNumber));
             return true;
         }
-        if (result.getUndefinedSteps() > undefinedStepsNumber) {
-            log(listener, String.format("Found %d undefined steps, while expected not more than %d",
+        if (undefinedStepsNumber != -1 && result.getUndefinedSteps() > undefinedStepsNumber) {
+            log(listener, String.format("Found %d undefined steps, while expected at most %d",
                     result.getUndefinedSteps(), undefinedStepsNumber));
             return true;
         }
 
-        if (result.getFailedScenarios() > failedScenariosNumber) {
-            log(listener, String.format("Found %d failed scenarios, while expected not more than %d",
+        if (failedScenariosNumber != -1 && result.getFailedScenarios() > failedScenariosNumber) {
+            log(listener, String.format("Found %d failed scenarios, while expected at most %d",
                     result.getFailedScenarios(), failedScenariosNumber));
             return true;
         }
-        if (result.getFailedFeatures() > failedFeaturesNumber) {
-            log(listener, String.format("Found %d failed features, while expected not more than %d",
+        if (failedFeaturesNumber != -1 && result.getFailedFeatures() > failedFeaturesNumber) {
+            log(listener, String.format("Found %d failed features, while expected at most %d",
                     result.getFailedFeatures(), failedFeaturesNumber));
             return true;
         }
@@ -431,7 +431,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     private void addClassificationsToBuildReport(Run<?, ?> build, FilePath workspace, TaskListener listener, Configuration configuration, List<Classification> listToAdd) throws InterruptedException, IOException {
         for (Classification classification : listToAdd) {
-            log(listener, String.format("Adding classification - %s:%s", classification.key, classification.value));
+            log(listener, String.format("Adding classification - %s -> %s", classification.key, classification.value));
             configuration.addClassifications(classification.key, evaluateMacro(build, workspace, listener, classification.value));
         }
     }
