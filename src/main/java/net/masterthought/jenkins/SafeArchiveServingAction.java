@@ -50,6 +50,8 @@ import static java.util.Collections.unmodifiableSet;
  */
 public class SafeArchiveServingAction implements Action {
 
+    private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingAction.class.getName());
+
     private Map<String,String> fileChecksums = new HashMap<>();
 
     private final File rootDir;
@@ -147,7 +149,8 @@ public class SafeArchiveServingAction implements Action {
      * Record the checksums of files in the specified directory and its descendants unless a file type is whitelisted as
      * safe.
      *
-     * @throws NoSuchAlgorithmException If the platform does unexpectedly not support SHA-1
+     * @throws NoSuchAlgorithmException when the platform does unexpectedly not support SHA-1
+     * @throws IOException when the file or directory for specified file could not be created
      */
     public void processDirectory() throws NoSuchAlgorithmException, IOException {
         LOGGER.log(Level.FINE, "Scanning " + getRootDir());
@@ -299,6 +302,4 @@ public class SafeArchiveServingAction implements Action {
             }
         }
     }
-
-    private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingAction.class.getName());
 }
