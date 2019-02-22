@@ -8,10 +8,9 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.Nonnull;
-
 import hudson.model.Action;
 import hudson.model.Run;
+import javax.annotation.Nonnull;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep;
 
@@ -20,6 +19,8 @@ import jenkins.tasks.SimpleBuildStep;
  * build.
  */
 public class SafeArchiveServingRunAction extends SafeArchiveServingAction implements RunAction2, SimpleBuildStep.LastBuildAction {
+
+    private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingRunAction.class.getName());
 
     private Run<?, ?> run;
 
@@ -47,6 +48,4 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
     public Collection<? extends Action> getProjectActions() {
     	return Collections.singleton(new CucumberReportProjectAction(run.getParent()));
     }
-    
-    private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingRunAction.class.getName());
 }

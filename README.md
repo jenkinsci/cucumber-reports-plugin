@@ -1,5 +1,7 @@
 [![Build Travis](https://img.shields.io/travis/jenkinsci/cucumber-reports-plugin/master.svg)](https://travis-ci.org/jenkinsci/cucumber-reports-plugin)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8a9f4e032a47461fb984cd39c599584d)](https://www.codacy.com/app/damianszczepanik/cucumber-reports-plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jenkinsci/cucumber-reports-plugin&amp;utm_campaign=Badge_Grade)
+
 # Publish pretty [cucumber](https://cucumber.io/) reports on [Jenkins](http://jenkins-ci.org/)
 
 This is a Java Jenkins plugin which publishes [pretty html reports](https://github.com/damianszczepanik/cucumber-reporting) showing the results of cucumber runs. To use with regular cucumber just make sure to run cucumber like this: cucumber `--plugin json -o cucumber.json`
@@ -12,11 +14,9 @@ This plugin allows Jenkins to publish the results as pretty html reports hosted 
 
 ## Install
 
-1. [Get](https://jenkins-ci.org/) Jenkins.
-
-2. Install the [Cucumber Reports](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Reports+Plugin) plugin.
-
-3. Restart Jenkins.
+1.  [Get](https://jenkins-ci.org/) Jenkins.
+2.  Install the [Cucumber Reports](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Reports+Plugin) plugin.
+3.  Restart Jenkins.
 
 Read this if you need further  [detailed install and configuration](https://github.com/jenkinsci/cucumber-reports-plugin/wiki/Detailed-Configuration) instructions 
 
@@ -32,11 +32,11 @@ If you need more control over the plugin you can click the Advanced button for m
 
 ![](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced-publish-box.png)
 
-1. Leave empty for the plugin to automagically find your json files or enter the path to the json reports relative to the workspace if for some reason the automagic doesn't work for you
-2. Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
-3. Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
-4. Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
-5. Tick if you want failed test not to fail the entire build but make it unstable
+1.  Leave empty for the plugin to automagically find your json files or enter the path to the json reports relative to the workspace if for some reason the automagic doesn't work for you
+2.  Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
+3.  Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
+4.  Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
+5.  Tick if you want failed test not to fail the entire build but make it unstable
 
 ## Advanced Configuration Options
 
@@ -48,17 +48,17 @@ The first setting is Skipped steps fail the build - so if you tick this any step
 
 If you check both skipped and not implemented fails the build then your report will look something like this:
 
-
 Make sure you have configured cucumber to run with the JUnit runner and to generate a json report: (note - you can add other formatters in if you like e.g. pretty - but only the json formatter is required for the reports to work)
-
+```java
     import cucumber.junit.Cucumber;
     import org.junit.runner.RunWith;
-
+    
     @RunWith(Cucumber.class)
     @Cucumber.Options(format = {"json:target/cucumber.json"})
     public class MyTest {
-
+    
     }
+```
 
 ## Automated configuration
 
