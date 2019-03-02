@@ -119,7 +119,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>4.4.0</version>
+            <version>4.5.1</version>
         </dependency>
     </dependencies>
 </project>
