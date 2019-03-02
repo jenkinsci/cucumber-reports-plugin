@@ -50,14 +50,14 @@ If you check both skipped and not implemented fails the build then your report w
 
 Make sure you have configured cucumber to run with the JUnit runner and to generate a json report: (note - you can add other formatters in if you like e.g. pretty - but only the json formatter is required for the reports to work)
 ```java
-    import cucumber.junit.Cucumber;
-    import org.junit.runner.RunWith;
-    
-    @RunWith(Cucumber.class)
-    @Cucumber.Options(format = {"json:target/cucumber.json"})
-    public class MyTest {
-    
-    }
+  import cucumber.junit.Cucumber;
+  import org.junit.runner.RunWith;
+  
+  @RunWith(Cucumber.class)
+  @Cucumber.Options(format = {"json:target/cucumber.json"})
+  public class MyTest {
+  
+  }
 ```
 
 ## Automated configuration
