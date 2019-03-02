@@ -3,5 +3,5 @@
     Provides pretty html reports for Cucumber. Can be used anywhere a json report is generated (Java, Ruby, JavaScript
     and other implementations).
     <br/>
-    <b>Now with support for parallel testing.</b>
+    <b>Now with support for parallel testing and empty JSON files.</b>
 </div>
