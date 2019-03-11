@@ -33,34 +33,34 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
 
 
     public FormValidation doCheckTrendsLimit(@QueryParameter String value) {
-        return isValidNumber(value);
+        return isValidInteger(value);
     }
 
     public FormValidation doCheckFailedStepsNumber(@QueryParameter String value) {
-        return isValidNumber(value);
+        return isValidInteger(value);
     }
 
     public FormValidation doCheckSkippedStepsNumber(@QueryParameter String value) {
-        return isValidNumber(value);
+        return isValidInteger(value);
     }
 
     public FormValidation doCheckPendingStepsNumber(@QueryParameter String value) {
-        return isValidNumber(value);
+        return isValidInteger(value);
     }
 
     public FormValidation doCheckUndefinedStepsNumber(@QueryParameter String value) {
-        return isValidNumber(value);
+        return isValidInteger(value);
     }
 
     public FormValidation doCheckFailedScenariosNumber(@QueryParameter String value) {
-        return isValidNumber(value);
+        return isValidInteger(value);
     }
 
     public FormValidation doCheckFailedFeaturesNumber(@QueryParameter String value) {
-        return isValidNumber(value);
+        return isValidInteger(value);
     }
 
-    private static FormValidation isValidNumber(String value) {
+    private static FormValidation isValidInteger(String value) {
         try {
             int intValue = Integer.parseInt(value);
             if (intValue == -1) {
@@ -72,7 +72,46 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
                 return FormValidation.error(Messages.Configuration_notValidNumber());
             }
         } catch (NumberFormatException e) {
-            return FormValidation.error(Messages.Configuration_notValidNumber());
+            return FormValidation.error(Messages.Configuration_notValidInteger());
+        }
+    }
+
+
+    public FormValidation doCheckFailedStepsPercentage(@QueryParameter String value) {
+        return isValidPercentage(value);
+    }
+
+    public FormValidation doCheckSkippedStepsPercentage(@QueryParameter String value) {
+        return isValidPercentage(value);
+    }
+
+    public FormValidation doCheckPendingStepsPercentage(@QueryParameter String value) {
+        return isValidPercentage(value);
+    }
+
+    public FormValidation doCheckUndefinedStepsPercentage(@QueryParameter String value) {
+        return isValidPercentage(value);
+    }
+
+    public FormValidation doCheckFailedScenariosPercentage(@QueryParameter String value) {
+        return isValidPercentage(value);
+    }
+
+    public FormValidation doCheckFailedFeaturesPercentage(@QueryParameter String value) {
+        return isValidPercentage(value);
+    }
+
+    private static FormValidation isValidPercentage(String value) {
+        double doubleValue;
+        try {
+            doubleValue = Double.parseDouble(value);
+            if (doubleValue >= 0 && doubleValue <= 100) {
+                return FormValidation.ok();
+            } else {
+                return FormValidation.error(Messages.Configuration_notValidInteger());
+            }
+        } catch (NumberFormatException e) {
+            return FormValidation.error(Messages.Configuration_notValidPercentage());
         }
     }
 

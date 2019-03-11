@@ -56,6 +56,14 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int undefinedStepsNumber;
     private int failedScenariosNumber;
     private int failedFeaturesNumber;
+
+    private double failedStepsPercentage;
+    private double skippedStepsPercentage;
+    private double pendingStepsPercentage;
+    private double undefinedStepsPercentage;
+    private double failedScenariosPercentage;
+    private double failedFeaturesPercentage;
+
     private String buildStatus;
     private boolean stopBuildOnFailedReport;
 
@@ -131,6 +139,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.jsonReportDirectory = jsonReportDirectory;
     }
 
+
     public int getFailedStepsNumber() {
         return failedStepsNumber;
     }
@@ -184,6 +193,62 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     public void setFailedFeaturesNumber(int failedFeaturesNumber) {
         this.failedFeaturesNumber = failedFeaturesNumber;
     }
+
+
+    public double getFailedStepsPercentage() {
+        return failedStepsPercentage;
+    }
+
+    @DataBoundSetter
+    public void setFailedStepsPercentage(double failedStepsPercentage) {
+        this.failedStepsPercentage = failedStepsPercentage;
+    }
+
+    public double getSkippedStepsPercentage() {
+        return skippedStepsPercentage;
+    }
+
+    @DataBoundSetter
+    public void setSkippedStepsPercentage(double skippedStepsPercentage) {
+        this.skippedStepsPercentage = skippedStepsPercentage;
+    }
+
+    public double getPendingStepsPercentage() {
+        return pendingStepsPercentage;
+    }
+
+    @DataBoundSetter
+    public void setPendingStepsPercentage(double pendingStepsPercentage) {
+        this.pendingStepsPercentage = pendingStepsPercentage;
+    }
+
+    public double getUndefinedStepsPercentage() {
+        return undefinedStepsPercentage;
+    }
+
+    @DataBoundSetter
+    public void setUndefinedStepsPercentage(double undefinedStepsPercentage) {
+        this.undefinedStepsPercentage = undefinedStepsPercentage;
+    }
+
+    public double getFailedScenariosPercentage() {
+        return failedScenariosPercentage;
+    }
+
+    @DataBoundSetter
+    public void setFailedScenariosPercentage(double failedScenariosPercentage) {
+        this.failedScenariosPercentage = failedScenariosPercentage;
+    }
+
+    public double getFailedFeaturesPercentage() {
+        return failedFeaturesPercentage;
+    }
+
+    @DataBoundSetter
+    public void setFailedFeaturesPercentage(double failedFeaturesPercentage) {
+        this.failedFeaturesPercentage = failedFeaturesPercentage;
+    }
+
 
     public String getBuildStatus() {
         return buildStatus;
@@ -405,7 +470,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
                     result.getUndefinedSteps(), undefinedStepsNumber));
             return true;
         }
-
         if (failedScenariosNumber != -1 && result.getFailedScenarios() > failedScenariosNumber) {
             log(listener, String.format("Found %d failed scenarios, while expected at most %d",
                     result.getFailedScenarios(), failedScenariosNumber));
@@ -414,6 +478,43 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (failedFeaturesNumber != -1 && result.getFailedFeatures() > failedFeaturesNumber) {
             log(listener, String.format("Found %d failed features, while expected at most %d",
                     result.getFailedFeatures(), failedFeaturesNumber));
+            return true;
+        }
+
+        double failedStepsThreshold = 100.0 * result.getFailedSteps() / result.getSteps();
+        if (failedStepsThreshold > failedStepsPercentage) {
+            log(listener, String.format("Found %f failed steps, while expected not more than %f percent",
+                    failedStepsThreshold, failedStepsPercentage));
+            return true;
+        }
+        double skippedStepsThreshold = 100.0 * result.getSkippedSteps() / result.getSteps();
+        if (skippedStepsThreshold > skippedStepsPercentage) {
+            log(listener, String.format("Found %f skipped steps, while expected not more than %f percent",
+                    skippedStepsThreshold, skippedStepsPercentage));
+            return true;
+        }
+        double pendingStepsThreshold = 100.0 * result.getPendingSteps() / result.getSteps();
+        if (pendingStepsThreshold > pendingStepsPercentage) {
+            log(listener, String.format("Found %f pending steps, while expected not more than %f percent",
+                    pendingStepsThreshold, pendingStepsPercentage));
+            return true;
+        }
+        double undefinedStepsThreshold = 100.0 * result.getUndefinedSteps() / result.getSteps();
+        if (undefinedStepsThreshold > undefinedStepsPercentage) {
+            log(listener, String.format("Found %f undefined steps, while expected not more than %f percent",
+                    undefinedStepsThreshold, undefinedStepsPercentage));
+            return true;
+        }
+        double failedScenariosThreshold = 100.0 * result.getFailedScenarios() / result.getScenarios();
+        if (failedScenariosThreshold > failedScenariosPercentage) {
+            log(listener, String.format("Found %f failed scenarios, while expected not more than %f percent",
+                    failedScenariosThreshold, failedScenariosPercentage));
+            return true;
+        }
+        double failedFeaturesThreshold = 100.0 * result.getFailedFeatures() / result.getFeatures();
+        if (failedFeaturesThreshold > failedFeaturesPercentage) {
+            log(listener, String.format("Found %f failed features, while expected not more than %f percent",
+                    failedFeaturesThreshold, failedFeaturesPercentage));
             return true;
         }
 
