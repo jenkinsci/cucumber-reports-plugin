@@ -340,7 +340,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
         // copies JSON files to cache...
-        int copiedFiles = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_JSONS, new FilePath(directoryJsonCache));
+        int copiedFiles = inputDirectory.copyRecursiveTo(fileIncludePattern, new FilePath(directoryJsonCache));
         log(listener, String.format("Copied %d json files from workspace \"%s\" to reports directory \"%s\"",
                 copiedFiles, inputDirectory.getRemote(), directoryJsonCache));
         // copies Classifications files to cache...
