@@ -137,6 +137,9 @@
                 <br/>
                 <f:checkbox title="${%reducingMethods.skipEmptyJSONFiles.title}"
                             field="skipEmptyJSONFiles"/>
+                <br/>
+                <f:checkbox title="${%presentationModes.expandAllSteps.title}"
+                            field="expandAllSteps"/>
 
             </f:entry>
 
