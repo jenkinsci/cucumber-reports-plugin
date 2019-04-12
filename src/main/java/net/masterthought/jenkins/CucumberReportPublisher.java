@@ -35,6 +35,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 import net.masterthought.cucumber.Reportable;
+import net.masterthought.cucumber.presentation.PresentationMode;
 import net.masterthought.cucumber.reducers.ReducingMethod;
 import net.masterthought.cucumber.sorting.SortingMethod;
 
@@ -72,6 +73,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private List<Classification> classifications;
     private boolean mergeFeaturesById;
     private boolean skipEmptyJSONFiles;
+    private boolean expandAllSteps;
     private String classificationsFilePattern = "";
 
     @DataBoundConstructor
@@ -304,6 +306,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return skipEmptyJSONFiles;
     }
 
+    @DataBoundSetter
+    public void setExpandAllSteps(boolean expandAllSteps) {
+        this.expandAllSteps = expandAllSteps;
+    }
+
+    public boolean getExpandAllSteps() {
+        return expandAllSteps;
+    }
+
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
@@ -364,7 +375,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         String projectName = build.getParent().getDisplayName();
 
         Configuration configuration = new Configuration(directoryForReport, projectName);
-        configuration.setRunWithJenkins(true);
         configuration.setBuildNumber(buildNumber);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
         configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
@@ -374,6 +384,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (skipEmptyJSONFiles) {
             configuration.addReducingMethod(ReducingMethod.SKIP_EMPTY_JSON_FILES);
         }
+        if (expandAllSteps) {
+            configuration.addPresentationModes(PresentationMode.EXPAND_ALL_STEPS);
+        }
+
+        configuration.addPresentationModes(PresentationMode.RUN_WITH_JENKINS);
 
         if (CollectionUtils.isNotEmpty(classifications)) {
             log(listener, String.format("Adding %d classification(s)", classifications.size()));
