@@ -1,4 +1,7 @@
 [![Build Travis](https://img.shields.io/travis/jenkinsci/cucumber-reports-plugin/master.svg?label=Travis%20bulid)](https://travis-ci.org/jenkinsci/cucumber-reports-plugin)
+[![Build Shippable](https://img.shields.io/shippable/540e74493479c5ea8f9e5f55/master.svg?label=Shippable%20bulid)](https://app.shippable.com/github/jenkinsci/cucumber-reports-plugin/)
+
+[![Popularity](https://img.shields.io/jenkins/plugin/i/Office-365-Connector.svg)](https://plugins.jenkins.io/Office-365-Connector)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-blue.svg)](http://damianszczepanik.github.io/cucumber-html-reports/overview-features.html)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8a9f4e032a47461fb984cd39c599584d)](https://www.codacy.com/app/damianszczepanik/cucumber-reports-plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jenkinsci/cucumber-reports-plugin&amp;utm_campaign=Badge_Grade)
