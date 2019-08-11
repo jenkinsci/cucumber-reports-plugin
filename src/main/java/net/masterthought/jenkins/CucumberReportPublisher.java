@@ -71,9 +71,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int trendsLimit;
     private String sortingMethod;
     private List<Classification> classifications;
+
     private boolean mergeFeaturesById;
+    private boolean hideEmptyHooks;
     private boolean skipEmptyJSONFiles;
     private boolean expandAllSteps;
+
     private String classificationsFilePattern = "";
 
     @DataBoundConstructor
@@ -298,6 +301,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     @DataBoundSetter
+    public void setHideEmptyHooks(boolean hideEmptyHooks) {
+        this.hideEmptyHooks = hideEmptyHooks;
+    }
+
+    public boolean getHideEmptyHooks() {
+        return hideEmptyHooks;
+    }
+
+    @DataBoundSetter
     public void setSkipEmptyJSONFiles(boolean skipEmptyJSONFiles) {
         this.skipEmptyJSONFiles = skipEmptyJSONFiles;
     }
@@ -383,6 +395,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         }
         if (skipEmptyJSONFiles) {
             configuration.addReducingMethod(ReducingMethod.SKIP_EMPTY_JSON_FILES);
+        }
+        if (hideEmptyHooks) {
+            configuration.addReducingMethod(ReducingMethod.HIDE_EMPTY_HOOKS);
         }
         if (expandAllSteps) {
             configuration.addPresentationModes(PresentationMode.EXPAND_ALL_STEPS);
