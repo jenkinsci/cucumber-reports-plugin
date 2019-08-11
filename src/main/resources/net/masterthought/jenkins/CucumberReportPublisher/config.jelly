@@ -135,6 +135,9 @@
                 <f:checkbox title="${%reducingMethods.mergeFeaturesById.title}"
                             field="mergeFeaturesById"/>
                 <br/>
+                <f:checkbox title="${%reducingMethods.hideEmptyHooks.title}"
+                            field="hideEmptyHooks"/>
+                <br/>
                 <f:checkbox title="${%reducingMethods.skipEmptyJSONFiles.title}"
                             field="skipEmptyJSONFiles"/>
                 <br/>
