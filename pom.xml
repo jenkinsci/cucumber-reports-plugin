@@ -9,7 +9,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>4.11.1-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <!-- This name and URL are added by the Jenkins when displaying help.html file -->
     <name>Cucumber reports</name>
@@ -23,7 +23,7 @@
         <connection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</developerConnection>
         <url>git@github.com:jenkinsci/cucumber-reports-plugin.git</url>
-        <tag>cucumber-reports-4.1.0</tag>
+        <tag>cucumber-reports-5.0.0</tag>
     </scm>
     <ciManagement>
         <system>travis</system>
@@ -106,6 +106,16 @@
         and should be removed later
         -->
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.29</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.9.10</version>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>animal-sniffer-annotations</artifactId>
             <version>1.18</version>
@@ -128,7 +138,17 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>4.11.2</version>
+            <version>5.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                    <artifactId>jackson-datatype-jsr310</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
