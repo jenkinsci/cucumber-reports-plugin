@@ -73,6 +73,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private List<Classification> classifications;
 
     private boolean mergeFeaturesById;
+    private boolean mergeFeaturesWithRetest;
     private boolean hideEmptyHooks;
     private boolean skipEmptyJSONFiles;
     private boolean expandAllSteps;
@@ -301,6 +302,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     }
 
     @DataBoundSetter
+    public void setMergeFeaturesWithRetest(boolean mergeFeaturesWithRetest) {
+        this.mergeFeaturesWithRetest = mergeFeaturesWithRetest;
+    }
+
+    public boolean getMergeFeaturesWithRetest() {
+        return mergeFeaturesWithRetest;
+    }
+
+    @DataBoundSetter
     public void setHideEmptyHooks(boolean hideEmptyHooks) {
         this.hideEmptyHooks = hideEmptyHooks;
     }
@@ -392,6 +402,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
         if (mergeFeaturesById) {
             configuration.addReducingMethod(ReducingMethod.MERGE_FEATURES_BY_ID);
+        }
+        if (mergeFeaturesWithRetest) {
+            configuration.addReducingMethod(ReducingMethod.MERGE_FEATURES_WITH_RETEST);
         }
         if (skipEmptyJSONFiles) {
             configuration.addReducingMethod(ReducingMethod.SKIP_EMPTY_JSON_FILES);
