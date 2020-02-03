@@ -30,23 +30,24 @@ You must use a **Freestyle project type** in jenkins.
 With the cucumber-reports plugin installed in Jenkins, you simply check the "Publish cucumber results as a report" box in the
 publish section of the build config:
 
-![](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/publish-box.png)
+![](.README/publish-box.png)
 
 If you need more control over the plugin you can click the Advanced button for more options:
 
-![](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced-publish-box.png)
+![](.README/advanced-publish-box.png)
 
-1.  Leave empty for the plugin to automagically find your json files or enter the path to the json reports relative to the workspace if for some reason the automagic doesn't work for you
-2.  Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
-3.  Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
-4.  Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
-5.  Tick if you want failed test not to fail the entire build but make it unstable
+1.  Report title can be used to publish multiple reports from the same job - reports with different titles are stored separately; or leave blank for a single report with no title
+2.  Leave empty for the plugin to automagically find your json files or enter the path to the json reports relative to the workspace if for some reason the automagic doesn't work for you
+3.  Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
+4.  Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
+5.  Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
+6.  Tick if you want failed test not to fail the entire build but make it unstable
 
 ## Advanced Configuration Options
 
 There are 4 advanced configuration options that can affect the outcome of the build status. Click on the Advanced tab in the configuration screen:
 
-![Advanced Configuration](https://github.com/jenkinsci/cucumber-reports-plugin/raw/master/.README/advanced_options.png)
+![Advanced Configuration](.README/advanced_options.png)
 
 The first setting is Skipped steps fail the build - so if you tick this any steps that are skipped during executions will be marked as failed and will cause the build to fail:
 
@@ -73,6 +74,7 @@ Typical step for report generation:
 node {
     stage('Generate HTML report') {
         cucumber buildStatus: 'UNSTABLE',
+                reportTitle: 'My report',
                 fileIncludePattern: '**/*.json',
                 trendsLimit: 10,
                 classifications: [
@@ -97,6 +99,7 @@ post {
                         [key: 'Commit', value: '<a href="${GERRIT_CHANGE_URL}">${GERRIT_PATCHSET_REVISION}</a>'],
                         [key: 'Submitter', value: '${GERRIT_PATCHSET_UPLOADER_NAME}']
                 ],
+                reportTitle: 'My report',
                 fileIncludePattern: '**/*cucumber-report.json',
                 sortingMethod: 'ALPHABETICAL',
                 trendsLimit: 100
@@ -109,6 +112,7 @@ post {
 ```groovy
 configure { project ->
   project / 'publishers' << 'net.masterthought.jenkins.CucumberReportPublisher' {
+    reportTitle 'My report'
     fileIncludePattern '**/*.json'
     fileExcludePattern ''
     jsonReportDirectory ''
