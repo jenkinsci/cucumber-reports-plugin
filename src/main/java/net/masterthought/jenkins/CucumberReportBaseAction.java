@@ -17,9 +17,4 @@ public abstract class CucumberReportBaseAction implements Action {
     public String getIconFileName() {
         return ICON_NAME;
     }
-
-    @Override
-    public String getDisplayName() {
-        return Messages.Plugin_DisplayName();
-    }
 }

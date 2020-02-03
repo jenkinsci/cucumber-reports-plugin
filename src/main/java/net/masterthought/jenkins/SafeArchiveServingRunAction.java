@@ -23,9 +23,13 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
     private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingRunAction.class.getName());
 
     private Run<?, ?> run;
+    private String title;
+    private String directoryQualifier;
 
-	public SafeArchiveServingRunAction(@Nonnull Run<?, ?> r, File rootDir, String urlName, String indexFile, String iconName, String title, String... safeExtensions) {
+	public SafeArchiveServingRunAction(@Nonnull Run<?, ?> r, File rootDir, String urlName, String indexFile, String iconName, String title, String directoryQualifier, String... safeExtensions) {
         super(rootDir, urlName, indexFile, iconName, title, safeExtensions);
+        this.title = title;
+        this.directoryQualifier = directoryQualifier;
 		this.run = r;
     }
 
@@ -46,6 +50,6 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-    	return Collections.singleton(new CucumberReportProjectAction(run.getParent()));
+    	return Collections.singleton(new CucumberReportProjectAction(run.getParent(), title, directoryQualifier));
     }
 }

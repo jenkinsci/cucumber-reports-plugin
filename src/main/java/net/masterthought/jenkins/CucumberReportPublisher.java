@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import hudson.AbortException;
 import hudson.Extension;
@@ -43,6 +40,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN_JSONS = "**/*.json";
     private final static String DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS = "**/*.properties";
+    private final static String DEFAULT_DIRECTORY_QUALIFIER = "default";
 
     private final static String TRENDS_DIR = "cucumber-reports";
     private final static String TRENDS_FILE = "cucumber-trends.json";
@@ -50,6 +48,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private final String fileIncludePattern;
     private String fileExcludePattern = "";
     private String jsonReportDirectory = "";
+    private String reportTitle = "";
+    private String directoryQualifier = "";
 
     private int failedStepsNumber;
     private int skippedStepsNumber;
@@ -91,10 +91,16 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
      */
     protected void keepBackwardCompatibility() {
         if (classifications == null) {
-            classifications = Collections.emptyList();
+            classifications = new LinkedList<>();
         }
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
+        }
+        if (reportTitle == null) {
+            reportTitle = "";
+        }
+        if (StringUtils.isEmpty(directoryQualifier)) {
+            directoryQualifier = CucumberReportPublisher.DEFAULT_DIRECTORY_QUALIFIER;
         }
     }
 
@@ -145,6 +151,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.jsonReportDirectory = jsonReportDirectory;
     }
 
+    public String getReportTitle() {
+        return reportTitle;
+    }
+
+    @DataBoundSetter
+    public void setReportTitle(String reportTitle) {
+        this.reportTitle = reportTitle;
+        this.directoryQualifier = reportTitle.replaceAll("[^A-Za-z0-9@+-_.,~]", "_");
+    }
 
     public int getFailedStepsNumber() {
         return failedStepsNumber;
@@ -342,12 +357,27 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             throws InterruptedException, IOException {
 
         keepBackwardCompatibility();
+        if (StringUtils.isNotEmpty(reportTitle)) {
+
+            classifications.add(new Classification(Messages.Classification_ReportTitle(), reportTitle));
+        }
 
         generateReport(run, workspace, listener);
 
-        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(run, new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY),
-                ReportBuilder.BASE_DIRECTORY, ReportBuilder.HOME_PAGE, CucumberReportBaseAction.ICON_NAME, Messages.SidePanel_DisplayName());
-        run.replaceAction(caa);
+        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(
+                run,
+                new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY + "_" + this.directoryQualifier),
+                ReportBuilder.BASE_DIRECTORY + "_" + this.directoryQualifier,
+                ReportBuilder.HOME_PAGE,
+                CucumberReportBaseAction.ICON_NAME,
+                getActionName(),
+                directoryQualifier
+        );
+        run.addAction(caa);
+    }
+
+    private String getActionName() {
+        return StringUtils.isEmpty(reportTitle) ? Messages.SidePanel_DisplayNameNoTitle() : String.format(Messages.SidePanel_DisplayName(), reportTitle);
     }
 
     private void generateReport(Run<?, ?> build, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
@@ -355,11 +385,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         log(listener, "Using Cucumber Reports version " + getPomVersion(listener));
 
         // create directory where trends will be stored
-        final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR);
-        if (!trendsDir.exists()) {
-            if (!trendsDir.mkdir()) {
-                throw new IllegalStateException("Could not create directory for trends: " + trendsDir);
-            }
+        final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR + "_" + directoryQualifier);
+        if (!trendsDir.exists() && !trendsDir.mkdirs()) {
+            throw new IllegalStateException("Could not create directory for trends: " + trendsDir);
         }
 
         // source directory (possibly on slave)
@@ -367,8 +395,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         log(listener, String.format("JSON report directory is \"%s\"", parsedJsonReportDirectory));
         FilePath inputDirectory = new FilePath(workspace, parsedJsonReportDirectory);
 
-        File directoryForReport = build.getRootDir();
-        File directoryJsonCache = new File(directoryForReport, ReportBuilder.BASE_DIRECTORY + File.separatorChar + ".cache");
+        File directoryForReport = new File(build.getRootDir(), ReportBuilder.BASE_DIRECTORY + "_" + directoryQualifier);
+        File directoryJsonCache = new File(directoryForReport, ".cache");
         if (!directoryJsonCache.exists() && !directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
@@ -447,6 +475,15 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         // removes cache which may run out of the free space on storage
         FileUtils.deleteQuietly(directoryJsonCache);
+
+        File reportFilesLocation = new File(directoryForReport, ReportBuilder.BASE_DIRECTORY);
+        File[] reportFiles = reportFilesLocation.listFiles();
+        if (reportFiles != null) {
+            for (File f : reportFiles) {
+                FileUtils.moveToDirectory(f, directoryForReport, false);
+            }
+        }
+        FileUtils.deleteQuietly(reportFilesLocation);
     }
 
     private String getPomVersion(TaskListener listener) {
