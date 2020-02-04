@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import hudson.AbortException;
@@ -99,9 +101,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (reportTitle == null) {
             reportTitle = "";
         }
-        if (StringUtils.isEmpty(directoryQualifier)) {
-            directoryQualifier = CucumberReportPublisher.DEFAULT_DIRECTORY_QUALIFIER;
-        }
+        directoryQualifier = StringUtils.defaultString(directoryQualifier, CucumberReportPublisher.DEFAULT_DIRECTORY_QUALIFIER);
     }
 
     private static void log(TaskListener listener, String message) {
@@ -158,7 +158,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @DataBoundSetter
     public void setReportTitle(String reportTitle) {
         this.reportTitle = reportTitle;
-        this.directoryQualifier = reportTitle.replaceAll("[^A-Za-z0-9@+-_.,~]", "_");
+        this.directoryQualifier = UUID.nameUUIDFromBytes(reportTitle.getBytes()).toString();
     }
 
     public int getFailedStepsNumber() {
