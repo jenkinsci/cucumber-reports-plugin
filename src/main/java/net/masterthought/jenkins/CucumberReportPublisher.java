@@ -1,9 +1,7 @@
 package net.masterthought.jenkins;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -158,7 +156,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @DataBoundSetter
     public void setReportTitle(String reportTitle) {
         this.reportTitle = reportTitle;
-        this.directoryQualifier = UUID.nameUUIDFromBytes(reportTitle.getBytes()).toString();
+        this.directoryQualifier = UUID.nameUUIDFromBytes(reportTitle.getBytes(StandardCharsets.UTF_8)).toString();
     }
 
     public int getFailedStepsNumber() {
