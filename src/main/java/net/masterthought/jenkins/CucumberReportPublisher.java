@@ -94,9 +94,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
         }
-        if (reportTitle == null) {
-            reportTitle = "";
-        }
+        
+        reportTitle = StringUtils.defaultString(reportTitle);
         directoryQualifier = StringUtils.defaultString(directoryQualifier, CucumberReportPublisher.DEFAULT_DIRECTORY_QUALIFIER);
     }
 
