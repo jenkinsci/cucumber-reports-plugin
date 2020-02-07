@@ -38,7 +38,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN_JSONS = "**/*.json";
     private final static String DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS = "**/*.properties";
-    private final static String DEFAULT_DIRECTORY_QUALIFIER = "default";
 
     private final static String TRENDS_DIR = "cucumber-reports";
     private final static String TRENDS_FILE = "cucumber-trends.json";
@@ -96,7 +95,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         }
         
         reportTitle = StringUtils.defaultString(reportTitle);
-        directoryQualifier = StringUtils.defaultString(directoryQualifier, CucumberReportPublisher.DEFAULT_DIRECTORY_QUALIFIER);
+        directoryQualifier = StringUtils.defaultString(directoryQualifier);
     }
 
     private static void log(TaskListener listener, String message) {
@@ -153,7 +152,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @DataBoundSetter
     public void setReportTitle(String reportTitle) {
         this.reportTitle = reportTitle;
-        this.directoryQualifier = UUID.nameUUIDFromBytes(reportTitle.getBytes(StandardCharsets.UTF_8)).toString();
+        this.directoryQualifier = "_" +
+                (
+                        StringUtils.isEmpty(reportTitle)
+                                ? ""
+                                : UUID.nameUUIDFromBytes(reportTitle.getBytes(StandardCharsets.UTF_8)).toString()
+                );
     }
 
     public int getFailedStepsNumber() {
@@ -361,8 +365,8 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(
                 run,
-                new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY + "_" + this.directoryQualifier),
-                ReportBuilder.BASE_DIRECTORY + "_" + this.directoryQualifier,
+                new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY + this.directoryQualifier),
+                ReportBuilder.BASE_DIRECTORY + this.directoryQualifier,
                 ReportBuilder.HOME_PAGE,
                 CucumberReportBaseAction.ICON_NAME,
                 getActionName(),
@@ -380,7 +384,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         log(listener, "Using Cucumber Reports version " + getPomVersion(listener));
 
         // create directory where trends will be stored
-        final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR + "_" + directoryQualifier);
+        final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR + directoryQualifier);
         if (!trendsDir.exists() && !trendsDir.mkdirs()) {
             throw new IllegalStateException("Could not create directory for trends: " + trendsDir);
         }
@@ -390,7 +394,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         log(listener, String.format("JSON report directory is \"%s\"", parsedJsonReportDirectory));
         FilePath inputDirectory = new FilePath(workspace, parsedJsonReportDirectory);
 
-        File directoryForReport = new File(build.getRootDir(), ReportBuilder.BASE_DIRECTORY + "_" + directoryQualifier);
+        File directoryForReport = new File(build.getRootDir(), ReportBuilder.BASE_DIRECTORY + directoryQualifier);
         File directoryJsonCache = new File(directoryForReport, ".cache");
         if (!directoryJsonCache.exists() && !directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);

@@ -22,7 +22,7 @@ public class CucumberReportProjectAction extends CucumberReportBaseAction implem
     public String getUrlName() {
         Run<?, ?> run = this.project.getLastCompletedBuild();
         if (run != null) {
-            return run.getNumber() + "/" + ReportBuilder.BASE_DIRECTORY + "_" + directoryQualifier + "/" + ReportBuilder.HOME_PAGE;
+            return run.getNumber() + "/" + ReportBuilder.BASE_DIRECTORY + directoryQualifier + "/" + ReportBuilder.HOME_PAGE;
         }
 
         // none build was completed, report is yet not available
