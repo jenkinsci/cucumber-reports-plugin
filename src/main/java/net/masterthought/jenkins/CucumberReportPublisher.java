@@ -471,13 +471,23 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         // removes cache which may run out of the free space on storage
         FileUtils.deleteQuietly(directoryJsonCache);
 
-        File reportFilesLocation = new File(directoryForReport, ReportBuilder.BASE_DIRECTORY);
+        //Once created, the report will be in jobs/JobName/xxx/cucumber-reports_UUID/cucumber_reports
+        //This is a way to work around hardcoded paths in cucumber report builder plugin
+        //We need to move these into  jobs/JobName/xxx/cucumber-reports_UUID
+        moveFilesToPermamentLocation(directoryForReport, ReportBuilder.BASE_DIRECTORY);
+    }
+
+    private void moveFilesToPermamentLocation(File directoryForReport, String subdirectory) throws IOException {
+        // reportFilesLocation will be jobs/JobName/xxx/cucumber-reports_UUID/cucumber_reports
+        File reportFilesLocation = new File(directoryForReport, subdirectory);
+        // get everything from there and move into jobs/JobName/xxx/cucumber-reports_UUID
         File[] reportFiles = reportFilesLocation.listFiles();
         if (reportFiles != null) {
             for (File f : reportFiles) {
                 FileUtils.moveToDirectory(f, directoryForReport, false);
             }
         }
+        // and then delete empty directory jobs/JobName/xxx/cucumber-reports_UUID/cucumber-reports
         FileUtils.deleteQuietly(reportFilesLocation);
     }
 
