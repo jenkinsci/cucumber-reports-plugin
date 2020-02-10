@@ -129,6 +129,28 @@ configure { project ->
 }
 ```
 
+For backward compatibility, `reportTitle` parameter may be omitted:
+
+```groovy
+configure { project ->
+  project / 'publishers' << 'net.masterthought.jenkins.CucumberReportPublisher' {
+    fileIncludePattern '**/*.json'
+    fileExcludePattern ''
+    jsonReportDirectory ''
+    failedStepsNumber '0'
+    skippedStepsNumber '0'
+    pendingStepsNumber '0'
+    undefinedStepsNumber '0'
+    failedScenariosNumber '0'
+    failedFeaturesNumber '0'
+    buildStatus 'FAILURE'  //other option is 'UNSTABLE' - if you'd like it left unchanged, don't provide a value
+    trendsLimit '0'
+    sortingMethod 'ALPHABETICAL'
+  }
+}
+```
+
+
 When a build runs that publishes cucumber results it will put a link in the sidepanel to the [cucumber reports](https://github.com/damianszczepanik/cucumber-reporting). There is a feature overview page:
 
 ![feature overview page](https://github.com/damianszczepanik/cucumber-reporting/raw/master/.README/feature-overview.png)
