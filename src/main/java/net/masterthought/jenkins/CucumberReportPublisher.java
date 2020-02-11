@@ -151,13 +151,10 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
     @DataBoundSetter
     public void setReportTitle(String reportTitle) {
-        this.reportTitle = reportTitle;
-        this.directoryQualifier = "_" +
-                (
-                        StringUtils.isEmpty(reportTitle)
-                                ? ""
-                                : UUID.nameUUIDFromBytes(reportTitle.getBytes(StandardCharsets.UTF_8)).toString()
-                );
+        this.reportTitle = StringUtils.isEmpty(reportTitle) ? "" : reportTitle.trim();
+        this.directoryQualifier = StringUtils.isEmpty(this.reportTitle)
+                ? ""
+                : "_" + UUID.nameUUIDFromBytes(reportTitle.getBytes(StandardCharsets.UTF_8)).toString();
     }
 
     public int getFailedStepsNumber() {
