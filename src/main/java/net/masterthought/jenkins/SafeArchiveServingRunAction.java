@@ -44,6 +44,11 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
     }
 
     @Override
+    public String getDisplayName() {
+        return title;
+    }
+
+    @Override
     public void onLoad(Run<?, ?> r) {
     	this.run = r;
     }
