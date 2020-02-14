@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
@@ -391,9 +391,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         log(listener, String.format("JSON report directory is \"%s\"", parsedJsonReportDirectory));
         FilePath inputDirectory = new FilePath(workspace, parsedJsonReportDirectory);
 
-        File directoryForReport = new File(build.getRootDir(), ReportBuilder.BASE_DIRECTORY + directoryQualifier);
-        File directoryJsonCache = new File(directoryForReport, ".cache");
-        if (!directoryJsonCache.exists() && !directoryJsonCache.mkdirs()) {
+        File directoryForReport = build.getRootDir();
+        File directoryJsonCache = new File(directoryForReport, ReportBuilder.BASE_DIRECTORY + directoryQualifier + File.separatorChar + ".cache");
+        if (directoryJsonCache.exists()) {
+            throw new IllegalStateException("Cache directory " + directoryJsonCache + " already exists. Another report with the same title already generated?");
+        } else if (!directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
         // copies JSON files to cache...
@@ -422,6 +424,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         Configuration configuration = new Configuration(directoryForReport, projectName);
         configuration.setBuildNumber(buildNumber);
+        configuration.setDirectoryQualifier(directoryQualifier);
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
         configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
         if (mergeFeaturesById) {
@@ -471,25 +474,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         // removes cache which may run out of the free space on storage
         FileUtils.deleteQuietly(directoryJsonCache);
-
-        //Once created, the report will be in jobs/JobName/xxx/cucumber-reports_UUID/cucumber_reports
-        //This is a way to work around hardcoded paths in cucumber report builder plugin
-        //We need to move these into  jobs/JobName/xxx/cucumber-reports_UUID
-        moveFilesToPermamentLocation(directoryForReport, ReportBuilder.BASE_DIRECTORY);
-    }
-
-    private void moveFilesToPermamentLocation(File directoryForReport, String subdirectory) throws IOException {
-        // reportFilesLocation will be jobs/JobName/xxx/cucumber-reports_UUID/cucumber_reports
-        File reportFilesLocation = new File(directoryForReport, subdirectory);
-        // get everything from there and move into jobs/JobName/xxx/cucumber-reports_UUID
-        File[] reportFiles = reportFilesLocation.listFiles();
-        if (reportFiles != null) {
-            for (File f : reportFiles) {
-                FileUtils.moveToDirectory(f, directoryForReport, false);
-            }
-        }
-        // and then delete empty directory jobs/JobName/xxx/cucumber-reports_UUID/cucumber-reports
-        FileUtils.deleteQuietly(reportFilesLocation);
     }
 
     private String getPomVersion(TaskListener listener) {
