@@ -42,11 +42,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private final static String TRENDS_DIR = "cucumber-reports";
     private final static String TRENDS_FILE = "cucumber-trends.json";
 
+    private final static String DIRECTORY_SUFFIX_SEPARATOR = "_";
+
     private final String fileIncludePattern;
     private String fileExcludePattern = "";
     private String jsonReportDirectory = "";
     private String reportTitle = "";
-    private String directorySuffix = "";
 
     private int failedStepsNumber;
     private int skippedStepsNumber;
@@ -95,7 +96,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         }
         
         reportTitle = StringUtils.defaultString(reportTitle);
-        directorySuffix = StringUtils.defaultString(directorySuffix);
     }
 
     private static void log(TaskListener listener, String message) {
@@ -152,9 +152,18 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     @DataBoundSetter
     public void setReportTitle(String reportTitle) {
         this.reportTitle = StringUtils.isEmpty(reportTitle) ? "" : reportTitle.trim();
-        this.directorySuffix = StringUtils.isEmpty(this.reportTitle)
+    }
+
+    public String getDirectorySuffix() {
+        return StringUtils.isEmpty(this.reportTitle)
                 ? ""
-                : "_" + UUID.nameUUIDFromBytes(reportTitle.getBytes(StandardCharsets.UTF_8)).toString();
+                : UUID.nameUUIDFromBytes(reportTitle.getBytes(StandardCharsets.UTF_8)).toString();
+    }
+
+    public String getDirectorySuffixWithSeparator() {
+        return StringUtils.isEmpty(this.reportTitle)
+                ? ""
+                : ReportBuilder.SUFFIX_SEPARATOR + getDirectorySuffix();
     }
 
     public int getFailedStepsNumber() {
@@ -362,12 +371,12 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(
                 run,
-                new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY + this.directorySuffix),
-                ReportBuilder.BASE_DIRECTORY + this.directorySuffix,
+                new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY + getDirectorySuffixWithSeparator()),
+                ReportBuilder.BASE_DIRECTORY + getDirectorySuffixWithSeparator(),
                 ReportBuilder.HOME_PAGE,
                 CucumberReportBaseAction.ICON_NAME,
                 getActionName(),
-                directorySuffix
+                getDirectorySuffix()
         );
         run.addAction(caa);
     }
@@ -381,7 +390,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         log(listener, "Using Cucumber Reports version " + getPomVersion(listener));
 
         // create directory where trends will be stored
-        final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR + directorySuffix);
+        final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR + getDirectorySuffixWithSeparator());
         if (!trendsDir.exists() && !trendsDir.mkdirs()) {
             throw new IllegalStateException("Could not create directory for trends: " + trendsDir);
         }
@@ -392,7 +401,10 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         FilePath inputDirectory = new FilePath(workspace, parsedJsonReportDirectory);
 
         File directoryForReport = build.getRootDir();
-        File directoryJsonCache = new File(directoryForReport, ReportBuilder.BASE_DIRECTORY + directorySuffix + File.separatorChar + ".cache");
+        File directoryJsonCache = new File(
+                directoryForReport,
+                ReportBuilder.BASE_DIRECTORY + getDirectorySuffixWithSeparator() + File.separatorChar + ".cache"
+        );
         if (directoryJsonCache.exists()) {
             throw new IllegalStateException("Cache directory " + directoryJsonCache + " already exists. Another report with the same title already generated?");
         } else if (!directoryJsonCache.mkdirs()) {
@@ -424,7 +436,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         Configuration configuration = new Configuration(directoryForReport, projectName);
         configuration.setBuildNumber(buildNumber);
-        configuration.setdirectorySuffix(directorySuffix);
+        configuration.setDirectorySuffix(getDirectorySuffix());
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
         configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
         if (mergeFeaturesById) {
