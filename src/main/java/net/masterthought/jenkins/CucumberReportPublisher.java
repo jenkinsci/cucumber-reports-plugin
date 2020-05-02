@@ -42,8 +42,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private final static String TRENDS_DIR = "cucumber-reports";
     private final static String TRENDS_FILE = "cucumber-trends.json";
 
-    private final static String DIRECTORY_SUFFIX_SEPARATOR = "_";
-
     private final String fileIncludePattern;
     private String fileExcludePattern = "";
     private String jsonReportDirectory = "";
