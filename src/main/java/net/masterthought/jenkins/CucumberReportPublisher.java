@@ -87,7 +87,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
      */
     protected void keepBackwardCompatibility() {
         if (classifications == null) {
-            classifications = new LinkedList<>();
+            classifications = new ArrayList<>();
         }
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
@@ -374,7 +374,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
                 ReportBuilder.HOME_PAGE,
                 CucumberReportBaseAction.ICON_NAME,
                 getActionName(),
-                getDirectorySuffix()
+                getDirectorySuffixWithSeparator()
         );
         run.addAction(caa);
     }
