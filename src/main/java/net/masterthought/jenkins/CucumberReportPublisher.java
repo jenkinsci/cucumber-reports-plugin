@@ -1,13 +1,8 @@
 package net.masterthought.jenkins;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import hudson.AbortException;
 import hudson.Extension;
@@ -50,6 +45,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private final String fileIncludePattern;
     private String fileExcludePattern = "";
     private String jsonReportDirectory = "";
+    private String reportTitle = "";
 
     private int failedStepsNumber;
     private int skippedStepsNumber;
@@ -91,11 +87,13 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
      */
     protected void keepBackwardCompatibility() {
         if (classifications == null) {
-            classifications = Collections.emptyList();
+            classifications = new ArrayList<>();
         }
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
         }
+        
+        reportTitle = StringUtils.defaultString(reportTitle);
     }
 
     private static void log(TaskListener listener, String message) {
@@ -145,6 +143,26 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         this.jsonReportDirectory = jsonReportDirectory;
     }
 
+    public String getReportTitle() {
+        return reportTitle;
+    }
+
+    @DataBoundSetter
+    public void setReportTitle(String reportTitle) {
+        this.reportTitle = StringUtils.isEmpty(reportTitle) ? "" : reportTitle.trim();
+    }
+
+    public String getDirectorySuffix() {
+        return StringUtils.isEmpty(this.reportTitle)
+                ? ""
+                : UUID.nameUUIDFromBytes(reportTitle.getBytes(StandardCharsets.UTF_8)).toString();
+    }
+
+    public String getDirectorySuffixWithSeparator() {
+        return StringUtils.isEmpty(this.reportTitle)
+                ? ""
+                : ReportBuilder.SUFFIX_SEPARATOR + getDirectorySuffix();
+    }
 
     public int getFailedStepsNumber() {
         return failedStepsNumber;
@@ -342,12 +360,27 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             throws InterruptedException, IOException {
 
         keepBackwardCompatibility();
+        if (StringUtils.isNotEmpty(reportTitle)) {
+
+            classifications.add(new Classification(Messages.Classification_ReportTitle(), reportTitle));
+        }
 
         generateReport(run, workspace, listener);
 
-        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(run, new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY),
-                ReportBuilder.BASE_DIRECTORY, ReportBuilder.HOME_PAGE, CucumberReportBaseAction.ICON_NAME, Messages.SidePanel_DisplayName());
-        run.replaceAction(caa);
+        SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(
+                run,
+                new File(run.getRootDir(), ReportBuilder.BASE_DIRECTORY + getDirectorySuffixWithSeparator()),
+                ReportBuilder.BASE_DIRECTORY + getDirectorySuffixWithSeparator(),
+                ReportBuilder.HOME_PAGE,
+                CucumberReportBaseAction.ICON_NAME,
+                getActionName(),
+                getDirectorySuffixWithSeparator()
+        );
+        run.addAction(caa);
+    }
+
+    private String getActionName() {
+        return StringUtils.isEmpty(reportTitle) ? Messages.SidePanel_DisplayNameNoTitle() : String.format(Messages.SidePanel_DisplayName(), reportTitle);
     }
 
     private void generateReport(Run<?, ?> build, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
@@ -355,11 +388,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         log(listener, "Using Cucumber Reports version " + getPomVersion(listener));
 
         // create directory where trends will be stored
-        final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR);
-        if (!trendsDir.exists()) {
-            if (!trendsDir.mkdir()) {
-                throw new IllegalStateException("Could not create directory for trends: " + trendsDir);
-            }
+        final File trendsDir = new File(build.getParent().getRootDir(), TRENDS_DIR + getDirectorySuffixWithSeparator());
+        if (!trendsDir.exists() && !trendsDir.mkdirs()) {
+            throw new IllegalStateException("Could not create directory for trends: " + trendsDir);
         }
 
         // source directory (possibly on slave)
@@ -368,8 +399,13 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         FilePath inputDirectory = new FilePath(workspace, parsedJsonReportDirectory);
 
         File directoryForReport = build.getRootDir();
-        File directoryJsonCache = new File(directoryForReport, ReportBuilder.BASE_DIRECTORY + File.separatorChar + ".cache");
-        if (!directoryJsonCache.exists() && !directoryJsonCache.mkdirs()) {
+        File directoryJsonCache = new File(
+                directoryForReport,
+                ReportBuilder.BASE_DIRECTORY + getDirectorySuffixWithSeparator() + File.separatorChar + ".cache"
+        );
+        if (directoryJsonCache.exists()) {
+            throw new IllegalStateException("Cache directory " + directoryJsonCache + " already exists. Another report with the same title already generated?");
+        } else if (!directoryJsonCache.mkdirs()) {
             throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
         }
         // copies JSON files to cache...
@@ -398,6 +434,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
 
         Configuration configuration = new Configuration(directoryForReport, projectName);
         configuration.setBuildNumber(buildNumber);
+        configuration.setDirectorySuffix(getDirectorySuffix());
         configuration.setTrends(new File(trendsDir, TRENDS_FILE), trendsLimit);
         configuration.setSortingMethod(SortingMethod.valueOf(sortingMethod));
         if (mergeFeaturesById) {
