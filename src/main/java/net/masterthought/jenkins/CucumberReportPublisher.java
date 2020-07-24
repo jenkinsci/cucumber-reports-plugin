@@ -92,7 +92,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
         }
-        
+
         reportTitle = StringUtils.defaultString(reportTitle);
     }
 
@@ -360,11 +360,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             throws InterruptedException, IOException {
 
         keepBackwardCompatibility();
-        if (StringUtils.isNotEmpty(reportTitle)) {
-
-            classifications.add(new Classification(Messages.Classification_ReportTitle(), reportTitle));
-        }
-
+        updateReportTitleClassification(reportTitle);
         generateReport(run, workspace, listener);
 
         SafeArchiveServingRunAction caa = new SafeArchiveServingRunAction(
@@ -641,6 +637,22 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         return fullPathList;
     }
 
+    private void updateReportTitleClassification(String reportTitle) {
+        Optional<Classification> reportTitleClassification = classifications.stream().filter(
+                classification -> classification.getKey().equals(Messages.Classification_ReportTitle())).findFirst();
+        if (reportTitleClassification.isPresent()) {
+            if (StringUtils.isNotEmpty(reportTitle)) {
+                reportTitleClassification.get().setValue(reportTitle);
+            } else {
+                classifications.remove(reportTitleClassification.get());
+            }
+        } else {
+            if (StringUtils.isNotEmpty(reportTitle)) {
+                classifications.add(new Classification(Messages.Classification_ReportTitle(), reportTitle));
+            }
+        }
+    }
+
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
@@ -654,6 +666,22 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         @DataBoundConstructor
         public Classification(String key, String value) {
             this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
             this.value = value;
         }
 
