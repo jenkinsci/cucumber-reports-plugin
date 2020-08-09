@@ -1,8 +1,14 @@
 package net.masterthought.jenkins;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
 
 import hudson.AbortException;
 import hudson.Extension;
@@ -17,6 +23,12 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
+import net.masterthought.cucumber.Configuration;
+import net.masterthought.cucumber.ReportBuilder;
+import net.masterthought.cucumber.Reportable;
+import net.masterthought.cucumber.presentation.PresentationMode;
+import net.masterthought.cucumber.reducers.ReducingMethod;
+import net.masterthought.cucumber.sorting.SortingMethod;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,13 +38,6 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import net.masterthought.cucumber.Configuration;
-import net.masterthought.cucumber.ReportBuilder;
-import net.masterthought.cucumber.Reportable;
-import net.masterthought.cucumber.presentation.PresentationMode;
-import net.masterthought.cucumber.reducers.ReducingMethod;
-import net.masterthought.cucumber.sorting.SortingMethod;
 
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
@@ -92,7 +97,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
         }
-        
+
         reportTitle = StringUtils.defaultString(reportTitle);
     }
 
@@ -360,10 +365,6 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             throws InterruptedException, IOException {
 
         keepBackwardCompatibility();
-        if (StringUtils.isNotEmpty(reportTitle)) {
-
-            classifications.add(new Classification(Messages.Classification_ReportTitle(), reportTitle));
-        }
 
         generateReport(run, workspace, listener);
 
@@ -461,7 +462,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         }
 
         List<String> classificationFiles = fetchPropertyFiles(directoryJsonCache, listener);
-        if(CollectionUtils.isNotEmpty(classificationFiles)) {
+        if (CollectionUtils.isNotEmpty(classificationFiles)) {
             configuration.addClassificationFiles(classificationFiles);
         }
 
@@ -614,6 +615,10 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         for (Classification classification : listToAdd) {
             log(listener, String.format("Adding classification - %s -> %s", classification.key, classification.value));
             configuration.addClassifications(classification.key, evaluateMacro(build, workspace, listener, classification.value));
+        }
+
+        if (StringUtils.isNotEmpty(reportTitle)) {
+            configuration.addClassifications(Messages.Classification_ReportTitle(), reportTitle);
         }
     }
 
