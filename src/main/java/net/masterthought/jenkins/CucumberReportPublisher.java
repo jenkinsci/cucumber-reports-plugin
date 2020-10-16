@@ -1,15 +1,5 @@
 package net.masterthought.jenkins;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
-
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -21,7 +11,6 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
@@ -38,6 +27,20 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 
 public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
 
@@ -72,6 +75,7 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
     private int trendsLimit;
     private String sortingMethod;
     private List<Classification> classifications;
+    private Set<Status> notFailingStatues;
 
     private boolean mergeFeaturesById;
     private boolean mergeFeaturesWithRetest;
@@ -97,6 +101,9 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
         }
+        if (notFailingStatues == null) {
+          notFailingStatues = Collections.emptySet();
+        }
 
         reportTitle = StringUtils.defaultString(reportTitle);
     }
@@ -119,6 +126,16 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         if (CollectionUtils.isNotEmpty(classifications)) {
             this.classifications = classifications;
         }
+    }
+
+    public Set<Status> getNotFailingStatues() { return notFailingStatues; }
+
+    @DataBoundSetter
+    public void setNotFailingStatues(Set<Status> notFailingStatues) {
+      // don't store the status if there was no element provided
+      if (CollectionUtils.isNotEmpty(notFailingStatues)) {
+        this.notFailingStatues = notFailingStatues;
+      }
     }
 
     public int getTrendsLimit() {
@@ -461,6 +478,11 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
             addClassificationsToBuildReport(build, workspace, listener, configuration, classifications);
         }
 
+        if (CollectionUtils.isNotEmpty(notFailingStatues)) {
+          log(listener, String.format("Adding %d not failing statues(s)", notFailingStatues.size()));
+          addNotFailingStatuesToBuildReport(build, workspace, listener, configuration, notFailingStatues);
+        }
+
         List<String> classificationFiles = fetchPropertyFiles(directoryJsonCache, listener);
         if (CollectionUtils.isNotEmpty(classificationFiles)) {
             configuration.addClassificationFiles(classificationFiles);
@@ -622,6 +644,14 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
         }
     }
 
+    private void addNotFailingStatuesToBuildReport(Run<?, ?> build, FilePath workspace, TaskListener listener, Configuration configuration, Set<Status> statusesToAdd) throws IOException, InterruptedException {
+      Set<net.masterthought.cucumber.json.support.Status> set = new HashSet<>();
+      for (Status item : statusesToAdd) {
+        set.add(net.masterthought.cucumber.json.support.Status.valueOf(evaluateMacro(build, workspace, listener, item.value)));
+      }
+      configuration.setNotFailingStatuses(set);
+    }
+
     private List<String> fetchPropertyFiles(File targetDirectory, TaskListener listener) {
         List<String> propertyFiles = new ArrayList<>();
         if (StringUtils.isNotEmpty(classificationsFilePattern)) {
@@ -670,6 +700,25 @@ public class CucumberReportPublisher extends Publisher implements SimpleBuildSte
                 return "";
             }
         }
+    }
+
+    public static class Status extends AbstractDescribableImpl<Status> implements Serializable {
+
+      public String value;
+
+        @DataBoundConstructor
+        public Status(String value) {
+          this.value = value;
+        }
+
+        @Extension
+        public static class DescriptorImpl extends Descriptor<Status> {
+
+            @Override
+            public String getDisplayName() {
+              return "";
+            }
+      }
     }
 
     @Extension
