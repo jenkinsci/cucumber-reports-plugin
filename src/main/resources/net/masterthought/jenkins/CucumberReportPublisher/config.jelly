@@ -104,7 +104,11 @@
                     field="failedFeaturesPercentage">
                 <f:textbox default="0"/>
             </f:entry>
-
+            <f:entry
+                    title="${%notFailingStatues.title}"
+                    field="notFailingStatues">
+                <f:repeatableProperty field="notFailingStatues"/>
+            </f:entry>
 
             <f:entry
                     title="${%buildStatus.title}"
