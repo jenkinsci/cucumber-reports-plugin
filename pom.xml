@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.54</version>
+        <version>4.15</version>
     </parent>
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>5.4.1-SNAPSHOT</version>
+    <version>5.5.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <!-- This name and URL are added by the Jenkins when displaying help.html file -->
     <name>Cucumber reports</name>
@@ -17,7 +17,7 @@
 
     <!-- some comments here: https://jenkins.io/doc/developer/plugin-development/dependency-management/ -->
     <properties>
-        <slf4jVersion>1.7.29</slf4jVersion>
+        <slf4jVersion>1.7.30</slf4jVersion>
         <java.level>8</java.level>
     </properties>
 
@@ -103,14 +103,18 @@
     </build>
 
     <dependencies>
-        <!--
-        This is only to satisfy 'Failed while enforcing RequireUpperBoundDeps'
-        and should be removed later
-        -->
+        <!-- to satisfy dependencies problem with different versions -->
         <dependency>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>animal-sniffer-annotations</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4jVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4jVersion}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>token-macro</artifactId>
@@ -129,7 +133,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>5.4.0</version>
+            <version>5.5.2</version>
         </dependency>
     </dependencies>
 </project>

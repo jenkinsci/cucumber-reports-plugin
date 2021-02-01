@@ -20,7 +20,7 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import net.masterthought.cucumber.Configuration;
@@ -39,7 +39,7 @@ import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-public class CucumberReportPublisher extends Publisher implements SimpleBuildStep {
+public class CucumberReportPublisher extends Recorder implements SimpleBuildStep {
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN_JSONS = "**/*.json";
     private final static String DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS = "**/*.properties";
