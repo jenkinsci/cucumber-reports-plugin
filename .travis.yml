@@ -2,5 +2,25 @@ language: java
 
 dist: trusty
 
-jdk:
-  - oraclejdk8
+matrix:
+  include:
+    - jdk: openjdk8
+      env:
+        - DESC="tests by jdk8"
+      script: mvn verify
+
+    - jdk: oraclejdk11
+      env:
+        - DESC="tests by oracle"
+      script:
+        - mvn clean verify
+
+    - jdk: openjdk11
+      env:
+        - DESC="tests by openjdk"
+      script:
+        - mvn clean verify
+
+after_success:
+  # push report to codecov server
+  bash <(curl -s https://codecov.io/bash)
