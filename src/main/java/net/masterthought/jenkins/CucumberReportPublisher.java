@@ -419,31 +419,31 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         // source directory (possibly on slave)
         String parsedJsonReportDirectory = evaluateMacro(build, workspace, listener, jsonReportDirectory);
         log(listener, String.format("JSON report directory is \"%s\"", parsedJsonReportDirectory));
-        FilePath inputDirectory = new FilePath(workspace, parsedJsonReportDirectory);
+        FilePath inputReportDirectory = new FilePath(workspace, parsedJsonReportDirectory);
 
         File directoryForReport = build.getRootDir();
-        File directoryJsonCache = new File(
+        File directoryCache = new File(
                 directoryForReport,
                 ReportBuilder.BASE_DIRECTORY + getDirectorySuffixWithSeparator() + File.separatorChar + ".cache"
         );
 
-        if (directoryJsonCache.exists()) {
-            throw new IllegalStateException("Cache directory " + directoryJsonCache + " already exists. Another report with the same title already generated?");
-        } else if (!directoryJsonCache.mkdirs()) {
-            throw new IllegalStateException("Could not create directory for cache: " + directoryJsonCache);
+        if (directoryCache.exists()) {
+            throw new IllegalStateException("Cache directory " + directoryCache + " already exists. Another report with the same title already generated?");
+        } else if (!directoryCache.mkdirs()) {
+            throw new IllegalStateException("Could not create directory for cache: " + directoryCache);
         }
 
         // copies Classifications files to cache...
-        int copiedFilesProperties = inputDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS, new FilePath(directoryJsonCache));
+        int copiedFilesProperties = inputReportDirectory.copyRecursiveTo(DEFAULT_FILE_INCLUDE_PATTERN_CLASSIFICATIONS, new FilePath(directoryCache));
         log(listener, String.format("Copied %d properties files from workspace \"%s\" to reports directory \"%s\"",
-                copiedFilesProperties, inputDirectory.getRemote(), directoryJsonCache));
+                copiedFilesProperties, inputReportDirectory.getRemote(), directoryCache));
 
         // copies custom JS and CSS files to cache...
         List<String> cachedCustomJsFiles = new ArrayList<>();
         if (StringUtils.isNotEmpty(customJsFiles)) {
             cachedCustomJsFiles.addAll(copyFilesAndGetList(listener,
-                    inputDirectory,
-                    directoryJsonCache,
+                    workspace,
+                    directoryCache,
                     customJsFiles,
                     null)
             );
@@ -451,8 +451,8 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         List<String> cachedCustomCssFiles = new ArrayList<>();
         if (StringUtils.isNotEmpty(customCssFiles)) {
             cachedCustomCssFiles.addAll(copyFilesAndGetList(listener,
-                    inputDirectory,
-                    directoryJsonCache,
+                    workspace,
+                    directoryCache,
                     customCssFiles,
                     null)
             );
@@ -460,7 +460,7 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
 
         // copies JSON files to cache and
         // exclude JSONs that should be skipped (as configured by the user)
-        List<String> jsonFilesToProcess = copyFilesAndGetList(listener, inputDirectory, directoryJsonCache, fileIncludePattern, fileExcludePattern);
+        List<String> jsonFilesToProcess = copyFilesAndGetList(listener, inputReportDirectory, directoryCache, fileIncludePattern, fileExcludePattern);
         log(listener, String.format("Processing %d json files:", jsonFilesToProcess.size()));
         for (String jsonFile : jsonFilesToProcess) {
             log(listener, jsonFile);
@@ -509,7 +509,7 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
             configuration.addCustomCssFiles(cachedCustomCssFiles);
         }
 
-        List<String> classificationFiles = fetchPropertyFiles(directoryJsonCache, listener);
+        List<String> classificationFiles = fetchPropertyFiles(directoryCache, listener);
         if (CollectionUtils.isNotEmpty(classificationFiles)) {
             configuration.addClassificationFiles(classificationFiles);
         }
@@ -532,7 +532,7 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         }
 
         // removes cache which may run out of the free space on storage
-        FileUtils.deleteQuietly(directoryJsonCache);
+        FileUtils.deleteQuietly(directoryCache);
     }
 
     private List<String> copyFilesAndGetList(TaskListener listener, FilePath inputDirectory, File directoryJsonCache, String includePattern, String excludePattern) throws IOException, InterruptedException {
