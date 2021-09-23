@@ -154,6 +154,18 @@
 
             </f:entry>
 
+            <f:entry
+                    title="${%customStyle.css}"
+                    field="customCssFiles">
+                <f:textbox/>
+            </f:entry>
+
+            <f:entry
+                    title="${%customStyle.js}"
+                    field="customJsFiles">
+                <f:textbox/>
+            </f:entry>
+
         </f:section>
 
     </f:advanced>
