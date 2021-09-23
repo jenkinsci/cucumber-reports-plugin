@@ -1,10 +1,7 @@
-[![Build Travis](https://img.shields.io/travis/jenkinsci/cucumber-reports-plugin/master.svg?label=Travis%20bulid)](https://travis-ci.org/jenkinsci/cucumber-reports-plugin)
-[![Build Shippable](https://api.shippable.com/projects/540e74493479c5ea8f9e5f55/badge?branch=master&label=Shippable%20bulid)](https://app.shippable.com/github/jenkinsci/cucumber-reports-plugin/)
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/cucumber-reports-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/cucumber-reports-plugin/job/master/)
 
 [![Popularity](https://img.shields.io/jenkins/plugin/i/cucumber-reports.svg)](https://plugins.jenkins.io/cucumber-reports)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-blue.svg)](http://damianszczepanik.github.io/cucumber-html-reports/overview-features.html)
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8a9f4e032a47461fb984cd39c599584d)](https://www.codacy.com/app/damianszczepanik/cucumber-reports-plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jenkinsci/cucumber-reports-plugin&amp;utm_campaign=Badge_Grade)
 
 # Publish pretty [cucumber](https://cucumber.io/) reports on [Jenkins](http://jenkins-ci.org/)
 
