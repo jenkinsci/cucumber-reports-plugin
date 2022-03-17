@@ -130,12 +130,12 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
-            <version>1.23</version>
+            <version>308.v852b473a2b8c</version>
         </dependency>
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>5.6.1</version>
+            <version>5.7.0</version>
         </dependency>
     </dependencies>
 </project>
