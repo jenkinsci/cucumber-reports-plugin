@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 
 import hudson.AbortException;
@@ -26,6 +28,7 @@ import jenkins.tasks.SimpleBuildStep;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
 import net.masterthought.cucumber.Reportable;
+import net.masterthought.cucumber.json.support.Status;
 import net.masterthought.cucumber.presentation.PresentationMode;
 import net.masterthought.cucumber.reducers.ReducingMethod;
 import net.masterthought.cucumber.sorting.SortingMethod;
@@ -68,6 +71,11 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
 
     private String buildStatus;
     private boolean stopBuildOnFailedReport;
+
+    private boolean failedAsNotFailingStatus;
+    private boolean skippedAsNotFailingStatus;
+    private boolean pendingAsNotFailingStatus;
+    private boolean undefinedAsNotFailingStatus;
 
     private int trendsLimit;
     private String sortingMethod;
@@ -318,6 +326,43 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     }
 
     @DataBoundSetter
+    public void setFailedAsNotFailingStatus(boolean failedAsNotFailingStatus) {
+        this.failedAsNotFailingStatus = failedAsNotFailingStatus;
+    }
+
+    public boolean getFailedAsNotFailingStatus() {
+        return failedAsNotFailingStatus;
+    }
+
+    @DataBoundSetter
+    public void setSkippedAsNotFailingStatus(boolean skippedAsNotFailingStatus) {
+        this.skippedAsNotFailingStatus = skippedAsNotFailingStatus;
+    }
+
+    public boolean setSkippedAsNotFailingStatus() {
+        return skippedAsNotFailingStatus;
+    }
+
+    @DataBoundSetter
+    public void setPendingAsNotFailingStatus(boolean pendingAsNotFailingStatus) {
+        this.pendingAsNotFailingStatus = pendingAsNotFailingStatus;
+    }
+
+    public boolean getPendingAsNotFailingStatus() {
+        return pendingAsNotFailingStatus;
+    }
+
+    @DataBoundSetter
+    public void setUndefinedAsNotFailingStatus(boolean undefinedAsNotFailingStatus) {
+        this.undefinedAsNotFailingStatus = undefinedAsNotFailingStatus;
+    }
+
+    public boolean getUndefinedAsNotFailingStatus() {
+        return undefinedAsNotFailingStatus;
+    }
+
+
+    @DataBoundSetter
     public void setSortingMethod(String sortingMethod) {
         this.sortingMethod = sortingMethod;
     }
@@ -512,6 +557,8 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
             configuration.addClassificationFiles(classificationFiles);
         }
 
+        setFailingStatuses(configuration);
+
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
         Reportable result = reportBuilder.generateReports();
 
@@ -675,6 +722,25 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         if (StringUtils.isNotEmpty(reportTitle)) {
             configuration.addClassifications(Messages.Classification_ReportTitle(), reportTitle);
         }
+    }
+
+    private void setFailingStatuses(Configuration configuration) {
+        Set<Status> notFailingStatuses = new HashSet<>();
+
+        if (failedAsNotFailingStatus) {
+            notFailingStatuses.add(Status.FAILED);
+        }
+        if (skippedAsNotFailingStatus) {
+            notFailingStatuses.add(Status.SKIPPED);
+        }
+        if (pendingAsNotFailingStatus) {
+            notFailingStatuses.add(Status.PENDING);
+        }
+        if (undefinedAsNotFailingStatus) {
+            notFailingStatuses.add(Status.UNDEFINED);
+        }
+
+        configuration.setNotFailingStatuses(notFailingStatuses);
     }
 
     private List<String> fetchPropertyFiles(File targetDirectory, TaskListener listener) {
