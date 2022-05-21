@@ -21,9 +21,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
-
 import javax.annotation.Nonnull;
-
 import jenkins.tasks.SimpleBuildStep;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
@@ -519,7 +517,7 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
 
         if (hasReportFailed(result, listener)) {
             // redefine build result if it was provided by plugin configuration
-            if (buildStatus != null) {
+            if (Result.FAILURE.toString().equals(buildStatus) || Result.UNSTABLE.toString().equals(buildStatus)) {
                 log(listener, "Build status is changed to " + buildStatus);
                 build.setResult(Result.fromString(buildStatus));
             } else {
