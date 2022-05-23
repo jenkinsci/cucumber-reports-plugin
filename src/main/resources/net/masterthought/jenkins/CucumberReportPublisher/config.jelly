@@ -105,6 +105,20 @@
                 <f:textbox default="0"/>
             </f:entry>
 
+            <f:entry
+                    title="${%failingStatuses.title}">
+                <f:checkbox title="${%failedAsNotFailingStatus.title}"
+                            field="failedAsNotFailingStatus"/>
+                <br/>
+                <f:checkbox title="${%skippedAsNotFailingStatus.title}"
+                            field="skippedAsNotFailingStatus"/>
+                <br/>
+                <f:checkbox title="${%pendingAsNotFailingStatus.title}"
+                            field="pendingAsNotFailingStatus"/>
+                <br/>
+                <f:checkbox title="${%undefinedAsNotFailingStatus.title}"
+                            field="undefinedAsNotFailingStatus"/>
+            </f:entry>
 
             <f:entry
                     title="${%buildStatus.title}"
