@@ -18,7 +18,7 @@
     <!-- some comments here: https://jenkins.io/doc/developer/plugin-development/dependency-management/ -->
     <properties>
         <java.level>8</java.level>
-        <jenkins.version>2.277.1</jenkins.version>
+        <jenkins.version>2.289.1</jenkins.version>
 
         <slf4jVersion>1.7.30</slf4jVersion>
     </properties>
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>token-macro</artifactId>
-            <version>266.v44a80cf277fd</version>
+            <version>293.v283932a_0a_b_49</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -130,12 +130,12 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
-            <version>308.v852b473a2b8c</version>
+            <version>318.va_f3ccb_729b_71</version>
         </dependency>
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>5.7.0</version>
+            <version>5.7.1</version>
         </dependency>
     </dependencies>
 </project>
