@@ -339,7 +339,7 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         this.skippedAsNotFailingStatus = skippedAsNotFailingStatus;
     }
 
-    public boolean setSkippedAsNotFailingStatus() {
+    public boolean getSkippedAsNotFailingStatus() {
         return skippedAsNotFailingStatus;
     }
 
