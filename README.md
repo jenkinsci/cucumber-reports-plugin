@@ -34,11 +34,11 @@ If you need more control over the plugin you can click the Advanced button for m
 ![](.README/advanced-publish-box.png)
 
 1.  Report title can be used to publish multiple reports from the same job - reports with different titles are stored separately; or leave blank for a single report with no title
-2.  Leave empty for the plugin to automagically find your json files or enter the path to the json reports relative to the workspace if for some reason the automagic doesn't work for you
-3.  Leave empty unless your jenkins is installed on a different url to the default hostname:port - see the wiki for further info on this option
-4.  Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
-5.  Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
-6.  Tick if you want failed test not to fail the entire build but make it unstable
+2.  Leave empty for the plugin to automagically find your json files, or enter a base folder relative to the workspace if for some reason the automagic doesn't work for you
+3.  Leave default, or specify an ant-style pattern for report json files in case you need to select only specific files
+4.  Specify which json files should be excluded from prior selection
+5.  If you would like to include .properties files containing metadata to be displayed in the report's top right corner, specify them via ant-style pattern here. Attention: Equal to File Include/Exclude Pattern, files are searched only below JSON Reports Path
+6.  Configure how many historical reports to keep (0 = no limit)
 
 ## Advanced Configuration Options
 
