@@ -4,21 +4,32 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.15</version>
+        <version>4.51</version>
+        <relativePath/>
     </parent>
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
     <version>5.7.6-SNAPSHOT</version>
     <packaging>hpi</packaging>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jenkins.tools.bom</groupId>
+                <artifactId>bom-2.346.x</artifactId>
+                <version>1763.v092b_8980a_f5e</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <!-- This name and URL are added by the Jenkins when displaying help.html file -->
     <name>Cucumber reports</name>
     <url>https://github.com/jenkinsci/cucumber-reports-plugin</url>
 
     <!-- some comments here: https://jenkins.io/doc/developer/plugin-development/dependency-management/ -->
     <properties>
-        <java.level>8</java.level>
-        <jenkins.version>2.289.3</jenkins.version>
+        <jenkins.version>2.346.3</jenkins.version>
 
         <slf4jVersion>1.7.30</slf4jVersion>
     </properties>
@@ -114,13 +125,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4jVersion}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>token-macro</artifactId>
-            <version>321.vd7cc1f2a_52c8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -130,7 +139,6 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
-            <version>324.va_f5d6774f3a_d</version>
         </dependency>
         <dependency>
             <groupId>net.masterthought</groupId>
