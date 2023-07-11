@@ -26,7 +26,7 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
     public ListBoxModel doFillBuildStatusItems() {
         return new ListBoxModel(
                 // default option should be listed first
-                new ListBoxModel.Option(Messages.BuildStatus_unchanged(), null),
+                new ListBoxModel.Option(Messages.BuildStatus_unchanged(), "UNCHANGED"),
                 new ListBoxModel.Option(Messages.BuildStatus_FAILURE(), Result.FAILURE.toString()),
                 new ListBoxModel.Option(Messages.BuildStatus_UNSTABLE(), Result.UNSTABLE.toString()));
     }
