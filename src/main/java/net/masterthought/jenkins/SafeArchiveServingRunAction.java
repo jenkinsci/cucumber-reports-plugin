@@ -8,9 +8,9 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.model.Action;
 import hudson.model.Run;
-import javax.annotation.Nonnull;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep;
 
@@ -25,7 +25,7 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
     private Run<?, ?> run;
     private String directorySuffix;
 
-	public SafeArchiveServingRunAction(@Nonnull Run<?, ?> r, File rootDir, String urlName, String indexFile, String iconName, String title, String directorySuffix, String... safeExtensions) {
+	public SafeArchiveServingRunAction(@NonNull Run<?, ?> r, File rootDir, String urlName, String indexFile, String iconName, String title, String directorySuffix, String... safeExtensions) {
         super(rootDir, urlName, indexFile, iconName, title, safeExtensions);
         this.directorySuffix = directorySuffix;
 		this.run = r;

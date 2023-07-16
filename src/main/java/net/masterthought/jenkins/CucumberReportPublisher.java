@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -23,7 +24,6 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
-import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import net.masterthought.cucumber.Configuration;
 import net.masterthought.cucumber.ReportBuilder;
@@ -426,7 +426,7 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
+    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher, @NonNull TaskListener listener)
             throws InterruptedException, IOException {
 
         keepBackwardCompatibility();
