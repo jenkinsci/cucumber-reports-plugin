@@ -3,7 +3,6 @@ package net.masterthought.jenkins;
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
-
 import net.masterthought.cucumber.ReportBuilder;
 
 public class CucumberReportProjectAction extends CucumberReportBaseAction implements ProminentProjectAction {

@@ -13,15 +13,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.util.HttpResponses;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.ServletException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
@@ -110,7 +110,7 @@ public class SafeArchiveServingAction implements Action {
         return fileChecksums.get(file);
     }
 
-    private String calculateChecksum(@Nonnull File file) throws NoSuchAlgorithmException, IOException {
+    private String calculateChecksum(@NonNull File file) throws NoSuchAlgorithmException, IOException {
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] bytes = new byte[1024];
@@ -121,7 +121,7 @@ public class SafeArchiveServingAction implements Action {
         return Util.toHexString(sha1.digest());
     }
 
-    private void processDirectory(@Nonnull File directory, @Nullable String path) throws NoSuchAlgorithmException, IOException {
+    private void processDirectory(@NonNull File directory, @Nullable String path) throws NoSuchAlgorithmException, IOException {
         if (LOGGER.isLoggable(Level.FINER)) {
             LOGGER.log(Level.FINER, "Scanning " + getRootDir());
         }
