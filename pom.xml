@@ -10,7 +10,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>5.7.6</version>
+    <version>5.7.7-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <dependencyManagement>
         <dependencies>
@@ -38,7 +38,7 @@
         <connection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</developerConnection>
         <url>git@github.com:jenkinsci/cucumber-reports-plugin.git</url>
-        <tag>cucumber-reports-5.7.6</tag>
+        <tag>cucumber-reports-4.1.0</tag>
     </scm>
     <ciManagement>
         <system>travis</system>
