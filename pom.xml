@@ -5,12 +5,12 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>4.71</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>5.7.6-SNAPSHOT</version>
+    <version>5.7.6</version>
     <packaging>hpi</packaging>
     <dependencyManagement>
         <dependencies>
@@ -38,7 +38,7 @@
         <connection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</developerConnection>
         <url>git@github.com:jenkinsci/cucumber-reports-plugin.git</url>
-        <tag>cucumber-reports-4.1.0</tag>
+        <tag>cucumber-reports-5.7.6</tag>
     </scm>
     <ciManagement>
         <system>travis</system>
