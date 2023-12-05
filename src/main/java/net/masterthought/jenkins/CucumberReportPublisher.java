@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.StreamReadConstraints;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
 import hudson.Extension;
@@ -78,6 +79,7 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     private boolean undefinedAsNotFailingStatus;
 
     private int trendsLimit;
+    private int maxStringLengthConstraint = 20_000_000;
     private String sortingMethod;
     private List<Classification> classifications;
     private String customJsFiles;
@@ -156,6 +158,15 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     @DataBoundSetter
     public void setTrendsLimit(int trendsLimit) {
         this.trendsLimit = trendsLimit;
+    }
+
+    public int getMaxStringLengthConstraint() {
+        return maxStringLengthConstraint;
+    }
+
+    @DataBoundSetter
+    public void setMaxStringLengthConstraint(int maxStringLengthConstraint) {
+        this.maxStringLengthConstraint = maxStringLengthConstraint;
     }
 
     public String getFileExcludePattern() {
@@ -558,6 +569,8 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         }
 
         setFailingStatuses(configuration);
+
+        StreamReadConstraints.overrideDefaultStreamReadConstraints(StreamReadConstraints.builder().maxStringLength(maxStringLengthConstraint).build());
 
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
         Reportable result = reportBuilder.generateReports();

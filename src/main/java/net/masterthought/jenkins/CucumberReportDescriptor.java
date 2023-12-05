@@ -35,6 +35,10 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
         return isValidInteger(value);
     }
 
+    public FormValidation doMaxStringLengthConstraint(@QueryParameter String value) {
+        return isValidInteger(value);
+    }
+
     public FormValidation doCheckFailedStepsNumber(@QueryParameter String value) {
         return isValidInteger(value);
     }

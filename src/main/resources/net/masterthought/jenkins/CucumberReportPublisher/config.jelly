@@ -33,6 +33,11 @@
                     field="trendsLimit">
                 <f:textbox default="0"/>
             </f:entry>
+            <f:entry
+                    title="${%maxStringLengthConstraint.title}"
+                    field="maxStringLengthConstraint">
+                <f:textbox default="20000000"/>
+            </f:entry>
         </f:section>
 
 
