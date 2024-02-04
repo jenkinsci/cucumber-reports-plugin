@@ -5,41 +5,52 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>4.76</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>5.8.2-SNAPSHOT</version>
+    <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-2.387.x</artifactId>
-                <version>2543.vfb_1a_5fb_9496d</version>
-                <type>pom</type>
+                <!-- Latest version based on
+                     https://repo.jenkins-ci.org/artifactory/public/io/jenkins/tools/bom/
+				     https://www.jenkins.io/doc/developer/plugin-development/dependency-management/#jenkins-plugin-bom
+				-->
+                <version>2483.v3b_22f030990a_</version>
                 <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <!-- This name and URL are added by the Jenkins when displaying help.html file -->
     <name>Cucumber reports</name>
     <url>https://github.com/jenkinsci/cucumber-reports-plugin</url>
 
     <!-- some comments here: https://jenkins.io/doc/developer/plugin-development/dependency-management/ -->
     <properties>
+        <revision>5.8.2</revision>
+        <changelist>-SNAPSHOT</changelist>
+        <gitHubRepo>jenkinsci/cucumber-reports-plugin</gitHubRepo>
+
         <jenkins.version>2.387.3</jenkins.version>
 
         <slf4jVersion>1.7.30</slf4jVersion>
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/cucumber-reports-plugin.git</developerConnection>
-        <url>git@github.com:jenkinsci/cucumber-reports-plugin.git</url>
-        <tag>cucumber-reports-4.1.0</tag>
+        <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+        <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+        <url>https://github.com/${gitHubRepo}</url>
+        <tag>${scmTag}</tag>
     </scm>
+
     <ciManagement>
         <system>Jenkins</system>
         <url>https://ci.jenkins.io/job/Plugins/job/cucumber-reports-plugin/job/master/</url>
@@ -65,8 +76,6 @@
         </developer>
     </developers>
 
-    <!-- get every artifact through repo.jenkins-ci.org, which proxies all
-        the artifacts that we need -->
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
@@ -83,21 +92,12 @@
 
     <build>
         <plugins>
-            <!--  release with
-            mvn clean release:prepare release:perform
-            once the release is completed, new version should be present here:
-            https://repo.jenkins-ci.org/releases/net/masterthought/jenkins/cucumber-reports/
-            and later after synchronization also here:
-            http://updates.jenkins-ci.org/update-center.json
-             -->
             <plugin>
-                <groupId>org.eclipse.hudson.tools</groupId>
+                <groupId>org.jenkins-ci.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
-                <!-- explicitly specifying the latest version here because one we get from
-                     the parent POM tends to lag behind a bit -->
-                <version>3.0.3</version>
             </plugin>
         </plugins>
+
         <pluginManagement>
             <plugins>
                 <plugin>
