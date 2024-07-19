@@ -10,7 +10,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>5.8.3-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <dependencyManagement>
@@ -35,7 +35,7 @@
 
     <!-- some comments here: https://jenkins.io/doc/developer/plugin-development/dependency-management/ -->
     <properties>
-        <revision>5.8.3-SNAPSHOT</revision>
+        <revision>5.8.3</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/cucumber-reports-plugin</gitHubRepo>
 
