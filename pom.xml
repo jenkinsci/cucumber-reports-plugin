@@ -17,12 +17,12 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.387.x</artifactId>
+                <artifactId>bom-2.440.x</artifactId>
                 <!-- Latest version based on
                      https://repo.jenkins-ci.org/artifactory/public/io/jenkins/tools/bom/
 				     https://www.jenkins.io/doc/developer/plugin-development/dependency-management/#jenkins-plugin-bom
 				-->
-                <version>2543.vfb_1a_5fb_9496d</version>
+                <version>3234.v5ca_5154341ef</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -39,7 +39,7 @@
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/cucumber-reports-plugin</gitHubRepo>
 
-        <jenkins.version>2.387.3</jenkins.version>
+        <jenkins.version>2.440.3</jenkins.version>
 
         <slf4jVersion>1.7.30</slf4jVersion>
     </properties>
