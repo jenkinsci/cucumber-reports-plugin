@@ -1,0 +1,38 @@
+name: Perform trial release
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: adopt
+
+      - name: Configure git
+        run: |
+           git config --global user.name "Damian Szczepanik"
+           git config --global user.email "damianszczepanik@github"
+
+      - name: Release with Maven
+        run: |
+           mvn \
+            --batch-mode \
+            -DpushChanges=false \
+            -DreleaseVersion=0.0-trial \
+            release:prepare \
+            -DlocalCheckout=true \
+            release:perform
