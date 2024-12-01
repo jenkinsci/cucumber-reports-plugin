@@ -22,7 +22,7 @@
                      https://repo.jenkins-ci.org/artifactory/public/io/jenkins/tools/bom/
 				     https://www.jenkins.io/doc/developer/plugin-development/dependency-management/#jenkins-plugin-bom
 				-->
-                <version>3413.v0d896b_76a_30d</version>
+                <version>3435.v238d66a_043fb_</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
