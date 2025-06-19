@@ -138,7 +138,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>5.8.4</version>
+            <version>5.9.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
