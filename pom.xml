@@ -36,7 +36,7 @@
 
 
     <properties>
-        <revision>5.9.1</revision>
+        <revision>5.10.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/cucumber-reports-plugin</gitHubRepo>
         <jenkins.baseline>2.479</jenkins.baseline>
@@ -138,7 +138,7 @@
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>5.9.0</version>
+            <version>5.10.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

@@ -91,6 +91,8 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
 
     private String classificationsFilePattern = "";
 
+    private int maxStreamStringLength;
+
     @DataBoundConstructor
     public CucumberReportPublisher(String fileIncludePattern) {
         this.fileIncludePattern = fileIncludePattern;
@@ -381,6 +383,15 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     }
 
     @DataBoundSetter
+    public void setMaxStreamStringLength(int maxStreamStringLength) {
+        this.maxStreamStringLength = maxStreamStringLength;
+    }
+
+    public int getMaxStreamStringLength() {
+        return maxStreamStringLength;
+    }
+
+    @DataBoundSetter
     public void setMergeFeaturesById(boolean mergeFeaturesById) {
         this.mergeFeaturesById = mergeFeaturesById;
     }
@@ -555,6 +566,10 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         List<String> classificationFiles = fetchPropertyFiles(directoryCache, listener);
         if (CollectionUtils.isNotEmpty(classificationFiles)) {
             configuration.addClassificationFiles(classificationFiles);
+        }
+
+        if (maxStreamStringLength != 0) {
+            configuration.setMaxStreamStringLength(maxStreamStringLength);
         }
 
         setFailingStatuses(configuration);

@@ -182,6 +182,11 @@
 
         </f:section>
 
+        <f:entry
+                title="${%maxStreamStringLength.title}"
+                field="maxStreamStringLength">
+            <f:number default="0"/>
+        </f:entry>
+
     </f:advanced>
 </j:jelly>
-
