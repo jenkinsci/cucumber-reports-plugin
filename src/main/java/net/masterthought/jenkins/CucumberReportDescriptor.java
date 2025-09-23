@@ -8,6 +8,7 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import net.masterthought.cucumber.sorting.SortingMethod;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
 
@@ -22,6 +23,7 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
     // names must refer to the field name
+    @POST
     public ListBoxModel doFillBuildStatusItems() {
         return new ListBoxModel(
                 // default option should be listed first
@@ -31,30 +33,37 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
 
+    @POST
     public FormValidation doCheckTrendsLimit(@QueryParameter String value) {
         return isValidInteger(value);
     }
 
+    @POST
     public FormValidation doCheckFailedStepsNumber(@QueryParameter String value) {
         return isValidInteger(value);
     }
 
+    @POST
     public FormValidation doCheckSkippedStepsNumber(@QueryParameter String value) {
         return isValidInteger(value);
     }
 
+    @POST
     public FormValidation doCheckPendingStepsNumber(@QueryParameter String value) {
         return isValidInteger(value);
     }
 
+    @POST
     public FormValidation doCheckUndefinedStepsNumber(@QueryParameter String value) {
         return isValidInteger(value);
     }
 
+    @POST
     public FormValidation doCheckFailedScenariosNumber(@QueryParameter String value) {
         return isValidInteger(value);
     }
 
+    @POST
     public FormValidation doCheckFailedFeaturesNumber(@QueryParameter String value) {
         return isValidInteger(value);
     }
@@ -76,26 +85,32 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
 
+    @POST
     public FormValidation doCheckFailedStepsPercentage(@QueryParameter String value) {
         return isValidPercentage(value);
     }
 
+    @POST
     public FormValidation doCheckSkippedStepsPercentage(@QueryParameter String value) {
         return isValidPercentage(value);
     }
 
+    @POST
     public FormValidation doCheckPendingStepsPercentage(@QueryParameter String value) {
         return isValidPercentage(value);
     }
 
+    @POST
     public FormValidation doCheckUndefinedStepsPercentage(@QueryParameter String value) {
         return isValidPercentage(value);
     }
 
+    @POST
     public FormValidation doCheckFailedScenariosPercentage(@QueryParameter String value) {
         return isValidPercentage(value);
     }
 
+    @POST
     public FormValidation doCheckFailedFeaturesPercentage(@QueryParameter String value) {
         return isValidPercentage(value);
     }
@@ -115,6 +130,7 @@ public class CucumberReportDescriptor extends BuildStepDescriptor<Publisher> {
     }
 
     // names must refer to the field name
+    @POST
     public ListBoxModel doFillSortingMethodItems() {
         return new ListBoxModel(
                 // default option should be listed first
