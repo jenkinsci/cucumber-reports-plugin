@@ -54,7 +54,7 @@ public class SafeArchiveServingAction implements Action {
     private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingAction.class.getName());
 
     @GuardedBy("fileChecksums")
-    private Map<String,String> fileChecksums = new HashMap<>();
+    private final Map<String,String> fileChecksums = new HashMap<>();
 
     private final File rootDir;
 
