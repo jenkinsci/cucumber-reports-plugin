@@ -22,6 +22,7 @@ import hudson.Util;
 import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.util.HttpResponses;
+import net.jcip.annotations.GuardedBy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
@@ -52,6 +53,7 @@ public class SafeArchiveServingAction implements Action {
 
     private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingAction.class.getName());
 
+    @GuardedBy("fileChecksums")
     private Map<String,String> fileChecksums = new HashMap<>();
 
     private final File rootDir;
@@ -64,6 +66,8 @@ public class SafeArchiveServingAction implements Action {
 
     private final String title;
 
+    // Only modified from the constructor (and as unmodifiable list/set
+    // classes), so not synchronized/guarded in other code:
     private final List<String> safeExtensions;
     private Set<File> safeDirectories;
 
@@ -100,14 +104,18 @@ public class SafeArchiveServingAction implements Action {
     }
 
     private void addFile(String relativePath, String checksum) {
-        this.fileChecksums.put(relativePath, checksum);
+        synchronized (this.fileChecksums) {
+            this.fileChecksums.put(relativePath, checksum);
+        }
     }
 
     private String getChecksum(String file) {
         if (file == null || !fileChecksums.containsKey(file)) {
             throw new IllegalArgumentException(file + " has no checksum recorded");
         }
-        return fileChecksums.get(file);
+        synchronized (this.fileChecksums) {
+            return fileChecksums.get(file);
+        }
     }
 
     private String calculateChecksum(@NonNull File file) throws NoSuchAlgorithmException, IOException {
@@ -224,13 +232,15 @@ public class SafeArchiveServingAction implements Action {
 
         // if we're here, we know it's not a safe file type based on name
 
-        if (!fileChecksums.containsKey(fileName)) {
-            // file had no checksum recorded -- dangerous
-            if (LOGGER.isLoggable(Level.FINEST)) {
-                LOGGER.log(Level.FINEST, "File exists but no checksum recorded: " + fileName);
-            }
+        synchronized (this.fileChecksums) {
+            if (!fileChecksums.containsKey(fileName)) {
+                // file had no checksum recorded -- dangerous
+                if (LOGGER.isLoggable(Level.FINEST)) {
+                    LOGGER.log(Level.FINEST, "File exists but no checksum recorded: " + fileName);
+                }
 
-            throw HttpResponses.notFound();
+                throw HttpResponses.notFound();
+            }
         }
 
         // checksum recorded
