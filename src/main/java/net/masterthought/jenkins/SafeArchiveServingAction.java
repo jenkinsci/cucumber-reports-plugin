@@ -103,6 +103,35 @@ public class SafeArchiveServingAction implements Action {
         )));
     }
 
+    /** Copy constructor, primarily for {@link #writeReplace} */
+    private SafeArchiveServingAction(SafeArchiveServingAction other) {
+        synchronized (other.fileChecksums) {
+            this.rootDir = other.rootDir;
+            this.urlName = other.urlName;
+            this.indexFile = other.indexFile;
+            this.iconName = other.iconName;
+            this.title = other.title;
+            this.safeExtensions = other.safeExtensions; /* already an unmodifiableList */
+            this.safeDirectories = other.safeDirectories; /* already an unmodifiableSet */
+            this.fileChecksums.putAll(other.fileChecksums);    /* we have a new private final map, populate it */
+        }
+    }
+
+    /**
+     * Ensure iteration during XStream marshalling is also synchronized,
+     * otherwise we tend to get {@link java.util.ConcurrentModificationException}.<br/>
+     *
+     * The recommended approach is to copy-on-write the properties so a
+     * snapshot can always be scraped consistently. But this can be costly
+     * at run-time, so we use the next-best option: produce a consistent
+     * replica of the current object for actual saving only on demand.<br/>
+     *
+     * This method is found by XStream via reflection.<br/>
+     */
+    protected synchronized Object writeReplace() {
+        return new SafeArchiveServingAction(this);
+    }
+
     private void addFile(String relativePath, String checksum) {
         synchronized (this.fileChecksums) {
             this.fileChecksums.put(relativePath, checksum);
