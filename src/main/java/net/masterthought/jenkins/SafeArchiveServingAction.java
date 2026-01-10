@@ -22,6 +22,7 @@ import hudson.Util;
 import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
 import hudson.util.HttpResponses;
+import net.jcip.annotations.GuardedBy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
@@ -52,7 +53,8 @@ public class SafeArchiveServingAction implements Action {
 
     private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingAction.class.getName());
 
-    private Map<String,String> fileChecksums = new HashMap<>();
+    @GuardedBy("fileChecksums")
+    private final Map<String,String> fileChecksums = new HashMap<>();
 
     private final File rootDir;
 
@@ -64,6 +66,8 @@ public class SafeArchiveServingAction implements Action {
 
     private final String title;
 
+    // Only modified from the constructor (and as unmodifiable list/set
+    // classes), so not synchronized/guarded in other code:
     private final List<String> safeExtensions;
     private Set<File> safeDirectories;
 
@@ -99,15 +103,48 @@ public class SafeArchiveServingAction implements Action {
         )));
     }
 
+    /** Copy constructor, primarily for {@link #writeReplace} */
+    private SafeArchiveServingAction(SafeArchiveServingAction other) {
+        synchronized (other.fileChecksums) {
+            this.rootDir = other.rootDir;
+            this.urlName = other.urlName;
+            this.indexFile = other.indexFile;
+            this.iconName = other.iconName;
+            this.title = other.title;
+            this.safeExtensions = other.safeExtensions; /* already an unmodifiableList */
+            this.safeDirectories = other.safeDirectories; /* already an unmodifiableSet */
+            this.fileChecksums.putAll(other.fileChecksums);    /* we have a new private final map, populate it */
+        }
+    }
+
+    /**
+     * Ensure iteration during XStream marshalling is also synchronized,
+     * otherwise we tend to get {@link java.util.ConcurrentModificationException}.<br/>
+     *
+     * The recommended approach is to copy-on-write the properties so a
+     * snapshot can always be scraped consistently. But this can be costly
+     * at run-time, so we use the next-best option: produce a consistent
+     * replica of the current object for actual saving only on demand.<br/>
+     *
+     * This method is found by XStream via reflection.<br/>
+     */
+    protected synchronized Object writeReplace() {
+        return new SafeArchiveServingAction(this);
+    }
+
     private void addFile(String relativePath, String checksum) {
-        this.fileChecksums.put(relativePath, checksum);
+        synchronized (this.fileChecksums) {
+            this.fileChecksums.put(relativePath, checksum);
+        }
     }
 
     private String getChecksum(String file) {
         if (file == null || !fileChecksums.containsKey(file)) {
             throw new IllegalArgumentException(file + " has no checksum recorded");
         }
-        return fileChecksums.get(file);
+        synchronized (this.fileChecksums) {
+            return fileChecksums.get(file);
+        }
     }
 
     private String calculateChecksum(@NonNull File file) throws NoSuchAlgorithmException, IOException {
@@ -224,13 +261,15 @@ public class SafeArchiveServingAction implements Action {
 
         // if we're here, we know it's not a safe file type based on name
 
-        if (!fileChecksums.containsKey(fileName)) {
-            // file had no checksum recorded -- dangerous
-            if (LOGGER.isLoggable(Level.FINEST)) {
-                LOGGER.log(Level.FINEST, "File exists but no checksum recorded: " + fileName);
-            }
+        synchronized (this.fileChecksums) {
+            if (!fileChecksums.containsKey(fileName)) {
+                // file had no checksum recorded -- dangerous
+                if (LOGGER.isLoggable(Level.FINEST)) {
+                    LOGGER.log(Level.FINEST, "File exists but no checksum recorded: " + fileName);
+                }
 
-            throw HttpResponses.notFound();
+                throw HttpResponses.notFound();
+            }
         }
 
         // checksum recorded
