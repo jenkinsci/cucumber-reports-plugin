@@ -39,6 +39,8 @@
         <revision>5.10.1</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/cucumber-reports-plugin</gitHubRepo>
+        <hpi.bundledArtifacts>commons-configuration2,cucumber-reporting,velocity-engine-core</hpi.bundledArtifacts>
+        <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
         <jenkins.baseline>2.504</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     </properties>
@@ -131,6 +133,30 @@
             <artifactId>commons-collections4-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>commons-lang3-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>commons-text-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>jackson2-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>joda-time-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>antisamy-markup-formatter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
         </dependency>
@@ -150,6 +176,10 @@
                 <exclusion>
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+                    <artifactId>owasp-java-html-sanitizer</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
