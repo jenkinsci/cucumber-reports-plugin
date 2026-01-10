@@ -41,8 +41,6 @@
         <gitHubRepo>jenkinsci/cucumber-reports-plugin</gitHubRepo>
         <jenkins.baseline>2.504</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.3</jenkins.version>
-
-        <slf4jVersion>1.7.30</slf4jVersion>
     </properties>
 
     <scm>
@@ -121,6 +119,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
