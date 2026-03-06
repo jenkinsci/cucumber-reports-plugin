@@ -80,7 +80,8 @@ class ConcurrentModificationExceptionTest {
     void noCmeWhileSavingXStreamVsSafeArchiveServingRunAction(JenkinsRule j) throws Exception {
         // How many parallel stages would we use before saving WorkflowRun
         // state inside the pipeline run, and overall?
-        int preflood = 25, maxflood = 75;
+        int preflood = 25;
+        int maxflood = 75;
 
         // More workers to increase the chaos in competition for resources;
         // this number should exceed maxRuns (agents are dedicated to a job
@@ -134,7 +135,8 @@ class ConcurrentModificationExceptionTest {
         LOGGER.info("create extra build agents done");
 
         LOGGER.info("define " + maxRuns + " test workflows");
-        String pipeCode = "import java.lang.Math;\n" + "import java.util.Random;\n"
+        String pipeCode = "import java.lang.Math;\n"
+                + "import java.util.Random;\n"
                 +
                 // Do not occupy all readers at first, so all our
                 // jobs can get defined and started simultaneously
@@ -143,12 +145,12 @@ class ConcurrentModificationExceptionTest {
                 + "def parstages = [:]\n"
                 +
                 // flood with cucumber actions, including logging about them
-                "def preflood = "
-                + preflood + "\n" + "def maxflood = "
-                + maxflood + "\n" + "for (int i = 1; i < preflood; i++) {\n"
+                "def preflood = " + preflood + "\n"
+                + "def maxflood = " + maxflood + "\n"
+                + "for (int i = 1; i < preflood; i++) {\n"
                 +
                 // Note that we must use toString() and explicit vars to
-                // avoid seeing same values at time of GString evaluation
+                // avoid seeing the same values at the time of GString evaluation
                 "  String iStr = String.valueOf(i)\n"
                 + "  parstages[\"stage-${iStr}\".toString()] = {\n"
                 + "    node(label: 'worker-' + env.JOB_NAME) {\n"
