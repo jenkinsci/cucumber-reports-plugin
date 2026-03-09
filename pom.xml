@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>5.28</version>
+        <version>6.2138.v03274d462c13</version>
         <relativePath />
     </parent>
 
@@ -23,7 +23,7 @@
                      https://repo.jenkins-ci.org/artifactory/public/io/jenkins/tools/bom/
 				     https://www.jenkins.io/doc/developer/plugin-development/dependency-management/#jenkins-plugin-bom
 				-->
-                <version>5054.v620b_5d2b_d5e6</version>
+                <version>5888.vd99c2b_38128d</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -36,14 +36,14 @@
 
 
     <properties>
-        <revision>5.10.1</revision>
+        <revision>5.10.3</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/cucumber-reports-plugin</gitHubRepo>
-        <jenkins.baseline>2.479</jenkins.baseline>
+        <hpi.bundledArtifacts>commons-configuration2,cucumber-reporting,velocity-engine-core</hpi.bundledArtifacts>
+        <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
+        <jenkins.baseline>2.504</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.3</jenkins.version>
-
         <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
-        <slf4jVersion>1.7.30</slf4jVersion>
         <system-stubs.version>2.1.8</system-stubs.version>
         <!-- FIXME: Get this into parent BOM? -->
     </properties>
@@ -107,7 +107,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -124,6 +124,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -135,13 +136,37 @@
             <artifactId>commons-collections4-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>commons-lang3-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>commons-text-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>jackson2-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>joda-time-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>antisamy-markup-formatter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
         </dependency>
         <dependency>
             <groupId>net.masterthought</groupId>
             <artifactId>cucumber-reporting</artifactId>
-            <version>5.10.1</version>
+            <version>5.10.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -154,6 +179,10 @@
                 <exclusion>
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+                    <artifactId>owasp-java-html-sanitizer</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
