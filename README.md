@@ -1,4 +1,4 @@
-[![Build Status](https://ci.jenkins.io/job/Plugins/job/cucumber-reports-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/cucumber-reports-plugin/job/master/)
+[![Build Status](https://ci.jenkins.io/buildStatus/icon?job=Plugins%2Fcucumber-reports-plugin%2Fmaster)](https://ci.jenkins.io/job/Plugins/job/cucumber-reports-plugin/job/master/)
 
 [![Popularity](https://img.shields.io/jenkins/plugin/i/cucumber-reports.svg)](https://plugins.jenkins.io/cucumber-reports)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-blue.svg)](https://damianszczepanik.github.io/cucumber-html-reports/overview-features.html)
