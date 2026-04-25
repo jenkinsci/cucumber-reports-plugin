@@ -28,9 +28,9 @@ import uk.org.webcompere.systemstubs.stream.output.TapStream;
 
 @ExtendWith(SystemStubsExtension.class)
 @WithJenkins
-class ConcurrentModificationExceptionTest {
+class ConcurrentModificationExceptionIntegrationTest {
 
-    private static final Logger LOGGER = Logger.getLogger(ConcurrentModificationExceptionTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConcurrentModificationExceptionIntegrationTest.class.getName());
 
     // Prepare to capture CME clues in JVM or Jenkins instance
     // logs (stderr -- sometimes the problem is reported there,
