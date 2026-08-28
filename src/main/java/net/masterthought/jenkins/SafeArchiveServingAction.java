@@ -147,12 +147,13 @@ public class SafeArchiveServingAction implements Action {
         }
     }
 
-    private String calculateChecksum(@NonNull File file) throws NoSuchAlgorithmException, IOException {
+    static String calculateChecksum(@NonNull File file) throws NoSuchAlgorithmException, IOException {
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] bytes = new byte[1024];
-            while (-1 != (fis.read(bytes))) {
-                sha1.update(bytes);
+            int bytesRead;
+            while ((bytesRead = fis.read(bytes)) != -1) {
+                sha1.update(bytes, 0, bytesRead);
             }
         }
         return Util.toHexString(sha1.digest());
