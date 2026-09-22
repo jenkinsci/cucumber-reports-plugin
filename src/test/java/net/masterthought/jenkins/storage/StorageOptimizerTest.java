@@ -3,6 +3,7 @@ package net.masterthought.jenkins.storage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -172,4 +173,34 @@ public class StorageOptimizerTest {
         assertNotNull(featureFiles, "Feature report files array must not be null");
         assertTrue(featureFiles.length > 0, "Separate report-feature_*.html files must be generated");
     }
+
+    @Test
+    public void testNonExistentGzipPayloadHandling() throws Exception {
+        File emptyDir = tempDir.resolve("empty-build").toFile();
+        emptyDir.mkdirs();
+
+        assertNull(StorageOptimizer.loadPayloadFromGzip(emptyDir));
+        assertEquals("{}", StorageOptimizer.readRawJsonFromGzip(emptyDir));
+
+        StorageOptimizer optimizer = new StorageOptimizer(emptyDir, true, -10);
+        assertNotNull(optimizer.getExternalizer());
+    }
+
+    @Test
+    public void testReadRawJsonFromExistingGzip() throws Exception {
+        File buildDir = tempDir.resolve("json-build").toFile();
+        buildDir.mkdirs();
+
+        StorageOptimizer optimizer = new StorageOptimizer(buildDir, false, 500);
+        CucumberReportPayload payload = new CucumberReportPayload();
+        ReportSummary summary = new ReportSummary();
+        summary.setTotalFeatures(1);
+        payload.setSummary(summary);
+        optimizer.savePayloadToGzip(payload);
+
+        String rawJson = StorageOptimizer.readRawJsonFromGzip(buildDir);
+        assertNotNull(rawJson);
+        assertTrue(rawJson.contains("\"totalFeatures\":1"));
+    }
 }
+
