@@ -107,7 +107,7 @@ public class SafeArchiveServingRunAction extends SafeArchiveServingAction implem
 
     /**
      * Stapler Web Endpoint: Serves or downloads an externalized attachment fragment.
-     * URL: buildUrl/cucumber-html-reports/attachment?fileId=att-xxx.dat&mimeType=image/png&download=true
+     * URL: {@code buildUrl/cucumber-html-reports/attachment?fileId=att-xxx.dat&mimeType=image/png&download=true}
      */
     public void doAttachment(@QueryParameter(required = true) String fileId,
                              @QueryParameter String mimeType,

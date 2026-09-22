@@ -32,7 +32,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * Core engine responsible for Jenkins controller storage optimization:
  * 1. GZIP compression on the fly into build.getRootDir()/cucumber-report.json.gz
- * 2. Pruning & externalizing large attachments from cached JSON files to fragment files
+ * 2. Pruning and externalizing large attachments from cached JSON files to fragment files
  * 3. Calculating summary metrics and structuring the lightweight report payload.
  */
 public class StorageOptimizer {
