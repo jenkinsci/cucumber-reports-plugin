@@ -188,5 +188,16 @@
             <f:number default="0"/>
         </f:entry>
 
+        <f:section title="Storage Optimization">
+            <f:entry title="Embed full attachments" field="embedFullAttachments">
+                <f:checkbox/>
+            </f:entry>
+            <f:entry title="Attachment size threshold (KB)" field="attachmentThresholdKB">
+                <f:number default="500"/>
+            </f:entry>
+            <f:entry title="Compress report payload to GZIP" field="compressReport">
+                <f:checkbox default="true"/>
+            </f:entry>
+        </f:section>
     </f:advanced>
 </j:jelly>
