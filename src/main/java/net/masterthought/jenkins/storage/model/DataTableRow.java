@@ -29,6 +29,6 @@ public class DataTableRow implements Serializable {
     }
 
     public void setCells(List<String> cells) {
-        this.cells = cells;
+        this.cells = cells != null ? cells : new ArrayList<>();
     }
 }

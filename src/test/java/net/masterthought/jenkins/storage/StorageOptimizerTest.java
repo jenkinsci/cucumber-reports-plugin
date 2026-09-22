@@ -202,5 +202,113 @@ public class StorageOptimizerTest {
         assertNotNull(rawJson);
         assertTrue(rawJson.contains("\"totalFeatures\":1"));
     }
+
+    @Test
+    public void testOptimizeNullFeaturesAndSkippedStatuses() throws Exception {
+        File buildDir = tempDir.resolve("branch-build").toFile();
+        buildDir.mkdirs();
+
+        StorageOptimizer optimizer = new StorageOptimizer(buildDir, false, 500);
+
+        // 1. Test null features
+        CucumberReportPayload p1 = optimizer.optimizeAndSave(null, "NullBuild", "/job/null/1");
+        assertEquals(0, p1.getSummary().getTotalFeatures());
+
+        // 2. Test features with skipped, pending, undefined and null attachment data
+        FeatureResult skippedFeat = new FeatureResult();
+        skippedFeat.setStatus("skipped");
+        skippedFeat.setDuration(100L);
+        skippedFeat.setTags(Collections.singletonList("skipped-tag"));
+
+        net.masterthought.jenkins.storage.model.ScenarioResult sc = new net.masterthought.jenkins.storage.model.ScenarioResult();
+        sc.setStatus("skipped");
+
+        net.masterthought.jenkins.storage.model.StepResult pendingStep = new net.masterthought.jenkins.storage.model.StepResult();
+        pendingStep.setStatus("pending");
+        // Attachment with null data
+        pendingStep.setAttachments(Collections.singletonList(new net.masterthought.jenkins.storage.model.Attachment("nullAtt", "text/plain", null)));
+
+        net.masterthought.jenkins.storage.model.StepResult undefStep = new net.masterthought.jenkins.storage.model.StepResult();
+        undefStep.setStatus("undefined");
+
+        net.masterthought.jenkins.storage.model.StepResult skipStep = new net.masterthought.jenkins.storage.model.StepResult();
+        skipStep.setStatus("skipped");
+
+        sc.setSteps(java.util.Arrays.asList(pendingStep, undefStep, skipStep));
+        skippedFeat.setScenarios(Collections.singletonList(sc));
+
+        CucumberReportPayload p2 = optimizer.optimizeAndSave(Collections.singletonList(skippedFeat), "SkipBuild", "/job/skip/1");
+        assertEquals(1, p2.getSummary().getSkippedFeatures());
+        assertEquals(1, p2.getSummary().getSkippedScenarios());
+        assertEquals(3, p2.getSummary().getSkippedSteps());
+    }
+
+    @Test
+    public void testPruneCachedJsonFilesEdgeCases() throws Exception {
+        File buildDir = tempDir.resolve("prune-edge-build").toFile();
+        buildDir.mkdirs();
+
+        StorageOptimizer optimizer = new StorageOptimizer(buildDir, false, 1);
+
+        // 1. null list and empty list
+        optimizer.pruneCachedJsonFiles(null);
+        optimizer.pruneCachedJsonFiles(Collections.emptyList());
+
+        // 2. Non-existent file and directory
+        File missingFile = tempDir.resolve("missing.json").toFile();
+        File aDir = tempDir.resolve("just-a-dir").toFile();
+        aDir.mkdirs();
+        optimizer.pruneCachedJsonFiles(java.util.Arrays.asList(missingFile.getAbsolutePath(), aDir.getAbsolutePath()));
+
+        // 3. Non-array JSON file
+        File objFile = tempDir.resolve("object.json").toFile();
+        Files.write(objFile.toPath(), "{\"key\": \"value\"}".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        optimizer.pruneCachedJsonFiles(Collections.singletonList(objFile.getAbsolutePath()));
+
+        // 4. Non-image embedding (text/plain) exceeding threshold
+        File textEmbFile = tempDir.resolve("text-emb.json").toFile();
+        StringBuilder largeText = new StringBuilder();
+        for (int i = 0; i < 200; i++) {
+            largeText.append("Log line number ").append(i).append(" with verbose stack trace details\n");
+        }
+        String jsonWithTextEmb = "[\n" +
+                "  {\n" +
+                "    \"elements\": [\n" +
+                "      {\n" +
+                "        \"before\": [\n" +
+                "          {\n" +
+                "            \"embeddings\": [\n" +
+                "              {\"mime_type\": \"text/plain\", \"data\": \"" + largeText.toString().replace("\n", "\\n") + "\"}\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        ],\n" +
+                "        \"steps\": [\n" +
+                "          {\n" +
+                "            \"attachments\": [\n" +
+                "              {\"name\": \"shortAtt\", \"mime_type\": \"text/plain\", \"data\": \"" + largeText.toString().replace("\n", "\\n") + "\"}\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        ],\n" +
+                "        \"after\": [\n" +
+                "          {\n" +
+                "            \"embeddings\": [\n" +
+                "              {\"mime_type\": \"text/plain\", \"data\": \"" + largeText.toString().replace("\n", "\\n") + "\"}\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "]";
+
+        Files.write(textEmbFile.toPath(), jsonWithTextEmb.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        optimizer.pruneCachedJsonFiles(Collections.singletonList(textEmbFile.getAbsolutePath()));
+
+        // Verify that the text embedding was pruned and replaced with external reference
+        String prunedContent = new String(Files.readAllBytes(textEmbFile.toPath()), java.nio.charset.StandardCharsets.UTF_8);
+        assertTrue(prunedContent.contains("externalized"));
+        assertTrue(prunedContent.contains("att-"));
+    }
 }
+
 
