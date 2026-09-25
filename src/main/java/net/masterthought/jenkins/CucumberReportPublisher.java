@@ -41,6 +41,9 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import net.masterthought.jenkins.storage.CucumberJsonParser;
+import net.masterthought.jenkins.storage.StorageOptimizer;
+import net.masterthought.jenkins.storage.model.FeatureResult;
 
 public class CucumberReportPublisher extends Recorder implements SimpleBuildStep {
 
@@ -92,6 +95,9 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
     private String classificationsFilePattern = "";
 
     private int maxStreamStringLength;
+    private boolean embedFullAttachments = false;
+    private int attachmentThresholdKB = 500;
+    private boolean compressReport = true;
 
     @DataBoundConstructor
     public CucumberReportPublisher(String fileIncludePattern) {
@@ -108,6 +114,9 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         }
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
+        }
+        if (attachmentThresholdKB <= 0) {
+            attachmentThresholdKB = 500;
         }
 
         reportTitle = StringUtils.defaultString(reportTitle);
@@ -436,6 +445,33 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         return expandAllSteps;
     }
 
+    @DataBoundSetter
+    public void setEmbedFullAttachments(boolean embedFullAttachments) {
+        this.embedFullAttachments = embedFullAttachments;
+    }
+
+    public boolean getEmbedFullAttachments() {
+        return embedFullAttachments;
+    }
+
+    @DataBoundSetter
+    public void setAttachmentThresholdKB(int attachmentThresholdKB) {
+        this.attachmentThresholdKB = attachmentThresholdKB;
+    }
+
+    public int getAttachmentThresholdKB() {
+        return attachmentThresholdKB;
+    }
+
+    @DataBoundSetter
+    public void setCompressReport(boolean compressReport) {
+        this.compressReport = compressReport;
+    }
+
+    public boolean getCompressReport() {
+        return compressReport;
+    }
+
     @Override
     public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher, @NonNull TaskListener listener)
             throws InterruptedException, IOException {
@@ -573,6 +609,33 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         }
 
         setFailingStatuses(configuration);
+
+        if (!embedFullAttachments || compressReport) {
+            try {
+                StorageOptimizer optimizer = new StorageOptimizer(build.getRootDir(), embedFullAttachments, attachmentThresholdKB);
+                if (compressReport) {
+                    CucumberJsonParser parser = new CucumberJsonParser();
+                    List<FeatureResult> allFeatures = new ArrayList<>();
+                    for (String jsonFile : jsonFilesToProcess) {
+                        try {
+                            allFeatures.addAll(parser.parseFile(new File(jsonFile)));
+                        } catch (Exception e) {
+                            log(listener, "Warning: Could not parse features from " + jsonFile + " for compressed report: " + e.getMessage());
+                        }
+                    }
+                    optimizer.optimizeAndSave(allFeatures, build.getDisplayName(), build.getUrl());
+                    log(listener, "Saved compressed BDD report payload to " + StorageOptimizer.REPORT_GZ_FILENAME);
+                }
+
+                if (!embedFullAttachments) {
+                    log(listener, String.format("Pruning attachments exceeding %d KB from cached JSON reports...",
+                            (attachmentThresholdKB > 0 ? attachmentThresholdKB : 500)));
+                    optimizer.pruneCachedJsonFiles(jsonFilesToProcess);
+                }
+            } catch (Exception e) {
+                log(listener, "Warning: Storage optimization encountered an issue: " + e.getMessage());
+            }
+        }
 
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
         Reportable result = reportBuilder.generateReports();

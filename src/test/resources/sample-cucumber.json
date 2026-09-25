@@ -1,0 +1,268 @@
+[
+  {
+    "id": "user-authentication",
+    "name": "User Authentication & Access Control",
+    "uri": "features/auth/login.feature",
+    "description": "As a registered customer, I want to securely log into my account so that I can access my dashboard.",
+    "keyword": "Feature",
+    "line": 1,
+    "tags": [
+      {
+        "name": "@auth",
+        "line": 1
+      },
+      {
+        "name": "@smoke",
+        "line": 1
+      }
+    ],
+    "elements": [
+      {
+        "id": "successful-login-with-valid-credentials",
+        "name": "Successful login with valid credentials",
+        "keyword": "Scenario",
+        "type": "scenario",
+        "line": 4,
+        "tags": [
+          {
+            "name": "@positive",
+            "line": 4
+          }
+        ],
+        "before": [
+          {
+            "result": {
+              "status": "passed",
+              "duration": 45000000
+            }
+          }
+        ],
+        "steps": [
+          {
+            "keyword": "Given ",
+            "name": "the customer navigates to the login portal",
+            "line": 5,
+            "result": {
+              "status": "passed",
+              "duration": 350000000
+            }
+          },
+          {
+            "keyword": "When ",
+            "name": "they submit valid username \"john.doe\" and password",
+            "line": 6,
+            "result": {
+              "status": "passed",
+              "duration": 820000000
+            },
+            "embeddings": [
+              {
+                "mime_type": "application/json",
+                "name": "auth-response.json",
+                "data": "{\"status\":\"SUCCESS\",\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\"expiresIn\":3600}"
+              }
+            ]
+          },
+          {
+            "keyword": "Then ",
+            "name": "the dashboard welcomes \"John Doe\"",
+            "line": 7,
+            "result": {
+              "status": "passed",
+              "duration": 120000000
+            }
+          }
+        ],
+        "after": [
+          {
+            "result": {
+              "status": "passed",
+              "duration": 15000000
+            }
+          }
+        ]
+      },
+      {
+        "id": "login-fails-with-invalid-password",
+        "name": "Login fails with invalid password",
+        "keyword": "Scenario",
+        "type": "scenario",
+        "line": 9,
+        "tags": [
+          {
+            "name": "@negative",
+            "line": 9
+          },
+          {
+            "name": "@security",
+            "line": 9
+          }
+        ],
+        "steps": [
+          {
+            "keyword": "Given ",
+            "name": "the customer navigates to the login portal",
+            "line": 10,
+            "result": {
+              "status": "passed",
+              "duration": 210000000
+            }
+          },
+          {
+            "keyword": "When ",
+            "name": "they submit username \"john.doe\" with wrong password \"WrongPass!\"",
+            "line": 11,
+            "result": {
+              "status": "failed",
+              "duration": 1250000000,
+              "error_message": "java.lang.AssertionError: Expected error message 'Invalid credentials', but found 'Internal Server Error'\n\tat org.junit.Assert.fail(Assert.java:89)\n\tat com.example.auth.LoginSteps.verifyErrorMessage(LoginSteps.java:48)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)"
+            },
+            "embeddings": [
+              {
+                "mime_type": "image/png",
+                "name": "failure-screenshot.png",
+                "data": "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"
+              },
+              {
+                "mime_type": "text/plain",
+                "name": "server-error-log.txt",
+                "data": "[ERROR] 2026-09-16 20:00:01 AuthenticatorService: NullPointerException while validating hashed token payload at com.example.auth.TokenValidator.verify(TokenValidator.java:112)"
+              }
+            ]
+          },
+          {
+            "keyword": "Then ",
+            "name": "an error banner displays \"Invalid credentials\"",
+            "line": 12,
+            "result": {
+              "status": "skipped"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "order-checkout",
+    "name": "Order Checkout & Payment Gateway",
+    "uri": "features/checkout/order.feature",
+    "description": "Ensure shopping cart items can be checked out with various payment providers.",
+    "keyword": "Feature",
+    "line": 1,
+    "tags": [
+      {
+        "name": "@checkout",
+        "line": 1
+      },
+      {
+        "name": "@payment",
+        "line": 1
+      }
+    ],
+    "elements": [
+      {
+        "id": "complete-order-using-credit-card",
+        "name": "Complete order using Credit Card",
+        "keyword": "Scenario",
+        "type": "scenario",
+        "line": 4,
+        "tags": [
+          {
+            "name": "@card",
+            "line": 4
+          }
+        ],
+        "steps": [
+          {
+            "keyword": "Given ",
+            "name": "the customer has added the following items to their cart:",
+            "line": 5,
+            "rows": [
+              {
+                "cells": [
+                  "Item SKU",
+                  "Quantity",
+                  "Unit Price"
+                ]
+              },
+              {
+                "cells": [
+                  "PROD-101",
+                  "2",
+                  "$49.99"
+                ]
+              },
+              {
+                "cells": [
+                  "PROD-202",
+                  "1",
+                  "$19.50"
+                ]
+              }
+            ],
+            "result": {
+              "status": "passed",
+              "duration": 400000000
+            }
+          },
+          {
+            "keyword": "When ",
+            "name": "they authorize a payment with card details",
+            "line": 10,
+            "result": {
+              "status": "passed",
+              "duration": 5400000000
+            }
+          },
+          {
+            "keyword": "Then ",
+            "name": "an order confirmation invoice is generated",
+            "line": 11,
+            "result": {
+              "status": "passed",
+              "duration": 300000000
+            },
+            "embeddings": [
+              {
+                "mime_type": "text/plain",
+                "name": "",
+                "data": "INVOICE #982341\nTOTAL: $119.48\nSTATUS: PAID"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "abandoned-cart-notification",
+        "name": "Abandoned cart notification",
+        "keyword": "Scenario",
+        "type": "scenario",
+        "line": 14,
+        "tags": [
+          {
+            "name": "@notifications",
+            "line": 14
+          }
+        ],
+        "steps": [
+          {
+            "keyword": "Given ",
+            "name": "a customer adds an item and leaves the session",
+            "line": 15,
+            "result": {
+              "status": "skipped"
+            }
+          },
+          {
+            "keyword": "Then ",
+            "name": "a reminder email is scheduled",
+            "line": 16,
+            "result": {
+              "status": "skipped"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
