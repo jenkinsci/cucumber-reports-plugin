@@ -188,5 +188,16 @@
             <f:number default="0"/>
         </f:entry>
 
+        <f:section title="${%storageOptimization.title}">
+            <f:entry title="${%embedFullAttachments.title}"
+                     field="embedFullAttachments">
+                <f:checkbox default="false"/>
+            </f:entry>
+            <f:entry title="${%attachmentThresholdKB.title}"
+                     field="attachmentThresholdKB">
+                <f:number default="500"/>
+            </f:entry>
+        </f:section>
+
     </f:advanced>
 </j:jelly>

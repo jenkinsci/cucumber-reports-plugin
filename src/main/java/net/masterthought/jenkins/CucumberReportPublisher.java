@@ -39,6 +39,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
+import net.masterthought.jenkins.storage.AttachmentPruner;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -93,6 +94,9 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
 
     private int maxStreamStringLength;
 
+    private boolean embedFullAttachments = false;
+    private int attachmentThresholdKB = 500;
+
     @DataBoundConstructor
     public CucumberReportPublisher(String fileIncludePattern) {
         this.fileIncludePattern = fileIncludePattern;
@@ -108,6 +112,9 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         }
         if (sortingMethod == null) {
             sortingMethod = SortingMethod.NATURAL.name();
+        }
+        if (attachmentThresholdKB <= 0) {
+            attachmentThresholdKB = 500;
         }
 
         reportTitle = StringUtils.defaultString(reportTitle);
@@ -436,6 +443,24 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         return expandAllSteps;
     }
 
+    public boolean isEmbedFullAttachments() {
+        return embedFullAttachments;
+    }
+
+    @DataBoundSetter
+    public void setEmbedFullAttachments(boolean embedFullAttachments) {
+        this.embedFullAttachments = embedFullAttachments;
+    }
+
+    public int getAttachmentThresholdKB() {
+        return attachmentThresholdKB;
+    }
+
+    @DataBoundSetter
+    public void setAttachmentThresholdKB(int attachmentThresholdKB) {
+        this.attachmentThresholdKB = attachmentThresholdKB;
+    }
+
     @Override
     public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher, @NonNull TaskListener listener)
             throws InterruptedException, IOException {
@@ -573,6 +598,10 @@ public class CucumberReportPublisher extends Recorder implements SimpleBuildStep
         }
 
         setFailingStatuses(configuration);
+
+        if (!embedFullAttachments) {
+            AttachmentPruner.pruneJsonFiles(jsonFilesToProcess, attachmentThresholdKB);
+        }
 
         ReportBuilder reportBuilder = new ReportBuilder(jsonFilesToProcess, configuration);
         Reportable result = reportBuilder.generateReports();
