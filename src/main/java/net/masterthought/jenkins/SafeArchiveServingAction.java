@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.Action;
@@ -52,6 +53,23 @@ import static java.util.Collections.unmodifiableSet;
 public class SafeArchiveServingAction implements Action {
 
     private static final Logger LOGGER = Logger.getLogger(SafeArchiveServingAction.class.getName());
+
+    /**
+     * Value of {@link #checksumFormat} for actions persisted before the field existed (cucumber-reports 5.12.0 and
+     * older). XStream leaves the field at its default value when it is missing from {@code build.xml}.
+     *
+     * Such actions may hold checksums from the pre-5.12.0 algorithm, see {@link #calculateLegacyChecksum(File)}.
+     */
+    static final int CHECKSUM_FORMAT_UNSPECIFIED = 0;
+
+    /** Value of {@link #checksumFormat} for checksums recorded with {@link #calculateChecksum(File)}. */
+    static final int CHECKSUM_FORMAT_SHA1 = 1;
+
+    /**
+     * Which algorithm produced the checksums in {@link #fileChecksums}. Set for every new action, so only actions
+     * persisted by older plugin versions fall back to the legacy algorithm.
+     */
+    private final int checksumFormat;
 
     @GuardedBy("fileChecksums")
     private final Map<String,String> fileChecksums = new HashMap<>();
@@ -93,6 +111,7 @@ public class SafeArchiveServingAction implements Action {
         this.iconName = iconName;
         this.title = title;
         this.safeExtensions = unmodifiableList(asList(safeExtensions));
+        this.checksumFormat = CHECKSUM_FORMAT_SHA1;
 
         this.safeDirectories = unmodifiableSet(new HashSet<>(asList(
                 rootDir,
@@ -113,6 +132,7 @@ public class SafeArchiveServingAction implements Action {
             this.title = other.title;
             this.safeExtensions = other.safeExtensions; /* already an unmodifiableList */
             this.safeDirectories = other.safeDirectories; /* already an unmodifiableSet */
+            this.checksumFormat = other.checksumFormat;
             this.fileChecksums.putAll(other.fileChecksums);    /* we have a new private final map, populate it */
         }
     }
@@ -157,6 +177,53 @@ public class SafeArchiveServingAction implements Action {
             }
         }
         return Util.toHexString(sha1.digest());
+    }
+
+    /**
+     * Reproduces the checksum algorithm used up to cucumber-reports 5.11.0, so reports recorded by those versions can
+     * still be verified. It hashed the whole 1024-byte buffer after every read, so for a file whose size is not a
+     * multiple of 1024 bytes the digest also covers leftover bytes from the previous read (or zeros).
+     *
+     * Only used to verify actions with {@link #CHECKSUM_FORMAT_UNSPECIFIED}; never used to record new checksums.
+     *
+     * @see <a href="https://github.com/jenkinsci/cucumber-reports-plugin/issues/570">#570</a>
+     */
+    @SuppressFBWarnings(value = "NCR_NOT_PROPERLY_CHECKED_READ",
+            justification = "Deliberately reproduces the pre-5.12.0 checksum, which hashed the whole buffer")
+    static String calculateLegacyChecksum(@NonNull File file) throws NoSuchAlgorithmException, IOException {
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] bytes = new byte[1024];
+            while (fis.read(bytes) != -1) {
+                sha1.update(bytes);
+            }
+        }
+        return Util.toHexString(sha1.digest());
+    }
+
+    /**
+     * Checks the file against its recorded checksum. Actions persisted before {@link #checksumFormat} existed may hold
+     * checksums from either the current or the pre-5.12.0 algorithm, so both are accepted for them. Newer actions only
+     * accept the current algorithm.
+     */
+    boolean matchesRecordedChecksum(@NonNull File file, @NonNull String expectedChecksum)
+            throws NoSuchAlgorithmException, IOException {
+        String actualChecksum = calculateChecksum(file);
+        if (expectedChecksum.equals(actualChecksum)) {
+            return true;
+        }
+        if (checksumFormat == CHECKSUM_FORMAT_UNSPECIFIED
+                && expectedChecksum.equals(calculateLegacyChecksum(file))) {
+            if (LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.log(Level.FINEST, "Legacy checksum matched for file: " + file);
+            }
+            return true;
+        }
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, "Checksum mismatch: recorded: " +
+                    expectedChecksum + ", actual: " + actualChecksum + " for file: " + file);
+        }
+        return false;
     }
 
     private void processDirectory(@NonNull File directory, @Nullable String path) throws NoSuchAlgorithmException, IOException {
@@ -285,23 +352,16 @@ public class SafeArchiveServingAction implements Action {
             throw HttpResponses.notFound();
         }
 
-        // calculate actual file checksum
-        String actualChecksum;
+        // compare actual and recorded file checksum
+        boolean checksumMatches;
         try {
-            actualChecksum = calculateChecksum(file);
+            checksumMatches = matchesRecordedChecksum(file, getChecksum(fileName));
         } catch (NoSuchAlgorithmException nse) {
             // cannot happen
             throw new IllegalStateException(nse);
         }
 
-        String expectedChecksum = getChecksum(fileName);
-
-        if (!expectedChecksum.equals(actualChecksum)) {
-            if (LOGGER.isLoggable(Level.FINEST)) {
-                LOGGER.log(Level.FINEST, "Checksum mismatch: recorded: " +
-                        expectedChecksum + ", actual: " + actualChecksum + " for file: " + fileName);
-            }
-
+        if (!checksumMatches) {
             throw HttpResponses.forbidden();
         }
 
